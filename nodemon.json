@@ -1,0 +1,7 @@
+{
+  "watch": ["src-ts"],
+  "ext": "ts",
+  "ignore": ["dist", "node_modules", "examples"],
+  "exec": "npm run build",
+  "delay": 500
+}

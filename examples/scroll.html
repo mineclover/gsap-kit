@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>스크롤 애니메이션 예제 - GSAP Kit</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: #0f0f0f;
+      color: white;
+    }
+
+    .hero {
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      text-align: center;
+    }
+
+    .hero h1 {
+      font-size: 4rem;
+      margin-bottom: 20px;
+    }
+
+    .hero p {
+      font-size: 1.5rem;
+      opacity: 0.9;
+    }
+
+    section {
+      min-height: 100vh;
+      padding: 100px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .section-title {
+      font-size: 3rem;
+      margin-bottom: 50px;
+      text-align: center;
+    }
+
+    /* Scroll Fade In */
+    .scroll-fade-section {
+      background: #1a1a1a;
+    }
+
+    .fade-items {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 30px;
+    }
+
+    .fade-item {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      padding: 60px 30px;
+      border-radius: 15px;
+      text-align: center;
+      font-size: 1.5rem;
+      font-weight: bold;
+    }
+
+    /* Scroll Slide Section */
+    .scroll-slide-section {
+      background: #2d2d2d;
+    }
+
+    .slide-items {
+      display: flex;
+      flex-direction: column;
+      gap: 30px;
+    }
+
+    .slide-item {
+      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+      padding: 60px 30px;
+      border-radius: 15px;
+      text-align: center;
+      font-size: 1.5rem;
+      font-weight: bold;
+    }
+
+    /* Parallax Section */
+    .parallax-section {
+      background: #1a1a1a;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .parallax-layer {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .parallax-bg {
+      font-size: 10rem;
+      opacity: 0.1;
+      pointer-events: none;
+    }
+
+    .parallax-content {
+      position: relative;
+      z-index: 10;
+      background: rgba(102, 126, 234, 0.9);
+      padding: 80px 60px;
+      border-radius: 20px;
+      backdrop-filter: blur(10px);
+    }
+
+    /* Pin Section */
+    .pin-section {
+      background: #2d2d2d;
+      height: 200vh;
+    }
+
+    .pin-container {
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .pin-content {
+      background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+      padding: 100px 80px;
+      border-radius: 20px;
+      text-align: center;
+      font-size: 2rem;
+      font-weight: bold;
+    }
+
+    /* Stagger Section */
+    .stagger-section {
+      background: #1a1a1a;
+    }
+
+    .stagger-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+    }
+
+    .stagger-item {
+      aspect-ratio: 1;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-radius: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      font-weight: bold;
+    }
+
+    /* Scrub Section */
+    .scrub-section {
+      background: #2d2d2d;
+      height: 200vh;
+    }
+
+    .scrub-container {
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: sticky;
+      top: 0;
+    }
+
+    .scrub-box {
+      width: 200px;
+      height: 200px;
+      background: linear-gradient(135deg, #30cfd0 0%, #330867 100%);
+      border-radius: 20px;
+    }
+
+    .footer {
+      background: #667eea;
+      padding: 60px 20px;
+      text-align: center;
+    }
+
+    .footer h2 {
+      font-size: 2.5rem;
+      margin-bottom: 20px;
+    }
+
+    .scroll-indicator {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      padding: 15px 25px;
+      border-radius: 10px;
+      font-size: 0.9rem;
+      z-index: 1000;
+    }
+  </style>
+</head>
+<body>
+  <div class="scroll-indicator">
+    Scroll Progress: <span id="progress">0%</span>
+  </div>
+
+  <!-- Hero Section -->
+  <div class="hero">
+    <div>
+      <h1 class="hero-title">스크롤 애니메이션</h1>
+      <p class="hero-subtitle">아래로 스크롤하여 다양한 효과를 확인하세요</p>
+    </div>
+  </div>
+
+  <!-- Scroll Fade In Section -->
+  <section class="scroll-fade-section">
+    <div class="container">
+      <h2 class="section-title scroll-title">Scroll Fade In</h2>
+      <div class="fade-items">
+        <div class="fade-item">Item 1</div>
+        <div class="fade-item">Item 2</div>
+        <div class="fade-item">Item 3</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Scroll Slide Section -->
+  <section class="scroll-slide-section">
+    <div class="container">
+      <h2 class="section-title scroll-title">Scroll Slide In</h2>
+      <div class="slide-items">
+        <div class="slide-item slide-left">Left Slide</div>
+        <div class="slide-item slide-right">Right Slide</div>
+        <div class="slide-item slide-left">Left Slide</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Parallax Section -->
+  <section class="parallax-section">
+    <div class="parallax-layer parallax-bg-layer">
+      <div class="parallax-bg">PARALLAX</div>
+    </div>
+    <div class="container">
+      <div class="parallax-content">
+        <h2 class="section-title">Parallax Effect</h2>
+        <p>배경이 다른 속도로 움직입니다</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Stagger Section -->
+  <section class="stagger-section">
+    <div class="container">
+      <h2 class="section-title scroll-title">Scroll Stagger</h2>
+      <div class="stagger-grid">
+        <div class="stagger-item">1</div>
+        <div class="stagger-item">2</div>
+        <div class="stagger-item">3</div>
+        <div class="stagger-item">4</div>
+        <div class="stagger-item">5</div>
+        <div class="stagger-item">6</div>
+        <div class="stagger-item">7</div>
+        <div class="stagger-item">8</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Scrub Section -->
+  <section class="scrub-section">
+    <div class="scrub-container">
+      <div class="container" style="text-align: center;">
+        <h2 class="section-title">Scroll Scrub</h2>
+        <p style="margin-bottom: 40px;">스크롤에 따라 박스가 회전하고 크기가 변합니다</p>
+        <div class="scrub-box"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Pin Section -->
+  <section class="pin-section">
+    <div class="pin-container pin-element">
+      <div class="pin-content">
+        <h2>Pinned Element</h2>
+        <p>스크롤해도 화면에 고정됩니다</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <div class="footer">
+    <h2>GSAP Kit</h2>
+    <p>스크롤 애니메이션 예제를 확인하셨습니다</p>
+  </div>
+
+  <!-- GSAP CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.13/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.13/dist/ScrollTrigger.min.js"></script>
+
+  <!-- 애니메이션 함수들 -->
+  <script src="../src/animations/scroll.js"></script>
+  <script src="../src/animations/fade.js"></script>
+
+  <!-- 실행 스크립트 -->
+  <script>
+    // Hero 애니메이션
+    gsap.from('.hero-title', {
+      opacity: 0,
+      y: 50,
+      duration: 1,
+      ease: "power3.out"
+    });
+
+    gsap.from('.hero-subtitle', {
+      opacity: 0,
+      y: 30,
+      duration: 1,
+      delay: 0.3,
+      ease: "power3.out"
+    });
+
+    // 섹션 타이틀 스크롤 애니메이션
+    scrollFadeIn('.scroll-title', {
+      y: 80,
+      duration: 0.8
+    });
+
+    // Fade Items
+    scrollFadeIn('.fade-item', {
+      stagger: 0.2,
+      start: "top 85%"
+    });
+
+    // Slide Items
+    document.querySelectorAll('.slide-left').forEach(el => {
+      scrollSlideInLeft(el, { start: "top 85%" });
+    });
+
+    document.querySelectorAll('.slide-right').forEach(el => {
+      scrollSlideInRight(el, { start: "top 85%" });
+    });
+
+    // Parallax
+    parallax('.parallax-bg-layer', {
+      speed: 0.5
+    });
+
+    // Stagger
+    scrollStagger('.stagger-item', {
+      stagger: 0.1,
+      y: 60,
+      start: "top 85%"
+    });
+
+    // Scrub (스크롤 진행에 따른 애니메이션)
+    scrollProgress('.scrub-box', {
+      to: {
+        rotation: 360,
+        scale: 1.5,
+        borderRadius: "50%"
+      },
+      scrub: 1,
+      start: "top bottom",
+      end: "bottom top"
+    });
+
+    // Pin
+    scrollPin('.pin-element', {
+      start: "top top",
+      end: "+=1000"
+    });
+
+    // 스크롤 진행도 표시
+    ScrollTrigger.create({
+      trigger: "body",
+      start: "top top",
+      end: "bottom bottom",
+      onUpdate: (self) => {
+        const progress = Math.round(self.progress * 100);
+        document.getElementById('progress').textContent = progress + '%';
+      }
+    });
+
+    console.log('[GSAP Kit] 스크롤 애니메이션 예제가 로드되었습니다');
+  </script>
+</body>
+</html>

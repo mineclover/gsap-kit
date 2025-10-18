@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TypeScript 프리뷰 - GSAP Kit</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 40px 20px;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      color: white;
+      text-align: center;
+      margin-bottom: 20px;
+      font-size: 3rem;
+    }
+
+    .subtitle {
+      color: rgba(255, 255, 255, 0.9);
+      text-align: center;
+      margin-bottom: 50px;
+      font-size: 1.2rem;
+    }
+
+    .info {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      padding: 30px;
+      margin-bottom: 30px;
+      color: white;
+    }
+
+    .info h2 {
+      margin-bottom: 15px;
+      color: #ffeb3b;
+    }
+
+    .info code {
+      background: rgba(0, 0, 0, 0.3);
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-family: 'Courier New', monospace;
+    }
+
+    .demo-area {
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 15px;
+      padding: 60px;
+      min-height: 400px;
+      position: relative;
+      border: 3px dashed rgba(255, 255, 255, 0.5);
+    }
+
+    .drag-box {
+      width: 150px;
+      height: 150px;
+      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+      border-radius: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: bold;
+      font-size: 1.2rem;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      cursor: grab;
+      user-select: none;
+      position: absolute;
+      left: 100px;
+      top: 100px;
+    }
+
+    .drag-box:active {
+      cursor: grabbing;
+    }
+
+    .status {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border-radius: 10px;
+      padding: 20px;
+      margin-top: 30px;
+      color: white;
+    }
+
+    .status h3 {
+      color: #4caf50;
+      margin-bottom: 10px;
+    }
+
+    .log {
+      background: rgba(0, 0, 0, 0.3);
+      padding: 15px;
+      border-radius: 8px;
+      font-family: 'Courier New', monospace;
+      font-size: 0.9rem;
+      max-height: 200px;
+      overflow-y: auto;
+      margin-top: 10px;
+    }
+
+    .log-item {
+      margin-bottom: 5px;
+      opacity: 0.8;
+    }
+
+    .log-item.new {
+      animation: highlight 0.5s ease;
+    }
+
+    @keyframes highlight {
+      0% {
+        background: rgba(255, 255, 0, 0.3);
+        transform: translateX(-5px);
+      }
+      100% {
+        background: transparent;
+        transform: translateX(0);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🚀 TypeScript 라이브 프리뷰</h1>
+    <p class="subtitle">TypeScript 파일을 수정하면 자동으로 컴파일되고 여기에 반영됩니다</p>
+
+    <div class="info">
+      <h2>📝 사용 방법</h2>
+      <p>1. <code>npm run dev:ts</code> 실행</p>
+      <p>2. <code>src-ts/draggable/basic.ts</code> 파일 수정</p>
+      <p>3. 자동으로 컴파일되고 이 페이지가 리로드됩니다</p>
+      <p style="margin-top: 15px; color: #ffeb3b;">💡 <strong>nodemon</strong>이 TypeScript 변경을 감지하고 자동 빌드합니다!</p>
+    </div>
+
+    <div class="demo-area" id="demo-area">
+      <div class="drag-box" id="test-box">
+        드래그 테스트
+      </div>
+    </div>
+
+    <div class="status">
+      <h3>✅ 상태</h3>
+      <p>현재 시간: <span id="current-time"></span></p>
+      <p>마지막 로드: <span id="load-time"></span></p>
+      <div class="log" id="log">
+        <div class="log-item">로그가 여기에 표시됩니다...</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- GSAP CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.13/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.13/dist/Draggable.min.js"></script>
+
+  <!-- 🎯 컴파일된 TypeScript 파일 (dist 폴더) -->
+  <script src="../dist/draggable/basic.js"></script>
+
+  <!-- 실행 스크립트 -->
+  <script>
+    // 시간 업데이트
+    function updateTime() {
+      const now = new Date();
+      document.getElementById('current-time').textContent = now.toLocaleTimeString('ko-KR');
+    }
+
+    updateTime();
+    setInterval(updateTime, 1000);
+
+    // 로드 시간
+    document.getElementById('load-time').textContent = new Date().toLocaleTimeString('ko-KR');
+
+    // 로그 함수
+    function addLog(message) {
+      const logDiv = document.getElementById('log');
+      const logItem = document.createElement('div');
+      logItem.className = 'log-item new';
+      logItem.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+      logDiv.insertBefore(logItem, logDiv.firstChild);
+
+      // 최대 20개 로그만 유지
+      while (logDiv.children.length > 20) {
+        logDiv.removeChild(logDiv.lastChild);
+      }
+
+      setTimeout(() => logItem.classList.remove('new'), 500);
+    }
+
+    addLog('페이지 로드됨');
+
+    // TypeScript로 작성된 함수 테스트
+    try {
+      addLog('makeDraggable 함수 호출 중...');
+
+      const drag = makeDraggable('#test-box', {
+        type: 'x,y',
+        bounds: '#demo-area',
+        onDragStart: function() {
+          addLog('✅ 드래그 시작!');
+        },
+        onDrag: function() {
+          // 너무 많은 로그 방지를 위해 주석 처리
+          // addLog(`드래그 중: x=${Math.round(this.x)}, y=${Math.round(this.y)}`);
+        },
+        onDragEnd: function() {
+          addLog(`✅ 드래그 종료: x=${Math.round(this.x)}, y=${Math.round(this.y)}`);
+        }
+      });
+
+      if (drag && drag.length > 0) {
+        addLog('✅ Draggable 인스턴스 생성 성공!');
+        addLog(`타입: ${typeof makeDraggable}`);
+      } else {
+        addLog('❌ Draggable 인스턴스 생성 실패');
+      }
+    } catch (error) {
+      addLog(`❌ 에러 발생: ${error.message}`);
+      console.error(error);
+    }
+
+    // 페이지 리로드 감지
+    window.addEventListener('beforeunload', () => {
+      addLog('페이지 리로드 중...');
+    });
+
+    addLog('스크립트 실행 완료');
+  </script>
+</body>
+</html>

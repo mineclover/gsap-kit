@@ -1,0 +1,36 @@
+# Claude
+.claude/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Logs
+logs
+*.log
+npm-debug.log*
+dev.log
+
+# Node
+node_modules/
+package-lock.json
+yarn.lock
+
+# Build (TypeScript 컴파일 결과)
+dist/
+build/
+*.tsbuildinfo
+
+# Temporary files
+*.tmp
+.cache/
+
+# Process IDs
+*.pid

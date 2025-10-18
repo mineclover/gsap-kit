@@ -1,0 +1,42 @@
+{
+  "name": "gsap-kit",
+  "version": "1.0.0",
+  "description": "순수 JavaScript와 GSAP CDN을 사용하는 재사용 가능한 드래그 & 인터랙션 함수 라이브러리",
+  "main": "src/animations/index.js",
+  "scripts": {
+    "serve": "npx http-server -p 8000 -o",
+    "dev": "npx http-server -p 8000 -o /examples/draggable.html",
+    "build": "tsc",
+    "build:watch": "tsc --watch",
+    "type-check": "tsc --noEmit",
+    "dev:ts": "concurrently \"npm run watch:ts\" \"npm run serve:live\"",
+    "dev:ts:bg": "concurrently -k \"npm run watch:ts\" \"npm run serve:live\" > dev.log 2>&1 &",
+    "watch:ts": "nodemon --watch src-ts --ext ts --exec \"npm run build\"",
+    "serve:live": "live-server --port=8000 --open=/examples/preview.html --watch=dist,examples --no-css-inject",
+    "stop": "pkill -f 'nodemon|live-server' || true",
+    "logs": "tail -f dev.log",
+    "status": "ps aux | grep -E 'nodemon|live-server' | grep -v grep"
+  },
+  "keywords": [
+    "gsap",
+    "draggable",
+    "drag-and-drop",
+    "animation",
+    "javascript",
+    "typescript",
+    "vanilla-js",
+    "scroll-animation",
+    "interactions",
+    "frontend"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/gsap": "^3.0.0",
+    "typescript": "^5.3.3",
+    "concurrently": "^8.2.2",
+    "nodemon": "^3.0.2",
+    "live-server": "^1.2.2"
+  },
+  "dependencies": {}
+}
