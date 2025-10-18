@@ -1,8 +1,14 @@
 # GSAP Kit
 
+![License](https://img.shields.io/badge/license-MIT-blue.svg)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.3-blue.svg)
+![GSAP](https://img.shields.io/badge/GSAP-3.13-green.svg)
+
 순수 JavaScript와 GSAP CDN을 사용하는 재사용 가능한 인터랙션 함수 라이브러리입니다.
 
 번들링이 필요 없이 HTML 파일에 바로 포함하여 사용할 수 있습니다.
+
+**🔗 저장소**: [github.com/mineclover/gsap-kit](https://github.com/mineclover/gsap-kit)
 
 ## 특징
 
@@ -495,11 +501,25 @@ MIT License
 이슈 및 PR을 환영합니다!
 
 1. Fork the Project
-2. Create your Feature Branch
-3. Commit your Changes
-4. Push to the Branch
+2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your Changes (`git commit -m 'feat: Add AmazingFeature'`)
+4. Push to the Branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
+
+## 로드맵
+
+- [ ] 추가 드래그 함수 (충돌 감지, 드롭존 등)
+- [ ] 더 많은 애니메이션 프리셋
+- [ ] npm 패키지 배포
+- [ ] 온라인 데모 사이트
+- [ ] 더 많은 예제
+
+## 스타 히스토리
+
+[![Star History Chart](https://api.star-history.com/svg?repos=mineclover/gsap-kit&type=Date)](https://star-history.com/#mineclover/gsap-kit&Date)
 
 ---
 
-**GSAP Kit** - 순수 JavaScript로 만드는 아름다운 애니메이션
+**GSAP Kit** - 순수 JavaScript로 만드는 아름다운 인터랙션 ✨
+
+Made with ❤️ by [mineclover](https://github.com/mineclover)
