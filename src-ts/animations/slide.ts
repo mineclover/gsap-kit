@@ -4,23 +4,21 @@
 
 /// <reference types="gsap" />
 
+import { AnimationTarget, BaseAnimationOptions } from '../types';
+
 /**
  * 슬라이드 애니메이션 옵션
  */
-interface SlideOptions {
-  duration?: number;
-  delay?: number;
-  ease?: string;
+export interface SlideOptions extends BaseAnimationOptions {
   x?: number;
   y?: number;
-  stagger?: number;
 }
 
 /**
  * 요소를 왼쪽에서 슬라이드 인
  */
 function slideInLeft(
-  target: gsap.TweenTarget,
+  target: AnimationTarget,
   options: SlideOptions = {}
 ): gsap.core.Tween | gsap.core.Timeline {
   const defaults: SlideOptions = {
@@ -46,7 +44,7 @@ function slideInLeft(
  * 요소를 오른쪽에서 슬라이드 인
  */
 function slideInRight(
-  target: gsap.TweenTarget,
+  target: AnimationTarget,
   options: SlideOptions = {}
 ): gsap.core.Tween | gsap.core.Timeline {
   const defaults: SlideOptions = {
@@ -72,7 +70,7 @@ function slideInRight(
  * 요소를 위에서 슬라이드 인
  */
 function slideInUp(
-  target: gsap.TweenTarget,
+  target: AnimationTarget,
   options: SlideOptions = {}
 ): gsap.core.Tween | gsap.core.Timeline {
   const defaults: SlideOptions = {
@@ -98,7 +96,7 @@ function slideInUp(
  * 요소를 아래에서 슬라이드 인
  */
 function slideInDown(
-  target: gsap.TweenTarget,
+  target: AnimationTarget,
   options: SlideOptions = {}
 ): gsap.core.Tween | gsap.core.Timeline {
   const defaults: SlideOptions = {
@@ -124,7 +122,7 @@ function slideInDown(
  * 요소를 왼쪽으로 슬라이드 아웃
  */
 function slideOutLeft(
-  target: gsap.TweenTarget,
+  target: AnimationTarget,
   options: SlideOptions = {}
 ): gsap.core.Tween | gsap.core.Timeline {
   const defaults: SlideOptions = {
@@ -150,7 +148,7 @@ function slideOutLeft(
  * 요소를 오른쪽으로 슬라이드 아웃
  */
 function slideOutRight(
-  target: gsap.TweenTarget,
+  target: AnimationTarget,
   options: SlideOptions = {}
 ): gsap.core.Tween | gsap.core.Timeline {
   const defaults: SlideOptions = {

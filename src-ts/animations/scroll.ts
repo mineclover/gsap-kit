@@ -5,6 +5,8 @@
 
 /// <reference types="gsap" />
 
+import { AnimationTarget, BaseAnimationOptions } from '../types';
+
 /**
  * ScrollTrigger 등록
  */
@@ -15,10 +17,7 @@ if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
 /**
  * 스크롤 애니메이션 옵션
  */
-interface ScrollOptions {
-  duration?: number;
-  delay?: number;
-  ease?: string;
+export interface ScrollOptions extends BaseAnimationOptions {
   y?: number;
   x?: number;
   trigger?: gsap.DOMTarget;
@@ -27,13 +26,12 @@ interface ScrollOptions {
   toggleActions?: string;
   scrub?: boolean | number;
   markers?: boolean;
-  stagger?: number;
 }
 
 /**
  * 스크롤 진행도 옵션
  */
-interface ScrollProgressOptions {
+export interface ScrollProgressOptions {
   to?: gsap.TweenVars;
   trigger?: gsap.DOMTarget;
   start?: string;
@@ -45,7 +43,7 @@ interface ScrollProgressOptions {
 /**
  * 패럴랙스 옵션
  */
-interface ParallaxOptions {
+export interface ParallaxOptions {
   speed?: number;
   trigger?: gsap.DOMTarget;
   start?: string;
@@ -56,7 +54,7 @@ interface ParallaxOptions {
 /**
  * 스크롤 핀 옵션
  */
-interface ScrollPinOptions {
+export interface ScrollPinOptions {
   start?: string;
   end?: string;
   pin?: boolean;
@@ -67,7 +65,7 @@ interface ScrollPinOptions {
  * 스크롤 시 페이드 인
  */
 function scrollFadeIn(
-  target: gsap.TweenTarget,
+  target: AnimationTarget,
   options: ScrollOptions = {}
 ): gsap.core.Tween {
   const defaults: ScrollOptions = {
@@ -103,7 +101,7 @@ function scrollFadeIn(
  * 스크롤 시 왼쪽에서 슬라이드 인
  */
 function scrollSlideInLeft(
-  target: gsap.TweenTarget,
+  target: AnimationTarget,
   options: ScrollOptions = {}
 ): gsap.core.Tween {
   const defaults: ScrollOptions = {
@@ -137,7 +135,7 @@ function scrollSlideInLeft(
  * 스크롤 시 오른쪽에서 슬라이드 인
  */
 function scrollSlideInRight(
-  target: gsap.TweenTarget,
+  target: AnimationTarget,
   options: ScrollOptions = {}
 ): gsap.core.Tween {
   const defaults: ScrollOptions = {
@@ -171,7 +169,7 @@ function scrollSlideInRight(
  * 스크롤 진행도에 따라 애니메이션 (scrub 모드)
  */
 function scrollProgress(
-  target: gsap.TweenTarget,
+  target: AnimationTarget,
   options: ScrollProgressOptions = {}
 ): gsap.core.Tween {
   const defaults: ScrollProgressOptions = {
@@ -200,7 +198,7 @@ function scrollProgress(
  * 패럴랙스 효과 (요소가 다른 속도로 스크롤)
  */
 function parallax(
-  target: gsap.TweenTarget,
+  target: AnimationTarget,
   options: ParallaxOptions = {}
 ): gsap.core.Tween {
   const defaults: ParallaxOptions = {
@@ -255,7 +253,7 @@ function scrollPin(
  * 스크롤 시 각 아이템 순차 애니메이션 (배치 처리)
  */
 function scrollStagger(
-  target: gsap.TweenTarget,
+  target: AnimationTarget,
   options: ScrollOptions = {}
 ): gsap.core.Timeline | gsap.core.Tween {
   const defaults: ScrollOptions = {

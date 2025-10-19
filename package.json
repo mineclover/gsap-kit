@@ -6,9 +6,12 @@
   "scripts": {
     "serve": "npx http-server -p 8000 -o",
     "dev": "npx http-server -p 8000 -o /examples/draggable.html",
-    "build": "tsc",
+    "build": "tsc && node scripts/remove-exports.js",
     "build:watch": "tsc --watch",
+    "bundle": "rollup -c",
+    "bundle:watch": "rollup -c --watch",
     "type-check": "tsc --noEmit",
+    "postbuild": "node scripts/remove-exports.js",
     "dev:ts": "concurrently \"npm run watch:ts\" \"npm run serve:live\"",
     "dev:ts:bg": "concurrently -k \"npm run watch:ts\" \"npm run serve:live\" > dev.log 2>&1 &",
     "watch:ts": "nodemon --watch src-ts --ext ts --exec \"npm run build\"",
@@ -32,11 +35,14 @@
   "author": "",
   "license": "MIT",
   "devDependencies": {
+    "@rollup/plugin-node-resolve": "16.0.3",
+    "@rollup/plugin-terser": "0.4.4",
+    "@rollup/plugin-typescript": "12.1.4",
     "@types/gsap": "^3.0.0",
-    "typescript": "^5.3.3",
     "concurrently": "^8.2.2",
+    "live-server": "^1.2.2",
     "nodemon": "^3.0.2",
-    "live-server": "^1.2.2"
-  },
-  "dependencies": {}
+    "rollup": "4.52.5",
+    "typescript": "^5.3.3"
+  }
 }

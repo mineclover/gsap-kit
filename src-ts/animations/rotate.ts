@@ -4,18 +4,16 @@
 
 /// <reference types="gsap" />
 
+import { AnimationTarget, BaseAnimationOptions } from '../types';
+
 /**
  * 회전 애니메이션 옵션
  */
-interface RotateOptions {
-  duration?: number;
-  delay?: number;
-  ease?: string;
+export interface RotateOptions extends BaseAnimationOptions {
   rotation?: number;
   rotationX?: number;
   rotationY?: number;
   scale?: number;
-  stagger?: number;
   clockwise?: boolean;
 }
 
@@ -23,7 +21,7 @@ interface RotateOptions {
  * 요소를 회전시킵니다
  */
 function rotate(
-  target: gsap.TweenTarget,
+  target: AnimationTarget,
   options: RotateOptions = {}
 ): gsap.core.Tween {
   const defaults: RotateOptions = {
@@ -49,7 +47,7 @@ function rotate(
  * 요소를 회전하면서 페이드 인
  */
 function rotateIn(
-  target: gsap.TweenTarget,
+  target: AnimationTarget,
   options: RotateOptions = {}
 ): gsap.core.Tween {
   const defaults: RotateOptions = {
@@ -78,7 +76,7 @@ function rotateIn(
  * 요소를 회전하면서 페이드 아웃
  */
 function rotateOut(
-  target: gsap.TweenTarget,
+  target: AnimationTarget,
   options: RotateOptions = {}
 ): gsap.core.Tween {
   const defaults: RotateOptions = {
@@ -107,7 +105,7 @@ function rotateOut(
  * 요소를 3D Y축 기준으로 회전 (플립)
  */
 function flipY(
-  target: gsap.TweenTarget,
+  target: AnimationTarget,
   options: RotateOptions = {}
 ): gsap.core.Tween {
   const defaults: RotateOptions = {
@@ -134,7 +132,7 @@ function flipY(
  * 요소를 3D X축 기준으로 회전 (플립)
  */
 function flipX(
-  target: gsap.TweenTarget,
+  target: AnimationTarget,
   options: RotateOptions = {}
 ): gsap.core.Tween {
   const defaults: RotateOptions = {
@@ -161,7 +159,7 @@ function flipX(
  * 요소를 무한 회전
  */
 function spinInfinite(
-  target: gsap.TweenTarget,
+  target: AnimationTarget,
   options: RotateOptions = {}
 ): gsap.core.Tween {
   const defaults: RotateOptions = {

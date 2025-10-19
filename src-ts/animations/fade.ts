@@ -4,24 +4,22 @@
 
 /// <reference types="gsap" />
 
+import { AnimationTarget, BaseAnimationOptions } from '../types';
+
 /**
  * 페이드 애니메이션 옵션
  */
-interface FadeOptions {
-  duration?: number;
-  delay?: number;
-  ease?: string;
+export interface FadeOptions extends BaseAnimationOptions {
   y?: number;
   x?: number;
   scale?: number;
-  stagger?: number;
 }
 
 /**
  * 요소를 페이드 인 시킵니다
  */
 function fadeIn(
-  target: gsap.TweenTarget,
+  target: AnimationTarget,
   options: FadeOptions = {}
 ): gsap.core.Tween | gsap.core.Timeline {
   const defaults: FadeOptions = {
@@ -48,7 +46,7 @@ function fadeIn(
  * 요소를 페이드 아웃 시킵니다
  */
 function fadeOut(
-  target: gsap.TweenTarget,
+  target: AnimationTarget,
   options: FadeOptions = {}
 ): gsap.core.Tween | gsap.core.Timeline {
   const defaults: FadeOptions = {
@@ -75,7 +73,7 @@ function fadeOut(
  * 요소를 페이드 인 (위에서 아래로)
  */
 function fadeInDown(
-  target: gsap.TweenTarget,
+  target: AnimationTarget,
   options: FadeOptions = {}
 ): gsap.core.Tween | gsap.core.Timeline {
   return fadeIn(target, { ...options, y: -30 });
@@ -85,7 +83,7 @@ function fadeInDown(
  * 요소를 페이드 인 (아래에서 위로)
  */
 function fadeInUp(
-  target: gsap.TweenTarget,
+  target: AnimationTarget,
   options: FadeOptions = {}
 ): gsap.core.Tween | gsap.core.Timeline {
   return fadeIn(target, { ...options, y: 30 });
@@ -95,7 +93,7 @@ function fadeInUp(
  * 요소를 페이드 인 (왼쪽에서 오른쪽으로)
  */
 function fadeInLeft(
-  target: gsap.TweenTarget,
+  target: AnimationTarget,
   options: FadeOptions = {}
 ): gsap.core.Tween | gsap.core.Timeline {
   const defaults: FadeOptions = {
@@ -122,7 +120,7 @@ function fadeInLeft(
  * 요소를 페이드 인 (오른쪽에서 왼쪽으로)
  */
 function fadeInRight(
-  target: gsap.TweenTarget,
+  target: AnimationTarget,
   options: FadeOptions = {}
 ): gsap.core.Tween | gsap.core.Timeline {
   const defaults: FadeOptions = {
@@ -149,7 +147,7 @@ function fadeInRight(
  * 요소를 확대하면서 페이드 인
  */
 function fadeInScale(
-  target: gsap.TweenTarget,
+  target: AnimationTarget,
   options: FadeOptions = {}
 ): gsap.core.Tween | gsap.core.Timeline {
   const defaults: FadeOptions = {

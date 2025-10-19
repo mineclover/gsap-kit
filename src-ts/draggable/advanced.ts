@@ -4,6 +4,8 @@
 
 /// <reference types="gsap" />
 
+import { DOMTarget, BaseDraggableOptions, validateTarget, debug } from '../types';
+
 /**
  * Draggable 플러그인 등록
  */
@@ -22,29 +24,22 @@ interface SnapConfig {
 /**
  * 그리드 스냅 드래그 옵션
  */
-interface SnapDraggableOptions {
+interface SnapDraggableOptions extends BaseDraggableOptions {
   gridSize?: number;
   snapConfig?: SnapConfig;
-  bounds?: Window | string | HTMLElement | DOMRect | { top?: number; left?: number; width?: number; height?: number };
   inertia?: boolean;
-  onDragStart?: (this: Draggable) => void;
-  onDrag?: (this: Draggable) => void;
-  onDragEnd?: (this: Draggable) => void;
 }
 
 /**
  * 슬라이더 옵션
  */
-interface SliderOptions {
+interface SliderOptions extends BaseDraggableOptions {
   axis?: 'x' | 'y';
   min?: number;
   max?: number;
   step?: number;
   onChange?: (value: number) => void;
-  onDrag?: (this: Draggable) => void;
-  onDragEnd?: (this: Draggable) => void;
   track?: HTMLElement | string;
-  bounds?: Window | string | HTMLElement | DOMRect | { top?: number; left?: number; width?: number; height?: number };
 }
 
 /**
@@ -81,33 +76,33 @@ interface RangeDraggableOptions {
  * 그리드에 스냅되는 드래그 만들기
  */
 function makeDraggableSnap(
-  target: string | HTMLElement | NodeListOf<HTMLElement>,
+  target: DOMTarget,
   options: SnapDraggableOptions = {}
 ): Draggable[] {
-  console.log('[GSAP Kit] makeDraggableSnap 호출됨:', { target, options });
+  debug('makeDraggableSnap 호출됨:', { target, options });
 
   const defaults: SnapDraggableOptions = {
     gridSize: 50
   };
 
   const config = { ...defaults, ...options };
-  console.log('[GSAP Kit] Grid Size:', config.gridSize);
+  debug('Grid Size:', config.gridSize);
 
   // 스냅 함수: 가장 가까운 그리드 포인트로 스냅
   const snapFunc = config.snapConfig || {
     x: function(endValue: number) {
       const snapped = Math.round(endValue / config.gridSize!) * config.gridSize!;
-      console.log('[GSAP Kit] Snap X:', endValue, '→', snapped);
+      debug('Snap X:', endValue, '→', snapped);
       return snapped;
     },
     y: function(endValue: number) {
       const snapped = Math.round(endValue / config.gridSize!) * config.gridSize!;
-      console.log('[GSAP Kit] Snap Y:', endValue, '→', snapped);
+      debug('Snap Y:', endValue, '→', snapped);
       return snapped;
     }
   };
 
-  console.log('[GSAP Kit] Draggable.create 호출 중...');
+  debug('Draggable.create 호출 중...');
   const instances = Draggable.create(target, {
     type: 'x,y',
     bounds: config.bounds,
@@ -120,7 +115,7 @@ function makeDraggableSnap(
     onDragStart: config.onDragStart,
     onDrag: config.onDrag,
     onDragEnd: function(this: Draggable) {
-      console.log('[GSAP Kit] Drag End - Final Position:', this.x, this.y);
+      debug('Drag End - Final Position:', this.x, this.y);
       if (config.onDragEnd) {
         config.onDragEnd.call(this);
       }
@@ -129,7 +124,7 @@ function makeDraggableSnap(
     activeCursor: 'grabbing'
   });
 
-  console.log('[GSAP Kit] Draggable 인스턴스 생성됨:', instances);
+  debug('Draggable 인스턴스 생성됨:', instances);
   return instances;
 }
 
@@ -137,7 +132,7 @@ function makeDraggableSnap(
  * 슬라이더 만들기 (가로 또는 세로)
  */
 function makeSlider(
-  target: string | HTMLElement | NodeListOf<HTMLElement>,
+  target: DOMTarget,
   options: SliderOptions = {}
 ): Draggable[] {
   const defaults: SliderOptions = {
@@ -184,10 +179,23 @@ function makeSlider(
  * 정렬 가능한 리스트 만들기 (드래그로 순서 변경)
  */
 function makeSortable(
-  target: string | NodeListOf<HTMLElement>,
+  target: DOMTarget,
   options: SortableOptions = {}
 ): Draggable[] | null {
-  const items = typeof target === 'string' ? document.querySelectorAll(target) : target;
+  // 요소 리스트 가져오기
+  let items: NodeListOf<Element> | HTMLElement[];
+
+  if (typeof target === 'string') {
+    items = document.querySelectorAll(target);
+  } else if (target instanceof NodeList) {
+    items = target;
+  } else if (Array.isArray(target)) {
+    items = target;
+  } else {
+    // 단일 HTMLElement인 경우 배열로 변환
+    items = [target];
+  }
+
   const container = (items[0] as HTMLElement)?.parentElement;
 
   if (!container) {
@@ -232,7 +240,8 @@ function makeSortable(
   let newIndex = -1; // 드래그 중 새로운 인덱스 추적
   let originalIndex = -1; // 드래그 시작 시 현재 인덱스
 
-  items.forEach((item) => {
+  // 배열로 변환 후 forEach
+  Array.from(items).forEach((item: Element) => {
     const draggable = Draggable.create(item, {
       type: 'x,y',
       onPress: function(this: Draggable) {
@@ -371,7 +380,7 @@ function makeSortable(
  * 스와이프 감지 (모바일 친화적)
  */
 function makeSwipeable(
-  target: string | HTMLElement | NodeListOf<HTMLElement>,
+  target: DOMTarget,
   options: SwipeableOptions = {}
 ): Draggable[] {
   const defaults: SwipeableOptions = {
@@ -424,7 +433,7 @@ function makeSwipeable(
  * 범위를 지정하여 값을 매핑하는 드래그
  */
 function makeDraggableWithRange(
-  target: string | HTMLElement | NodeListOf<HTMLElement>,
+  target: DOMTarget,
   options: RangeDraggableOptions = {}
 ): Draggable[] {
   const defaults: RangeDraggableOptions = {

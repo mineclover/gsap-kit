@@ -5,6 +5,8 @@
 
 /// <reference types="gsap" />
 
+import { DOMTarget, BaseDraggableOptions, validateTarget, debug, toElementArray } from '../types';
+
 /**
  * Draggable 플러그인 등록
  */
@@ -15,13 +17,9 @@ if (typeof gsap !== 'undefined' && typeof Draggable !== 'undefined') {
 /**
  * 드래그 옵션 인터페이스
  */
-interface DraggableOptions {
+interface DraggableOptions extends BaseDraggableOptions {
   type?: 'x' | 'y' | 'x,y' | 'rotation';
   inertia?: boolean;
-  bounds?: Window | string | HTMLElement | DOMRect | { top?: number; left?: number; width?: number; height?: number };
-  onDragStart?: (this: Draggable) => void;
-  onDrag?: (this: Draggable) => void;
-  onDragEnd?: (this: Draggable) => void;
   cursor?: string;
   activeCursor?: string;
   [key: string]: any;
@@ -34,11 +32,10 @@ interface DraggableOptions {
  * @returns Draggable 인스턴스 배열
  */
 function makeDraggable(
-  target: string | HTMLElement | NodeListOf<HTMLElement>,
+  target: DOMTarget,
   options: DraggableOptions = {}
 ): Draggable[] | null {
-  if (!target) {
-    console.error('[GSAP Kit] target이 필요합니다');
+  if (!validateTarget(target, 'makeDraggable')) {
     return null;
   }
 
@@ -69,7 +66,7 @@ function makeDraggable(
  * X축(가로)으로만 드래그 가능하게 만듭니다
  */
 function makeDraggableX(
-  target: string | HTMLElement | NodeListOf<HTMLElement>,
+  target: DOMTarget,
   options: DraggableOptions = {}
 ): Draggable[] | null {
   return makeDraggable(target, {
@@ -82,7 +79,7 @@ function makeDraggableX(
  * Y축(세로)으로만 드래그 가능하게 만듭니다
  */
 function makeDraggableY(
-  target: string | HTMLElement | NodeListOf<HTMLElement>,
+  target: DOMTarget,
   options: DraggableOptions = {}
 ): Draggable[] | null {
   return makeDraggable(target, {
@@ -95,7 +92,7 @@ function makeDraggableY(
  * 경계 내에서만 드래그 가능하게 만듭니다
  */
 function makeDraggableWithBounds(
-  target: string | HTMLElement | NodeListOf<HTMLElement>,
+  target: DOMTarget,
   options: DraggableOptions = {}
 ): Draggable[] | null {
   const defaults: DraggableOptions = {
@@ -112,11 +109,10 @@ function makeDraggableWithBounds(
  * 부모 요소 내에서만 드래그 가능하게 만듭니다
  */
 function makeDraggableInParent(
-  target: string | HTMLElement,
+  target: DOMTarget,
   options: DraggableOptions = {}
 ): Draggable[] | null {
-  if (!target) {
-    console.error('[GSAP Kit] target이 필요합니다');
+  if (!validateTarget(target, 'makeDraggableInParent')) {
     return null;
   }
 
@@ -128,36 +124,44 @@ function makeDraggableInParent(
 
   const config = { ...defaults, ...options };
 
-  // 부모 요소 찾기
-  const element = typeof target === 'string' ? document.querySelector(target) as HTMLElement : target;
-  const parent = element?.parentElement;
+  // 요소 배열로 변환
+  const elements = toElementArray(target);
+  const instances: Draggable[] = [];
 
-  if (!parent) {
-    console.error('[GSAP Kit] 부모 요소를 찾을 수 없습니다');
-    return null;
-  }
+  elements.forEach(el => {
+    const parent = el.parentElement;
 
-  // Draggable 생성
-  return Draggable.create(target, {
-    type: config.type,
-    inertia: config.inertia,
-    bounds: parent,
-    onDragStart: config.onDragStart,
-    onDrag: config.onDrag,
-    onDragEnd: config.onDragEnd,
-    cursor: config.cursor,
-    activeCursor: 'grabbing'
+    if (!parent) {
+      console.warn('[GSAP Kit] 요소의 부모를 찾을 수 없습니다:', el);
+      return;
+    }
+
+    // Draggable 생성
+    const draggable = Draggable.create(el, {
+      type: config.type,
+      inertia: config.inertia,
+      bounds: parent,
+      onDragStart: config.onDragStart,
+      onDrag: config.onDrag,
+      onDragEnd: config.onDragEnd,
+      cursor: config.cursor,
+      activeCursor: 'grabbing'
+    });
+
+    instances.push(...draggable);
   });
+
+  return instances.length > 0 ? instances : null;
 }
 
 /**
  * 관성(던지기) 효과와 함께 드래그 가능하게 만듭니다
  */
 function makeDraggableWithInertia(
-  target: string | HTMLElement | NodeListOf<HTMLElement>,
+  target: DOMTarget,
   options: DraggableOptions = {}
 ): Draggable[] | null {
-  console.log('[GSAP Kit] makeDraggableWithInertia 호출됨:', { target, options });
+  debug('makeDraggableWithInertia 호출됨:', { target, options });
 
   // 속도 추적을 위한 변수
   let lastX = 0;
@@ -172,7 +176,7 @@ function makeDraggableWithInertia(
     cursor: 'grab',
     ...options,
     onDragStart: function(this: Draggable) {
-      console.log('[GSAP Kit] Inertia Drag Start');
+      debug('Inertia Drag Start');
       lastX = this.x;
       lastY = this.y;
       lastTime = Date.now();
@@ -199,7 +203,7 @@ function makeDraggableWithInertia(
       }
     },
     onDragEnd: function(this: Draggable) {
-      console.log('[GSAP Kit] Inertia Drag End - Velocity:', velocityX, velocityY);
+      debug('Inertia Drag End - Velocity:', velocityX, velocityY);
 
       // 관성 효과 적용 (속도가 충분히 클 때만)
       const speed = Math.sqrt(velocityX * velocityX + velocityY * velocityY);
@@ -222,13 +226,13 @@ function makeDraggableWithInertia(
           targetX = Math.max(minX, Math.min(maxX, targetX));
           targetY = Math.max(minY, Math.min(maxY, targetY));
 
-          console.log('[GSAP Kit] Bounds applied:', {
+          debug('Bounds applied:', {
             bounds: { minX, minY, maxX, maxY },
             clamped: { x: targetX, y: targetY }
           });
         }
 
-        console.log('[GSAP Kit] Throwing to:', targetX, targetY);
+        debug('Throwing to:', targetX, targetY);
 
         gsap.to(this.target, {
           x: targetX,
@@ -244,7 +248,7 @@ function makeDraggableWithInertia(
     }
   };
 
-  console.log('[GSAP Kit] Inertia 설정:', config);
+  debug('Inertia 설정:', config);
   return Draggable.create(target, config);
 }
 
@@ -252,7 +256,7 @@ function makeDraggableWithInertia(
  * 요소를 회전 가능하게 만듭니다
  */
 function makeRotatable(
-  target: string | HTMLElement | NodeListOf<HTMLElement>,
+  target: DOMTarget,
   options: DraggableOptions = {}
 ): Draggable[] | null {
   return makeDraggable(target, {
