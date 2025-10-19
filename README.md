@@ -13,10 +13,11 @@
 ## 특징
 
 - 🎯 **드래그 & 인터랙션 중심**: Draggable 플러그인을 활용한 다양한 드래그 기능
-- ✅ **순수 JavaScript**: 번들러 없이 바로 사용 가능
+- ✅ **TypeScript 지원**: 완전한 타입 정의와 타입 안전성
+- ✅ **순수 JavaScript 출력**: 번들러 없이 바로 사용 가능
 - ✅ **GSAP CDN**: 간단한 CDN 로드만으로 시작
 - ✅ **재사용 가능한 함수**: 일반적인 패턴을 함수화
-- ✅ **타입 안전**: JSDoc을 통한 타입 힌팅
+- ✅ **실시간 개발 환경**: tsc --watch로 자동 컴파일
 - ✅ **테스트 환경**: 바로 실행 가능한 HTML 예제 포함
 - ✅ **확장 가능**: 쉽게 커스터마이징하고 새로운 함수 추가 가능
 
@@ -39,15 +40,15 @@
 
 ```html
 <!-- 드래그 기능 -->
-<script src="./src/draggable/basic.js"></script>
-<script src="./src/draggable/advanced.js"></script>
+<script src="./dist/draggable/basic.js"></script>
+<script src="./dist/draggable/advanced.js"></script>
 
 <!-- 애니메이션 -->
-<script src="./src/animations/fade.js"></script>
-<script src="./src/animations/slide.js"></script>
+<script src="./dist/animations/fade.js"></script>
+<script src="./dist/animations/slide.js"></script>
 
 <!-- 유틸리티 -->
-<script src="./src/utils/helpers.js"></script>
+<script src="./dist/utils/helpers.js"></script>
 ```
 
 ### 3. 사용하기
@@ -80,26 +81,31 @@
 
 ```
 gsap-kit/
-├── src/
+├── src-ts/                 # 📝 TypeScript 소스 코드
 │   ├── draggable/          # 🎯 드래그 & 인터랙션 (주요 기능)
-│   │   ├── basic.js        # 기본 드래그 함수들
-│   │   ├── advanced.js     # 고급 드래그 (스냅, 슬라이더, 정렬 등)
-│   │   └── index.js        # 통합 파일
+│   │   ├── basic.ts        # 기본 드래그 함수들
+│   │   ├── advanced.ts     # 고급 드래그 (스냅, 슬라이더, 정렬 등)
+│   │   └── index.ts        # 통합 파일
 │   ├── animations/         # 애니메이션 함수들
-│   │   ├── fade.js         # 페이드 인/아웃
-│   │   ├── slide.js        # 슬라이드
-│   │   ├── scroll.js       # 스크롤 트리거
-│   │   ├── rotate.js       # 회전
-│   │   └── index.js        # 통합 파일
-│   ├── interactions/       # 기타 인터랙션 (예정)
+│   │   ├── fade.ts         # 페이드 인/아웃
+│   │   ├── slide.ts        # 슬라이드
+│   │   ├── scroll.ts       # 스크롤 트리거
+│   │   ├── rotate.ts       # 회전
+│   │   └── index.ts        # 통합 파일
 │   └── utils/              # 유틸리티 함수
-│       └── helpers.js      # 공통 헬퍼
+│       └── helpers.ts      # 공통 헬퍼
+├── dist/                   # 📦 컴파일된 JavaScript (자동 생성)
+│   ├── draggable/          # 브라우저에서 사용할 파일들
+│   ├── animations/
+│   └── utils/
 ├── examples/               # 테스트 및 데모 HTML
 │   ├── draggable.html      # 🎯 드래그 예제 (주요)
 │   ├── basic.html          # 기본 애니메이션
+│   ├── preview.html        # 미리보기
 │   └── scroll.html         # 스크롤 애니메이션
 ├── docs/
 │   └── CONVENTIONS.md      # 코딩 컨벤션
+├── tsconfig.json           # TypeScript 설정
 └── README.md
 ```
 
@@ -357,38 +363,30 @@ npm run dev
 # 의존성 설치
 npm install
 
-# 포그라운드에서 실행
-npm run dev:ts
+# TypeScript 컴파일 + 감시 모드
+npx tsc --watch
 
 # 또는 백그라운드에서 실행
-./dev.sh start
-
-# 상태 확인
-./dev.sh status
-
-# 로그 확인
-./dev.sh logs
-
-# 종료
-./dev.sh stop
+npm run dev:ts
 ```
 
 **자동으로 실행되는 것들**:
-- ✅ nodemon이 TypeScript 변경 감지
-- ✅ 자동으로 JavaScript 컴파일
-- ✅ live-server가 브라우저 자동 리로드
-- ✅ examples/preview.html 자동 열림
+- ✅ tsc --watch가 TypeScript 파일 변경 감지
+- ✅ 자동으로 JavaScript로 컴파일
+- ✅ src-ts/ → dist/ 자동 변환
+- ✅ 타입 체크 및 에러 검출
 
 **실시간 개발 워크플로우**:
 1. `src-ts/draggable/basic.ts` 수정
 2. 저장 (Cmd+S / Ctrl+S)
 3. 자동으로 `dist/draggable/basic.js` 생성
-4. 브라우저 자동 리로드
-5. 즉시 확인!
+4. HTML 파일에서 dist/ 경로로 로드
+5. 브라우저 새로고침으로 확인!
 
-자세한 내용:
-- [개발 가이드](docs/DEVELOPMENT.md)
-- [백그라운드 실행](docs/BACKGROUND.md)
+**파일 구조**:
+- `src-ts/` - TypeScript 소스 (여기서 개발)
+- `dist/` - 컴파일된 JavaScript (자동 생성, Git 무시)
+- `examples/` - HTML 테스트 파일 (dist/ 참조)
 
 ## 옵션 파라미터
 
@@ -457,14 +455,26 @@ fadeIn('.box', {
 
 새로운 애니메이션 함수를 추가하려면:
 
-1. `src/animations/` 폴더에 새 파일 생성
-2. 컨벤션에 따라 함수 작성 (docs/CONVENTIONS.md 참고)
-3. HTML에서 해당 파일 로드
+1. `src-ts/animations/` 폴더에 새 .ts 파일 생성
+2. TypeScript로 함수 작성 (타입 안전하게)
+3. tsc --watch가 자동으로 dist/로 컴파일
+4. HTML에서 컴파일된 파일 로드
 
-```javascript
-// src/animations/custom.js
-function customAnimation(target, options = {}) {
-  const defaults = {
+```typescript
+// src-ts/animations/custom.ts
+/// <reference types="gsap" />
+
+interface CustomOptions {
+  duration?: number;
+  ease?: string;
+  customProp?: number;
+}
+
+function customAnimation(
+  target: gsap.TweenTarget,
+  options: CustomOptions = {}
+): gsap.core.Tween {
+  const defaults: CustomOptions = {
     duration: 1,
     ease: "power2.out"
   };

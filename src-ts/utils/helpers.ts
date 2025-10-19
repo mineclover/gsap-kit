@@ -1,13 +1,13 @@
 /**
- * GSAP Kit - 유틸리티 헬퍼 함수
+ * GSAP Kit - 유틸리티 헬퍼 함수 (TypeScript)
  */
 
 /**
  * CSS 선택자 또는 DOM 요소를 검증하고 반환합니다
- * @param {string|HTMLElement|NodeList} target - CSS 선택자 또는 DOM 요소
- * @returns {HTMLElement|NodeList|null}
  */
-function getElement(target) {
+function getElement(
+  target: string | HTMLElement | NodeList
+): HTMLElement | NodeList | null {
   if (!target) {
     console.error('[GSAP Kit] target이 필요합니다');
     return null;
@@ -15,7 +15,7 @@ function getElement(target) {
 
   if (typeof target === 'string') {
     const elements = document.querySelectorAll(target);
-    return elements.length === 1 ? elements[0] : elements;
+    return elements.length === 1 ? (elements[0] as HTMLElement) : elements;
   }
 
   return target;
@@ -23,24 +23,22 @@ function getElement(target) {
 
 /**
  * 기본 옵션과 사용자 옵션을 병합합니다
- * @param {Object} defaults - 기본 옵션
- * @param {Object} options - 사용자 옵션
- * @returns {Object} 병합된 옵션
  */
-function mergeOptions(defaults, options = {}) {
+function mergeOptions<T extends object>(defaults: T, options: Partial<T> = {}): T {
   return { ...defaults, ...options };
 }
 
 /**
  * 배열 또는 NodeList를 순회하며 각 요소에 콜백 실행
- * @param {Array|NodeList} elements - 요소 배열
- * @param {Function} callback - 콜백 함수
- * @param {number} stagger - 각 요소간 지연 시간 (초)
  */
-function forEachElement(elements, callback, stagger = 0) {
+function forEachElement(
+  elements: HTMLElement[] | NodeList | HTMLElement,
+  callback: (element: HTMLElement, index: number, delay: number) => void,
+  stagger: number = 0
+): void {
   if (!elements) return;
 
-  const items = elements.length ? Array.from(elements) : [elements];
+  const items = 'length' in elements ? Array.from(elements) as HTMLElement[] : [elements];
 
   items.forEach((element, index) => {
     const delay = stagger * index;
@@ -50,10 +48,8 @@ function forEachElement(elements, callback, stagger = 0) {
 
 /**
  * 뷰포트에 요소가 보이는지 확인
- * @param {HTMLElement} element - 확인할 요소
- * @returns {boolean}
  */
-function isInViewport(element) {
+function isInViewport(element: HTMLElement): boolean {
   const rect = element.getBoundingClientRect();
   return (
     rect.top >= 0 &&
@@ -65,13 +61,13 @@ function isInViewport(element) {
 
 /**
  * 디바운스 함수
- * @param {Function} func - 실행할 함수
- * @param {number} wait - 대기 시간 (ms)
- * @returns {Function}
  */
-function debounce(func, wait = 300) {
-  let timeout;
-  return function executedFunction(...args) {
+function debounce<T extends (...args: any[]) => any>(
+  func: T,
+  wait: number = 300
+): (...args: Parameters<T>) => void {
+  let timeout: ReturnType<typeof setTimeout> | undefined;
+  return function executedFunction(...args: Parameters<T>) {
     const later = () => {
       clearTimeout(timeout);
       func(...args);
@@ -83,13 +79,13 @@ function debounce(func, wait = 300) {
 
 /**
  * 스로틀 함수
- * @param {Function} func - 실행할 함수
- * @param {number} limit - 제한 시간 (ms)
- * @returns {Function}
  */
-function throttle(func, limit = 300) {
-  let inThrottle;
-  return function executedFunction(...args) {
+function throttle<T extends (...args: any[]) => any>(
+  func: T,
+  limit: number = 300
+): (...args: Parameters<T>) => void {
+  let inThrottle: boolean;
+  return function executedFunction(...args: Parameters<T>) {
     if (!inThrottle) {
       func(...args);
       inThrottle = true;

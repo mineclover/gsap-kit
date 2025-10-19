@@ -1,13 +1,13 @@
 /**
- * GSAP Kit - All Animations Index
+ * GSAP Kit - All Animations Index (TypeScript)
  * 모든 애니메이션 함수들을 한 번에 로드하는 통합 파일
  *
  * 사용법:
- * <script src="../src/animations/index.js"></script>
+ * <script src="../dist/animations/index.js"></script>
  *
  * 또는 개별 파일 로드:
- * <script src="../src/animations/fade.js"></script>
- * <script src="../src/animations/slide.js"></script>
+ * <script src="../dist/animations/fade.js"></script>
+ * <script src="../dist/animations/slide.js"></script>
  */
 
 // 이 파일은 브라우저에서 다른 파일들을 동적으로 로드하지 않습니다.
