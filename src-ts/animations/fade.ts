@@ -169,3 +169,14 @@ function fadeInScale(
     stagger: config.stagger
   });
 }
+
+// 전역으로 노출 (브라우저 환경)
+if (typeof window !== 'undefined') {
+  (window as any).fadeIn = fadeIn;
+  (window as any).fadeOut = fadeOut;
+  (window as any).fadeInUp = fadeInUp;
+  (window as any).fadeInDown = fadeInDown;
+  (window as any).fadeInLeft = fadeInLeft;
+  (window as any).fadeInRight = fadeInRight;
+  (window as any).fadeInScale = fadeInScale;
+}

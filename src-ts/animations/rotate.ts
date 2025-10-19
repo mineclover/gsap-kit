@@ -178,3 +178,13 @@ function spinInfinite(
     repeat: -1
   });
 }
+
+// 전역으로 노출 (브라우저 환경)
+if (typeof window !== 'undefined') {
+  (window as any).rotate = rotate;
+  (window as any).rotateIn = rotateIn;
+  (window as any).rotateOut = rotateOut;
+  (window as any).flipY = flipY;
+  (window as any).flipX = flipX;
+  (window as any).spinInfinite = spinInfinite;
+}

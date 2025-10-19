@@ -169,3 +169,13 @@ function slideOutRight(
     stagger: config.stagger
   });
 }
+
+// 전역으로 노출 (브라우저 환경)
+if (typeof window !== 'undefined') {
+  (window as any).slideInLeft = slideInLeft;
+  (window as any).slideInRight = slideInRight;
+  (window as any).slideInUp = slideInUp;
+  (window as any).slideInDown = slideInDown;
+  (window as any).slideOutLeft = slideOutLeft;
+  (window as any).slideOutRight = slideOutRight;
+}
