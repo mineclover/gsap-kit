@@ -86,25 +86,34 @@ gsap-kit/
 │   │   ├── basic.ts        # 기본 드래그 함수들
 │   │   ├── advanced.ts     # 고급 드래그 (스냅, 슬라이더, 정렬 등)
 │   │   └── index.ts        # 통합 파일
+│   ├── advanced/           # ⭐ 고급 인터랙션 (신규)
+│   │   └── line-matching.ts # 선 연결 매칭 게임 (SVG 기반)
 │   ├── animations/         # 애니메이션 함수들
 │   │   ├── fade.ts         # 페이드 인/아웃
 │   │   ├── slide.ts        # 슬라이드
 │   │   ├── scroll.ts       # 스크롤 트리거
 │   │   ├── rotate.ts       # 회전
 │   │   └── index.ts        # 통합 파일
-│   └── utils/              # 유틸리티 함수
-│       └── helpers.ts      # 공통 헬퍼
+│   ├── utils/              # 유틸리티 함수
+│   │   └── helpers.ts      # 공통 헬퍼
+│   └── types.ts            # 공통 타입 정의
 ├── dist/                   # 📦 컴파일된 JavaScript (자동 생성)
 │   ├── draggable/          # 브라우저에서 사용할 파일들
 │   ├── animations/
+│   ├── line-matching.min.js # Rollup 번들 (IIFE)
 │   └── utils/
 ├── examples/               # 테스트 및 데모 HTML
 │   ├── draggable.html      # 🎯 드래그 예제 (주요)
+│   ├── line-matching.html  # ⭐ 선 연결 매칭 데모
+│   ├── custom-cursor-demo.html # SVG marker-end 파라미터 조정 데모
 │   ├── basic.html          # 기본 애니메이션
 │   ├── preview.html        # 미리보기
 │   └── scroll.html         # 스크롤 애니메이션
+├── scripts/
+│   └── remove-exports.js   # 빌드 후처리 스크립트
 ├── docs/
 │   └── CONVENTIONS.md      # 코딩 컨벤션
+├── rollup.config.js        # Rollup 번들러 설정
 ├── tsconfig.json           # TypeScript 설정
 └── README.md
 ```
@@ -137,6 +146,24 @@ gsap-kit/
 | `makeSortable()` | 정렬 가능한 리스트 |
 | `makeSwipeable()` | 스와이프 감지 (모바일) |
 | `makeDraggableWithRange()` | 값 매핑 드래그 |
+
+### ⭐ Line Matching (선 연결 매칭)
+
+| 함수 | 설명 |
+|------|------|
+| `createLineMatching()` | SVG 기반 선 연결 매칭 게임 생성 |
+
+**주요 기능:**
+- 📍 포인트 기반 드래그 앤 드롭 선 연결
+- 🎨 5가지 선 스타일 (solid, dashed, dotted, animated-dash, arrow)
+- 🖱️ 드래그 중 시스템 커서 숨김 (옵션)
+- ✅ 정답/오답 자동 판정 및 피드백
+- 🔄 재시도 및 리셋 기능
+- 🎯 SVG marker-end를 활용한 화살표 렌더링
+
+**반환 메서드:**
+- `reset()` - 모든 연결 초기화
+- `destroy()` - 인스턴스 완전 제거
 
 ### Fade 애니메이션 (fade.js)
 
@@ -267,6 +294,102 @@ enableDraggable(drag);
 
 // 제거
 killDraggable(drag);
+```
+
+### ⭐ Line Matching (선 연결 매칭)
+
+#### 기본 선 연결
+
+```javascript
+// HTML 로드
+<script src="./dist/line-matching.min.js"></script>
+
+// 기본 매칭 게임
+const matching = createLineMatching({
+  container: '#game-area',
+  items: {
+    'a': { selector: '.point-a', point: { x: 'right', y: 'center' } },
+    'b': { selector: '.point-b', point: { x: 'left', y: 'center' } }
+  },
+  pairs: {
+    'a': 'b'  // A를 B에 연결
+  }
+});
+```
+
+#### 다중 선택 매칭
+
+```javascript
+// 하나의 질문에 여러 정답
+const matching = createLineMatching({
+  items: {
+    'q1': { selector: '[data-id="q1"]' },
+    'a1': { selector: '[data-id="a1"]' },
+    'a2': { selector: '[data-id="a2"]' }
+  },
+  pairs: {
+    'q1': ['a1', 'a2']  // Q1은 A1 또는 A2 모두 정답
+  }
+});
+```
+
+#### 화살표 스타일 + 커서 숨김
+
+```javascript
+const matching = createLineMatching({
+  items: {
+    'a': { selector: '.item-a', point: { x: 'right', y: 'center' } },
+    'b1': { selector: '.item-b1', point: { x: 'left', y: 'center' } },
+    'b2': { selector: '.item-b2', point: { x: 'left', y: 'center' } }
+  },
+  pairs: {
+    'a': ['b1', 'b2']
+  },
+  lineStyle: 'arrow',       // 화살표 선
+  hideCursor: true,         // 드래그 중 시스템 커서 숨김
+  arrowSize: 15,            // 화살표 크기
+  lineWidth: 3,             // 선 두께
+  lineColor: '#667eea',     // 기본 선 색상
+  correctColor: '#4CAF50',  // 정답 색상
+  allowMultipleAttempts: true,
+  showFeedback: true,
+  onCorrect: (from, to) => {
+    console.log(`✅ 정답! ${from} → ${to}`);
+  },
+  onIncorrect: (from, to) => {
+    console.log(`❌ 오답: ${from} → ${to}`);
+  },
+  onComplete: (score, total) => {
+    console.log(`🎉 완료! ${score}/${total}`);
+  }
+});
+
+// 리셋
+matching.reset();
+
+// 제거
+matching.destroy();
+```
+
+#### 다양한 선 스타일
+
+```javascript
+// Solid 선 (기본)
+lineStyle: 'solid'
+
+// Dashed 선 (점선)
+lineStyle: 'dashed',
+dashArray: '10,5'  // 10px 선, 5px 공백
+
+// Dotted 선
+lineStyle: 'dotted'
+
+// Animated Dash (움직이는 점선)
+lineStyle: 'animated-dash'
+
+// Arrow (화살표)
+lineStyle: 'arrow',
+arrowSize: 20
 ```
 
 ### 기본 페이드 애니메이션
@@ -518,7 +641,11 @@ MIT License
 
 ## 로드맵
 
+- [x] ⭐ Line Matching 시스템 구현 (SVG 기반 선 연결)
+- [x] Rollup 번들러 설정 (IIFE 포맷)
+- [x] TypeScript 타입 정의 및 export
 - [ ] 추가 드래그 함수 (충돌 감지, 드롭존 등)
+- [ ] 더 많은 Line Matching 옵션 (곡선, 커스텀 마커 등)
 - [ ] 더 많은 애니메이션 프리셋
 - [ ] npm 패키지 배포
 - [ ] 온라인 데모 사이트

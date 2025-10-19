@@ -11,62 +11,119 @@ import { debug } from '../types';
 
 /**
  * 위치 값 타입 (px, %, 키워드)
+ * @public
+ * @example
+ * ```typescript
+ * const x: PositionValue = 'center';
+ * const y: PositionValue = 100;
+ * const z: PositionValue = '50%';
+ * ```
  */
-type PositionValue = number | string;
+export type PositionValue = number | string;
 
 /**
  * 포인트 위치 설정
+ * @public
+ * @property {PositionValue} [x] - X 좌표 ('left', 'center', 'right', '50%', 100 등)
+ * @property {PositionValue} [y] - Y 좌표 ('top', 'center', 'bottom', '50%', 100 등)
  */
-interface PointPosition {
-  x?: PositionValue;  // 'left', 'center', 'right', '50%', 100 등
-  y?: PositionValue;  // 'top', 'center', 'bottom', '50%', 100 등
+export interface PointPosition {
+  x?: PositionValue;
+  y?: PositionValue;
 }
 
 /**
  * 매칭 아이템 정의
+ * @public
+ * @property {string} selector - CSS 선택자
+ * @property {PointPosition} [point] - 포인트 위치 (기본값: center)
+ * @property {any} [data] - 추가 사용자 데이터
  */
-interface MatchItem {
-  selector: string;           // CSS 선택자
-  point?: PointPosition;      // 포인트 위치 (기본값: center)
-  data?: any;                 // 추가 데이터
+export interface MatchItem {
+  selector: string;
+  point?: PointPosition;
+  data?: any;
 }
 
 /**
- * 선 연결 매칭 옵션
+ * 선 스타일 타입
+ * @public
  */
-interface LineMatchingOptions {
-  items: { [id: string]: MatchItem };  // 아이템 목록 (예: { 'a0': {...}, 'b0': {...} })
-  pairs: { [id: string]: string | string[] };     // 정답 매핑 (단일: 'b1', 다중: ['b1', 'b2'])
+export type LineStyle = 'solid' | 'dashed' | 'dotted' | 'animated-dash' | 'arrow';
+
+/**
+ * 선 연결 매칭 옵션
+ * @public
+ * @interface
+ *
+ * @example
+ * ```typescript
+ * const options: LineMatchingOptions = {
+ *   items: {
+ *     'a': { selector: '.item-a', point: { x: 'right', y: 'center' } },
+ *     'b': { selector: '.item-b', point: { x: 'left', y: 'center' } }
+ *   },
+ *   pairs: { 'a': 'b' },
+ *   lineStyle: 'arrow',
+ *   hideCursor: true,
+ *   onCorrect: (from, to) => console.log(`✓ ${from} -> ${to}`)
+ * };
+ * ```
+ */
+export interface LineMatchingOptions {
+  /** 아이템 목록 (id를 키로 하는 객체) */
+  items: { [id: string]: MatchItem };
+
+  /** 정답 매핑 (단일 문자열 또는 문자열 배열) */
+  pairs: { [id: string]: string | string[] };
 
   // 컨테이너 설정
-  container?: string | HTMLElement;   // SVG를 배치할 컨테이너 (기본값: document.body)
+  /** SVG를 배치할 컨테이너 (기본값: document.body) */
+  container?: string | HTMLElement;
 
   // 포인트 스타일
-  pointSize?: number;               // 포인트 크기
-  pointColor?: string;              // 포인트 색상
-  pointHoverColor?: string;         // 포인트 호버 색상
+  /** 포인트 크기 (기본값: 12) */
+  pointSize?: number;
+  /** 포인트 색상 (기본값: '#667eea') */
+  pointColor?: string;
+  /** 포인트 호버 색상 (기본값: '#764ba2') */
+  pointHoverColor?: string;
 
   // 선 스타일 옵션
-  lineColor?: string;               // 기본 선 색상
-  lineWidth?: number;               // 선 두께
-  correctColor?: string;            // 정답 선 색상
-  incorrectColor?: string;          // 오답 선 색상
+  /** 기본 선 색상 (기본값: '#999') */
+  lineColor?: string;
+  /** 선 두께 (기본값: 2) */
+  lineWidth?: number;
+  /** 정답 선 색상 (기본값: '#4CAF50') */
+  correctColor?: string;
+  /** 오답 선 색상 (기본값: '#F44336') */
+  incorrectColor?: string;
 
   // 고급 선 스타일 옵션
-  lineStyle?: 'solid' | 'dashed' | 'dotted' | 'animated-dash' | 'arrow';  // 선 스타일
-  dashArray?: string;               // 점선 패턴 (예: "5,5")
-  arrowSize?: number;               // 화살표 크기
-  hideCursor?: boolean;             // 드래그 중 시스템 커서 숨김 여부 (기본값: true)
+  /** 선 스타일 (기본값: 'solid') */
+  lineStyle?: LineStyle;
+  /** 점선 패턴 (예: "5,5") */
+  dashArray?: string;
+  /** 화살표 크기 (기본값: 15) */
+  arrowSize?: number;
+  /** 드래그 중 시스템 커서 숨김 여부 (기본값: true) */
+  hideCursor?: boolean;
 
   // 콜백 함수
+  /** 정답 연결 시 콜백 */
   onCorrect?: (fromId: string, toId: string) => void;
+  /** 오답 연결 시 콜백 */
   onIncorrect?: (fromId: string, toId: string) => void;
+  /** 모든 매칭 완료 시 콜백 */
   onComplete?: (score: number, total: number) => void;
 
   // 추가 옵션
-  allowMultipleAttempts?: boolean;  // 여러 번 시도 허용
-  showFeedback?: boolean;           // 시각적 피드백 표시
-  bidirectional?: boolean;          // 양방향 연결 허용 (기본: false, A->B만 가능)
+  /** 여러 번 시도 허용 (기본값: false) */
+  allowMultipleAttempts?: boolean;
+  /** 시각적 피드백 표시 (기본값: false) */
+  showFeedback?: boolean;
+  /** 양방향 연결 허용 (기본값: false, A->B만 가능) */
+  bidirectional?: boolean;
 }
 
 /**
@@ -1309,8 +1366,41 @@ class LineMatchingInstance {
 
 /**
  * 선 연결 매칭 게임 생성
+ *
+ * @public
+ * @param {LineMatchingOptions} options - 매칭 게임 설정 옵션
+ * @returns {LineMatchingInstance} 매칭 인스턴스 (reset, destroy 메서드 제공)
+ *
+ * @example
+ * ```typescript
+ * // 기본 선 연결
+ * const matching = createLineMatching({
+ *   items: {
+ *     'a': { selector: '.point-a', point: { x: 'right', y: 'center' } },
+ *     'b': { selector: '.point-b', point: { x: 'left', y: 'center' } }
+ *   },
+ *   pairs: { 'a': 'b' }
+ * });
+ * ```
+ *
+ * @example
+ * ```typescript
+ * // 화살표 스타일 + 커서 숨김
+ * const matching = createLineMatching({
+ *   container: '#game-area',
+ *   items: {
+ *     'q1': { selector: '[data-id="q1"]' },
+ *     'a1': { selector: '[data-id="a1"]' }
+ *   },
+ *   pairs: { 'q1': 'a1' },
+ *   lineStyle: 'arrow',
+ *   hideCursor: true,
+ *   onCorrect: (from, to) => console.log('정답!'),
+ *   onIncorrect: (from, to) => console.log('오답!')
+ * });
+ * ```
  */
-function createLineMatching(options: LineMatchingOptions): LineMatchingInstance {
+export function createLineMatching(options: LineMatchingOptions): LineMatchingInstance {
   return new LineMatchingInstance(options);
 }
 
