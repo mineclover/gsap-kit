@@ -471,26 +471,33 @@ flipY('.card', {
 
 ## 예제 실행하기
 
-### 빠른 시작 (순수 JS)
+### 빠른 시작 (HTML 파일 직접 열기)
 
 ```bash
-# 로컬 서버 실행
-npm run dev
+# 1. 모든 예제 목록 보기
+examples/index.html
 
-# 브라우저에서 examples/draggable.html 자동 열림
+# 2. 개별 예제 열기
+examples/basic.html          # 기본 애니메이션
+examples/draggable.html      # 드래그 & 인터랙션
+examples/line-matching.html  # 선 연결 매칭
+examples/custom-cursor-demo.html  # SVG Marker 데모
+examples/scroll.html         # 스크롤 애니메이션
 ```
+
+**사용 방법**:
+1. Finder에서 HTML 파일을 더블클릭
+2. 또는 브라우저에서 `file:///` 경로로 직접 열기
+3. CDN 방식으로 GSAP을 로드하므로 **서버 불필요**
 
 ### TypeScript 개발 모드 ⭐
 
 ```bash
-# 의존성 설치
+# 의존성 설치 (최초 1회)
 npm install
 
 # TypeScript 컴파일 + 감시 모드
 npx tsc --watch
-
-# 또는 백그라운드에서 실행
-npm run dev:ts
 ```
 
 **자동으로 실행되는 것들**:
@@ -499,17 +506,17 @@ npm run dev:ts
 - ✅ src-ts/ → dist/ 자동 변환
 - ✅ 타입 체크 및 에러 검출
 
-**실시간 개발 워크플로우**:
-1. `src-ts/draggable/basic.ts` 수정
+**개발 워크플로우**:
+1. `src-ts/` 폴더에서 TypeScript 파일 수정
 2. 저장 (Cmd+S / Ctrl+S)
-3. 자동으로 `dist/draggable/basic.js` 생성
-4. HTML 파일에서 dist/ 경로로 로드
-5. 브라우저 새로고침으로 확인!
+3. 자동으로 `dist/` 폴더에 JavaScript 생성
+4. HTML 파일 브라우저에서 새로고침
+5. 변경사항 즉시 확인!
 
 **파일 구조**:
 - `src-ts/` - TypeScript 소스 (여기서 개발)
-- `dist/` - 컴파일된 JavaScript (자동 생성, Git 무시)
-- `examples/` - HTML 테스트 파일 (dist/ 참조)
+- `dist/` - 컴파일된 JavaScript (자동 생성)
+- `examples/` - HTML 데모 파일 (dist/ 참조)
 
 ## 옵션 파라미터
 
