@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GSAP Kit - Line Matching Stroke Styles Preview</title>
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>🎨 Line Matching - Stroke Styles Preview</h1>
+    <p class="subtitle">다양한 선 스타일 옵션을 확인하세요</p>
+
+    <div class="demo-grid">
+      <!-- Solid Style -->
+      <div class="demo-card">
+        <div class="demo-title">Solid (실선)</div>
+        <div class="demo-description">기본 실선 스타일</div>
+        <div class="demo-area" id="demo-solid">
+          <div class="point point-left" data-id="s-a1">A1</div>
+          <div class="point point-right" data-id="s-b1">B1</div>
+        </div>
+        <div class="code-block">
+<code>createLineMatching({
+  // ...
+  <span class="highlight">lineWidth: 2,
+  lineStyle: 'solid'</span>
+});</code>
+        </div>
+      </div>
+
+      <!-- Dashed Style -->
+      <div class="demo-card">
+        <div class="demo-title">Dashed (점선)</div>
+        <div class="demo-description">점선 스타일 (커스텀 패턴 가능)</div>
+        <div class="demo-area" id="demo-dashed">
+          <div class="point point-left" data-id="d-a1">A1</div>
+          <div class="point point-right" data-id="d-b1">B1</div>
+        </div>
+        <div class="code-block">
+<code>createLineMatching({
+  // ...
+  <span class="highlight">lineWidth: 2,
+  lineStyle: 'dashed'
+  // dashArray 자동: '6,4'</span>
+});</code>
+        </div>
+      </div>
+
+      <!-- Dotted Style -->
+      <div class="demo-card">
+        <div class="demo-title">Dotted (점)</div>
+        <div class="demo-description">점 스타일</div>
+        <div class="demo-area" id="demo-dotted">
+          <div class="point point-left" data-id="dt-a1">A1</div>
+          <div class="point point-right" data-id="dt-b1">B1</div>
+        </div>
+        <div class="code-block">
+<code>createLineMatching({
+  // ...
+  <span class="highlight">lineWidth: 2,
+  lineStyle: 'dotted'</span>
+});</code>
+        </div>
+      </div>
+
+      <!-- Animated Dash Style -->
+      <div class="demo-card">
+        <div class="demo-title">Animated Dash (애니메이션 점선)</div>
+        <div class="demo-description">움직이는 점선 효과</div>
+        <div class="demo-area" id="demo-animated">
+          <div class="point point-left" data-id="ad-a1">A1</div>
+          <div class="point point-right" data-id="ad-b1">B1</div>
+        </div>
+        <div class="code-block">
+<code>createLineMatching({
+  // ...
+  <span class="highlight">lineWidth: 2,
+  lineStyle: 'animated-dash'
+  // dashArray 자동: '6,4'</span>
+});</code>
+        </div>
+      </div>
+
+      <!-- Arrow Style -->
+      <div class="demo-card">
+        <div class="demo-title">Arrow (화살표)</div>
+        <div class="demo-description">화살표가 있는 실선 + 커스텀 커서</div>
+        <div class="demo-area" id="demo-arrow">
+          <div class="point point-left" data-id="ar-a1">A1</div>
+          <div class="point point-right" data-id="ar-b1">B1</div>
+        </div>
+        <div class="code-block">
+<code>createLineMatching({
+  // ...
+  <span class="highlight">lineWidth: 2,
+  lineStyle: 'arrow',
+  hideCursor: true
+  // arrowSize 자동: 10</span>
+});</code>
+        </div>
+      </div>
+    </div>
+
+    <div class="instructions">
+      <h2>📚 사용 방법</h2>
+      <ul>
+        <li><strong>lineWidth</strong>: 선 두께 (기본값: 2)</li>
+        <li><strong>lineStyle</strong>: 선 스타일 타입 ('solid' | 'dashed' | 'dotted' | 'animated-dash' | 'arrow')</li>
+        <li><strong>dashArray</strong>: 점선 패턴 (생략 시 자동: lineWidth * 3, lineWidth * 2)</li>
+        <li><strong>arrowSize</strong>: 화살표 크기 (생략 시 자동: lineWidth * 5)</li>
+        <li><strong>hideCursor</strong>: 드래그 중 시스템 커서 숨김 여부 (기본값: true, arrow 스타일에서만 적용)</li>
+      </ul>
+
+      <div class="note">
+        <strong>💡 자동 연동:</strong> dashArray와 arrowSize를 생략하면 lineWidth에 비례하여 자동으로 계산됩니다!<br>
+        각 스타일은 lineColor, correctColor, incorrectColor와 함께 사용할 수 있습니다.<br>
+        <strong>🎯 커스텀 커서:</strong> arrow 스타일에서는 드래그 시 화살표 모양의 커스텀 커서가 활성화됩니다. hideCursor 옵션으로 시스템 커서 숨김 여부를 제어할 수 있습니다.
+      </div>
+    </div>
+  </div>
+
+  <!-- GSAP & Draggable -->
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.13/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.13/dist/Draggable.min.js"></script>
+
+  <!-- Main Script -->
+  <script src="./main.js"></script>
+</body>
+</html>

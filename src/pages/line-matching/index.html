@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GSAP Kit - Line Matching Demo (Point-Based)</title>
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>🎯 선 연결 매칭 게임 (Drag & Click)</h1>
+    <p class="subtitle">드래그 또는 클릭으로 짝을 연결해보세요!</p>
+
+    <div class="game-container">
+      <div class="instructions">
+        <h3>📖 게임 방법</h3>
+        <p>
+          <strong>방법 1: 드래그 앤 드롭</strong><br>
+          1. 위쪽 카드 아래의 <strong>파란색 포인트</strong>를 누른 채로 드래그합니다.<br>
+          2. 아래쪽 카드 위의 정답 포인트에 놓습니다.<br>
+          <br>
+          <strong>방법 2: 클릭-클릭</strong><br>
+          1. 위쪽 카드 아래의 <strong>파란색 포인트</strong>를 클릭합니다 (금색으로 변함).<br>
+          2. 마우스를 움직이면 선이 따라옵니다.<br>
+          3. 아래쪽 카드 위의 정답 포인트를 클릭하여 연결합니다.<br>
+          <br>
+          <br>
+          <strong>방법 3: 선 클릭으로 재연결</strong><br>
+          1. 이미 연결된 선을 클릭하면 연결이 해제되고 새 연결을 시작할 수 있습니다.<br>
+          <br>
+          <strong>💡 힌트 기능</strong><br>
+          포인트를 선택하면 연결 가능한 정답 포인트들이 펄싱 애니메이션으로 표시됩니다!<br>
+          <br>
+          <strong>🎨 선 스타일 커스터마이징</strong><br>
+          실선, 점선, 애니메이션 점선, 화살표 등 다양한 선 스타일을 사용할 수 있습니다!<br>
+          <a href="stroke-preview.html" target="_blank" style="color: #667eea; text-decoration: underline;">stroke-preview.html</a>에서 모든 스타일을 미리 확인하세요.<br>
+          <br>
+          정답이면 <strong style="color: #4CAF50;">초록색 선</strong>이, 오답이면 <strong style="color: #F44336;">빨간색 선</strong>이 표시됩니다. 모든 짝을 맞추면 완료!<br>
+          스크롤해도 선이 따라 움직입니다!
+        </p>
+      </div>
+
+      <div class="groups-container">
+        <!-- A 그룹 (한국어) -->
+        <div class="group group-a">
+          <h2>🇰🇷 한국어</h2>
+          <div class="item" id="a1">
+            <div class="item-content">
+              <div class="item-icon">🍎</div>
+              <div class="item-text">
+                <div class="item-title">사과</div>
+                <div class="item-desc">빨간 과일</div>
+              </div>
+            </div>
+          </div>
+          <div class="item" id="a2">
+            <div class="item-content">
+              <div class="item-icon">🍌</div>
+              <div class="item-text">
+                <div class="item-title">바나나</div>
+                <div class="item-desc">노란 과일</div>
+              </div>
+            </div>
+          </div>
+          <div class="item" id="a3">
+            <div class="item-content">
+              <div class="item-icon">🍊</div>
+              <div class="item-text">
+                <div class="item-title">오렌지</div>
+                <div class="item-desc">주황 과일</div>
+              </div>
+            </div>
+          </div>
+          <div class="item" id="a4">
+            <div class="item-content">
+              <div class="item-icon">🍇</div>
+              <div class="item-text">
+                <div class="item-title">포도</div>
+                <div class="item-desc">보라 과일</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- B 그룹 (영어) -->
+        <div class="group group-b">
+          <h2>🇺🇸 영어</h2>
+          <div class="item" id="b1">
+            <div class="item-content">
+              <div class="item-icon">🍇</div>
+              <div class="item-text">
+                <div class="item-title">Grape</div>
+                <div class="item-desc">Purple fruit</div>
+              </div>
+            </div>
+          </div>
+          <div class="item" id="b2">
+            <div class="item-content">
+              <div class="item-icon">🍎</div>
+              <div class="item-text">
+                <div class="item-title">Apple</div>
+                <div class="item-desc">Red fruit</div>
+              </div>
+            </div>
+          </div>
+          <div class="item" id="b3">
+            <div class="item-content">
+              <div class="item-icon">🍊</div>
+              <div class="item-text">
+                <div class="item-title">Orange</div>
+                <div class="item-desc">Orange fruit</div>
+              </div>
+            </div>
+          </div>
+          <div class="item" id="b4">
+            <div class="item-content">
+              <div class="item-icon">🍌</div>
+              <div class="item-text">
+                <div class="item-title">Banana</div>
+                <div class="item-desc">Yellow fruit</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="status">
+        <h3>📊 게임 상태</h3>
+        <div class="status-info">
+          <div class="status-item">
+            <div class="status-value" id="correct-count">0</div>
+            <div class="status-label">정답</div>
+          </div>
+          <div class="status-item">
+            <div class="status-value" id="incorrect-count">0</div>
+            <div class="status-label">오답</div>
+          </div>
+          <div class="status-item">
+            <div class="status-value" id="total-count">4</div>
+            <div class="status-label">전체</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="controls">
+        <button class="btn" onclick="resetGame()">🔄 다시 시작</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 피드백 모달 -->
+  <div class="feedback" id="feedback">
+    <div class="feedback-icon">🎉</div>
+    <div class="feedback-text">축하합니다!</div>
+    <div class="feedback-desc">모든 짝을 찾았습니다!</div>
+  </div>
+
+  <!-- GSAP & Draggable -->
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.13/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.13/dist/Draggable.min.js"></script>
+
+  <!-- Main Script -->
+  <script type="module" src="./main.js"></script>
+</body>
+</html>

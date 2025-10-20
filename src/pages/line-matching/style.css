@@ -1,0 +1,264 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  min-height: 100vh;
+  padding: 40px 20px;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+h1 {
+  color: white;
+  text-align: center;
+  margin-bottom: 10px;
+  font-size: 2.5rem;
+}
+
+.subtitle {
+  color: rgba(255, 255, 255, 0.9);
+  text-align: center;
+  margin-bottom: 40px;
+  font-size: 1.1rem;
+}
+
+.game-container {
+  background: white;
+  border-radius: 20px;
+  padding: 40px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+.instructions {
+  background: #f8f9fa;
+  border-left: 4px solid #667eea;
+  padding: 20px;
+  margin-bottom: 30px;
+  border-radius: 8px;
+}
+
+.instructions h3 {
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.instructions p {
+  color: #666;
+  line-height: 1.6;
+}
+
+.groups-container {
+  display: flex;
+  flex-direction: column;
+  gap: 80px;
+  margin-top: 40px;
+  position: relative;
+}
+
+.group {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+}
+
+.group h2 {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #333;
+  font-size: 1.5rem;
+  grid-column: 1 / -1;
+}
+
+.item {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 20px;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  user-select: none;
+  position: relative;
+  overflow: visible; /* 포인트가 보이도록 수정 */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.item::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s;
+  pointer-events: none; /* 이벤트 전달을 막지 않도록 */
+  z-index: 1;
+}
+
+.item:hover::before {
+  left: 100%;
+}
+
+/* 포인트가 잘 보이도록 추가 스타일 */
+.line-matching-point {
+  border: 2px solid white !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3) !important;
+}
+
+.group-a .item {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.group-b .item {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+}
+
+.item-content {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.item-icon {
+  font-size: 2rem;
+}
+
+.item-text {
+  flex: 1;
+}
+
+.item-title {
+  font-weight: bold;
+  font-size: 1.1rem;
+  margin-bottom: 5px;
+}
+
+.item-desc {
+  font-size: 0.9rem;
+  opacity: 0.9;
+}
+
+.controls {
+  margin-top: 30px;
+  text-align: center;
+}
+
+.btn {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  padding: 15px 40px;
+  border-radius: 30px;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+  margin: 0 10px;
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+}
+
+.btn:active {
+  transform: translateY(0);
+}
+
+.status {
+  margin-top: 30px;
+  padding: 20px;
+  background: #f8f9fa;
+  border-radius: 12px;
+  text-align: center;
+}
+
+.status h3 {
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.status-info {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  margin-top: 15px;
+}
+
+.status-item {
+  text-align: center;
+}
+
+.status-value {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #667eea;
+}
+
+.status-label {
+  color: #666;
+  font-size: 0.9rem;
+  margin-top: 5px;
+}
+
+.feedback {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  background: white;
+  padding: 40px;
+  border-radius: 20px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  text-align: center;
+  z-index: 10000;
+  transition: transform 0.3s ease;
+}
+
+.feedback.show {
+  transform: translate(-50%, -50%) scale(1);
+}
+
+.feedback-icon {
+  font-size: 4rem;
+  margin-bottom: 20px;
+}
+
+.feedback-text {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.feedback-desc {
+  color: #666;
+}
+
+/* 힌트 애니메이션 */
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 0.8;
+  }
+}
+
+.line-matching-hint {
+  animation: pulse 1s infinite;
+}

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TypeScript 프리뷰 - GSAP Kit</title>
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>🚀 TypeScript 라이브 프리뷰</h1>
+    <p class="subtitle">TypeScript 파일을 수정하면 자동으로 컴파일되고 여기에 반영됩니다</p>
+
+    <div class="info">
+      <h2>📝 사용 방법</h2>
+      <p>1. <code>npm run dev:ts</code> 실행</p>
+      <p>2. <code>src-ts/draggable/basic.ts</code> 파일 수정</p>
+      <p>3. 자동으로 컴파일되고 이 페이지가 리로드됩니다</p>
+      <p style="margin-top: 15px; color: #ffeb3b;">💡 <strong>nodemon</strong>이 TypeScript 변경을 감지하고 자동 빌드합니다!</p>
+    </div>
+
+    <div class="demo-area" id="demo-area">
+      <div class="drag-box" id="test-box">
+        드래그 테스트
+      </div>
+    </div>
+
+    <div class="status">
+      <h3>✅ 상태</h3>
+      <p>현재 시간: <span id="current-time"></span></p>
+      <p>마지막 로드: <span id="load-time"></span></p>
+      <div class="log" id="log">
+        <div class="log-item">로그가 여기에 표시됩니다...</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- GSAP CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.13/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.13/dist/Draggable.min.js"></script>
+
+  <!-- Application script -->
+  <script src="./main.js"></script>
+</body>
+</html>

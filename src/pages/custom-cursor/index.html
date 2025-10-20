@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GSAP Kit - Custom Cursor Demo</title>
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>🎯 Custom Cursor Demo</h1>
+    <p class="subtitle">화살표 스타일 + 커스텀 커서 기능 테스트</p>
+
+    <div class="demo-card">
+      <div class="demo-title">Arrow Style with Custom Cursor</div>
+      <div class="demo-description">
+        포인트를 드래그하여 연결할 때 <strong>시스템 커서가 숨겨지고</strong> 화살표 모양의 커스텀 커서가 표시됩니다.<br>
+        연결된 포인트를 클릭하면 자동으로 해제되고 시작점에서 다시 연결을 시작할 수 있습니다.
+      </div>
+
+      <div class="demo-area" id="demo-custom-cursor">
+        <div class="point point-a" data-id="a">A</div>
+        <div class="point point-b1" data-id="b1">B1</div>
+        <div class="point point-b2" data-id="b2">B2</div>
+      </div>
+
+      <div class="instructions">
+        <h3>📝 사용 방법</h3>
+        <ul>
+          <li><span class="highlight">A 포인트</span>를 클릭하거나 드래그하여 B1 또는 B2로 연결하세요</li>
+          <li>드래그 중에는 <strong>시스템 커서가 자동으로 숨겨지고</strong> 화살표 커서가 표시됩니다</li>
+          <li>연결이 완료되면 시스템 커서가 다시 나타납니다</li>
+          <li>연결된 포인트(B1 또는 B2)를 클릭하면 연결이 해제되고 A에서 재시작됩니다</li>
+          <li>배경을 클릭하면 선택이 취소됩니다</li>
+        </ul>
+
+        <div class="status-badge">✅ hideCursor: true (시스템 커서 숨김 활성화)</div>
+      </div>
+
+      <div class="toggle-section">
+        <h3>🔧 옵션 테스트</h3>
+        <p style="margin-bottom: 15px; color: #666;">
+          현재 <strong>hideCursor</strong> 옵션이 활성화되어 있습니다.
+          아래 버튼을 클릭하여 비활성화하고 시스템 커서와 커스텀 커서가 함께 표시되는 것을 확인할 수 있습니다.
+        </p>
+        <button class="toggle-button" onclick="toggleCursorMode()">
+          hideCursor 모드 전환
+        </button>
+        <p id="mode-status" style="margin-top: 10px; font-weight: bold; color: #667eea;"></p>
+      </div>
+
+      <div class="toggle-section" style="margin-top: 20px; background: rgba(255, 193, 7, 0.1); border: 2px solid rgba(255, 193, 7, 0.3);">
+        <h3>🐛 드래그 상태 디버그</h3>
+        <p style="margin-bottom: 15px; color: #666;">
+          드래그 중인 선이 너무 빨리 사라져서 확인하기 어려우신가요?<br>
+          아래 버튼을 클릭하면 드래그 중인 상태를 <strong>고정</strong>시켜서 천천히 확인할 수 있습니다.
+        </p>
+        <button class="toggle-button" style="background: #FFC107; margin-right: 10px;" onclick="freezeDragState()">
+          드래그 상태 고정 (A → B1)
+        </button>
+        <button class="toggle-button" style="background: #F44336;" onclick="unfreezeDragState()">
+          고정 해제
+        </button>
+        <p id="debug-status" style="margin-top: 10px; font-weight: bold; color: #FFC107;"></p>
+      </div>
+
+      <div class="toggle-section" style="margin-top: 20px; background: rgba(63, 81, 181, 0.1); border: 2px solid rgba(63, 81, 181, 0.3);">
+        <h3 style="margin-bottom: 10px;">🎨 Marker-End 파라미터 조정</h3>
+        <p style="margin-bottom: 15px; color: #666; font-size: 0.9rem;">
+          위의 데모 영역에서 "드래그 상태 고정" 버튼을 먼저 클릭한 후, 아래 파라미터를 조정하세요.
+        </p>
+
+        <div class="param-layout">
+          <!-- 왼쪽: 컨트롤 -->
+          <div class="param-controls-compact">
+            <div class="param-control-compact">
+              <label for="refX">refX</label>
+              <input type="range" id="refX" min="0" max="30" value="12" step="0.5" oninput="updateMarkerParams()">
+              <span id="refXValue">12</span>
+            </div>
+
+            <div class="param-control-compact">
+              <label for="refY">refY</label>
+              <input type="range" id="refY" min="0" max="30" value="7.5" step="0.5" oninput="updateMarkerParams()">
+              <span id="refYValue">7.5</span>
+            </div>
+
+            <div class="param-control-compact">
+              <label for="lineWidth">Line W</label>
+              <input type="range" id="lineWidth" min="1" max="10" value="3" step="0.5" oninput="updateMarkerParams()">
+              <span id="lineWidthValue">3</span>
+            </div>
+
+            <div class="param-control-compact">
+              <label for="markerScale">Scale</label>
+              <input type="range" id="markerScale" min="0.3" max="3" value="1" step="0.1" oninput="updateMarkerParams()">
+              <span id="markerScaleValue">1</span>
+            </div>
+
+            <div class="param-control-compact">
+              <label for="markerColor">Color</label>
+              <input type="color" id="markerColor" value="#667eea" oninput="updateMarkerParams()">
+              <span id="markerColorValue" style="font-size: 0.65rem; overflow: hidden; text-overflow: ellipsis;">#667eea</span>
+            </div>
+
+            <div class="param-control-compact" style="grid-column: 1 / -1;">
+              <label for="polygonShape">Shape</label>
+              <select id="polygonShape" onchange="updateMarkerParams()">
+                <option value="polygon:0,0 0,15 15,7.5">삼각형 (▶)</option>
+                <option value="circle:7.5">원형 (●)</option>
+                <option value="circle-stroke:7.5">빈 원형 (○)</option>
+                <option value="chevron:7.5">열린 삼각형 (⊳)</option>
+              </select>
+            </div>
+
+            <div class="param-control-compact" style="grid-column: 1 / -1; display: flex; align-items: center; gap: 10px;">
+              <input type="checkbox" id="markerUnits" onchange="updateMarkerParams()" style="width: auto;">
+              <label for="markerUnits" style="font-size: 0.8rem; margin: 0;">markerUnits="strokeWidth" (선 굵기에 비례)</label>
+            </div>
+          </div>
+
+          <!-- 코드 & 렌더링 -->
+          <div class="param-code-box">
+            <!-- 왼쪽: 실시간 렌더링 -->
+            <div class="param-render-section">
+              <h4 style="margin-bottom: 8px; color: #3f51b5; font-size: 0.95rem;">실시간 렌더링:</h4>
+              <div id="svgPreview" style="background: white; border: 2px solid #e0e0e0; border-radius: 4px; padding: 20px; height: 120px; display: flex; align-items: center; justify-content: center; overflow: hidden; position: relative;">
+                <!-- SVG 렌더링 영역 -->
+              </div>
+            </div>
+
+            <!-- 오른쪽: SVG 코드 -->
+            <div class="param-code-section">
+              <h4 style="margin-bottom: 8px; color: #3f51b5; font-size: 0.95rem;">SVG 코드:</h4>
+              <pre id="paramCode" style="background: #f5f5f5; padding: 8px; border-radius: 4px; overflow-x: auto; font-size: 0.75rem; margin: 0; line-height: 1.4; flex: 1;"></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Line Shape Preview Section -->
+    <div class="demo-card">
+      <div class="demo-title">📏 드래그 선 형태 프리뷰</div>
+      <div class="demo-description">
+        드래그 중에 실제로 표시되는 화살표 선의 모양을 다양한 각도와 길이로 미리 확인할 수 있습니다.
+      </div>
+
+      <div class="line-preview-grid">
+        <!-- 짧은 선 -->
+        <div class="line-preview-item">
+          <div class="line-preview-label">짧은 거리 (50px)</div>
+          <svg class="line-preview-svg" width="150" height="80" viewBox="0 0 150 80">
+            <defs>
+              <marker id="arrow-short" markerWidth="15" markerHeight="15" refX="12" refY="7.5" orient="auto">
+                <polygon points="0,0 0,15 15,7.5" fill="#667eea" />
+              </marker>
+            </defs>
+            <line x1="30" y1="40" x2="80" y2="40" stroke="#667eea" stroke-width="3" marker-end="url(#arrow-short)" />
+            <circle cx="30" cy="40" r="4" fill="#FFD700" />
+          </svg>
+        </div>
+
+        <!-- 중간 선 -->
+        <div class="line-preview-item">
+          <div class="line-preview-label">중간 거리 (100px)</div>
+          <svg class="line-preview-svg" width="150" height="80" viewBox="0 0 150 80">
+            <defs>
+              <marker id="arrow-medium" markerWidth="15" markerHeight="15" refX="12" refY="7.5" orient="auto">
+                <polygon points="0,0 0,15 15,7.5" fill="#667eea" />
+              </marker>
+            </defs>
+            <line x1="20" y1="40" x2="120" y2="40" stroke="#667eea" stroke-width="3" marker-end="url(#arrow-medium)" />
+            <circle cx="20" cy="40" r="4" fill="#FFD700" />
+          </svg>
+        </div>
+
+        <!-- 긴 선 -->
+        <div class="line-preview-item">
+          <div class="line-preview-label">긴 거리 (150px)</div>
+          <svg class="line-preview-svg" width="180" height="80" viewBox="0 0 180 80">
+            <defs>
+              <marker id="arrow-long" markerWidth="15" markerHeight="15" refX="12" refY="7.5" orient="auto">
+                <polygon points="0,0 0,15 15,7.5" fill="#667eea" />
+              </marker>
+            </defs>
+            <line x1="15" y1="40" x2="165" y2="40" stroke="#667eea" stroke-width="3" marker-end="url(#arrow-long)" />
+            <circle cx="15" cy="40" r="4" fill="#FFD700" />
+          </svg>
+        </div>
+
+        <!-- 위로 -->
+        <div class="line-preview-item">
+          <div class="line-preview-label">위 방향 (↑)</div>
+          <svg class="line-preview-svg" width="150" height="120" viewBox="0 0 150 120">
+            <defs>
+              <marker id="arrow-up" markerWidth="15" markerHeight="15" refX="12" refY="7.5" orient="auto">
+                <polygon points="0,0 0,15 15,7.5" fill="#667eea" />
+              </marker>
+            </defs>
+            <line x1="75" y1="100" x2="75" y2="20" stroke="#667eea" stroke-width="3" marker-end="url(#arrow-up)" />
+            <circle cx="75" cy="100" r="4" fill="#FFD700" />
+          </svg>
+        </div>
+
+        <!-- 아래로 -->
+        <div class="line-preview-item">
+          <div class="line-preview-label">아래 방향 (↓)</div>
+          <svg class="line-preview-svg" width="150" height="120" viewBox="0 0 150 120">
+            <defs>
+              <marker id="arrow-down" markerWidth="15" markerHeight="15" refX="12" refY="7.5" orient="auto">
+                <polygon points="0,0 0,15 15,7.5" fill="#667eea" />
+              </marker>
+            </defs>
+            <line x1="75" y1="20" x2="75" y2="100" stroke="#667eea" stroke-width="3" marker-end="url(#arrow-down)" />
+            <circle cx="75" cy="20" r="4" fill="#FFD700" />
+          </svg>
+        </div>
+
+        <!-- 대각선 우상 -->
+        <div class="line-preview-item">
+          <div class="line-preview-label">대각선 우상 (↗)</div>
+          <svg class="line-preview-svg" width="150" height="120" viewBox="0 0 150 120">
+            <defs>
+              <marker id="arrow-diagonal1" markerWidth="15" markerHeight="15" refX="12" refY="7.5" orient="auto">
+                <polygon points="0,0 0,15 15,7.5" fill="#667eea" />
+              </marker>
+            </defs>
+            <line x1="30" y1="90" x2="120" y2="30" stroke="#667eea" stroke-width="3" marker-end="url(#arrow-diagonal1)" />
+            <circle cx="30" cy="90" r="4" fill="#FFD700" />
+          </svg>
+        </div>
+
+        <!-- 대각선 우하 -->
+        <div class="line-preview-item">
+          <div class="line-preview-label">대각선 우하 (↘)</div>
+          <svg class="line-preview-svg" width="150" height="120" viewBox="0 0 150 120">
+            <defs>
+              <marker id="arrow-diagonal2" markerWidth="15" markerHeight="15" refX="12" refY="7.5" orient="auto">
+                <polygon points="0,0 0,15 15,7.5" fill="#667eea" />
+              </marker>
+            </defs>
+            <line x1="30" y1="30" x2="120" y2="90" stroke="#667eea" stroke-width="3" marker-end="url(#arrow-diagonal2)" />
+            <circle cx="30" cy="30" r="4" fill="#FFD700" />
+          </svg>
+        </div>
+
+        <!-- 대각선 좌상 -->
+        <div class="line-preview-item">
+          <div class="line-preview-label">대각선 좌상 (↖)</div>
+          <svg class="line-preview-svg" width="150" height="120" viewBox="0 0 150 120">
+            <defs>
+              <marker id="arrow-diagonal3" markerWidth="15" markerHeight="15" refX="12" refY="7.5" orient="auto">
+                <polygon points="0,0 0,15 15,7.5" fill="#667eea" />
+              </marker>
+            </defs>
+            <line x1="120" y1="90" x2="30" y2="30" stroke="#667eea" stroke-width="3" marker-end="url(#arrow-diagonal3)" />
+            <circle cx="120" cy="90" r="4" fill="#FFD700" />
+          </svg>
+        </div>
+
+        <!-- 연결 완료 -->
+        <div class="line-preview-item">
+          <div class="line-preview-label">연결 완료 (정답)</div>
+          <svg class="line-preview-svg" width="150" height="80" viewBox="0 0 150 80">
+            <defs>
+              <marker id="arrow-correct" markerWidth="15" markerHeight="15" refX="12" refY="7.5" orient="auto">
+                <polygon points="0,0 0,15 15,7.5" fill="#4CAF50" />
+              </marker>
+            </defs>
+            <line x1="20" y1="40" x2="130" y2="40" stroke="#4CAF50" stroke-width="3" marker-end="url(#arrow-correct)" />
+            <circle cx="20" cy="40" r="4" fill="#667eea" />
+            <circle cx="130" cy="40" r="4" fill="#667eea" />
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- Arrow Style Preview Section -->
+    <div class="demo-card">
+      <div class="demo-title">📋 인터랙션 단계별 스타일 프리뷰</div>
+      <div class="demo-description">
+        각 인터랙션 단계별로 포인트와 화살표 커서의 스타일이 어떻게 변하는지 확인할 수 있습니다.
+      </div>
+
+      <div class="preview-grid">
+        <!-- 1. Idle State -->
+        <div class="preview-item">
+          <div class="preview-label">1️⃣ Idle (기본 상태)</div>
+          <div class="preview-visual">
+            <div class="preview-point" style="background: #667eea;">A</div>
+            <span class="preview-desc">기본 포인트</span>
+          </div>
+        </div>
+
+        <!-- 2. Hover State -->
+        <div class="preview-item">
+          <div class="preview-label">2️⃣ Hover (호버 상태)</div>
+          <div class="preview-visual">
+            <div class="preview-point preview-point-hover" style="background: #764ba2; transform: scale(1.2);">A</div>
+            <span class="preview-desc">마우스 오버 시</span>
+          </div>
+        </div>
+
+        <!-- 3. Selected State -->
+        <div class="preview-item">
+          <div class="preview-label">3️⃣ Selected (선택됨)</div>
+          <div class="preview-visual">
+            <div class="preview-point preview-point-selected" style="background: #FFD700; transform: scale(1.3); box-shadow: 0 0 15px rgba(255, 215, 0, 0.8);">A</div>
+            <span class="preview-desc">클릭/드래그 시작</span>
+          </div>
+        </div>
+
+        <!-- 4. Dragging State -->
+        <div class="preview-item">
+          <div class="preview-label">4️⃣ Dragging (드래그 중)</div>
+          <div class="preview-visual">
+            <svg width="30" height="30" class="preview-arrow">
+              <polygon
+                points="15,18 7.5,12 22.5,12"
+                fill="#667eea"
+                style="filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));"
+              />
+            </svg>
+            <span class="preview-desc">화살표 커서 표시</span>
+          </div>
+        </div>
+
+        <!-- 5. Target Hint State -->
+        <div class="preview-item">
+          <div class="preview-label">5️⃣ Target Hint (연결 대상)</div>
+          <div class="preview-visual">
+            <div class="preview-point" style="background: #667eea; box-shadow: 0 0 20px rgba(102, 126, 234, 0.8);">B</div>
+            <span class="preview-desc">연결 가능 힌트</span>
+          </div>
+        </div>
+
+        <!-- 6. Connected State -->
+        <div class="preview-item">
+          <div class="preview-label">6️⃣ Connected (연결 완료)</div>
+          <div class="preview-visual">
+            <div style="position: relative; display: flex; align-items: center; gap: 40px;">
+              <div class="preview-point" style="background: #667eea;">A</div>
+              <svg width="40" height="4" style="position: absolute; left: 30px;">
+                <line x1="0" y1="2" x2="30" y2="2" stroke="#4CAF50" stroke-width="3" />
+                <polygon points="30,2 26,0 26,4" fill="#4CAF50" />
+              </svg>
+              <div class="preview-point" style="background: #667eea;">B</div>
+            </div>
+            <span class="preview-desc">정답 연결</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- GSAP & Draggable -->
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.13/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.13/dist/Draggable.min.js"></script>
+
+  <!-- Main Script -->
+  <script src="./main.js"></script>
+</body>
+</html>

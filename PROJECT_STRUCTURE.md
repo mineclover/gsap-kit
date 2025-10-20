@@ -29,7 +29,23 @@ gsap-kit/
 │       │   ├── index.html
 │       │   ├── style.css
 │       │   └── main.ts
-│       └── scroll/       # 스크롤 애니메이션 예제
+│       ├── scroll/       # 스크롤 애니메이션 예제
+│       │   ├── index.html
+│       │   ├── style.css
+│       │   └── main.ts
+│       ├── line-matching/     # 선 연결 매칭 게임
+│       │   ├── index.html
+│       │   ├── style.css
+│       │   └── main.ts
+│       ├── custom-cursor/     # SVG Marker-End 데모
+│       │   ├── index.html
+│       │   ├── style.css
+│       │   └── main.ts
+│       ├── stroke-preview/    # 선 스타일 프리뷰
+│       │   ├── index.html
+│       │   ├── style.css
+│       │   └── main.ts
+│       └── preview/           # 개발용 라이브 프리뷰
 │           ├── index.html
 │           ├── style.css
 │           └── main.ts
@@ -40,15 +56,21 @@ gsap-kit/
 │   │   ├── draggable/
 │   │   └── line-matching.min.js
 │   └── pages/            # 페이지별 번들
+│       ├── index.html    # 자동 생성된 페이지 목록
 │       ├── basic/
 │       │   ├── index.html
 │       │   ├── style.css
 │       │   └── main.js
 │       ├── draggable/
-│       └── scroll/
+│       ├── scroll/
+│       ├── line-matching/
+│       ├── custom-cursor/
+│       ├── stroke-preview/
+│       └── preview/
 │
 ├── scripts/              # 빌드 스크립트
-│   └── copy-assets.js   # HTML/CSS 복사 스크립트
+│   ├── copy-assets.js   # HTML/CSS 복사 스크립트
+│   └── generate-index.js # 페이지 목록 자동 생성
 │
 ├── rollup.config.js     # Rollup 번들러 설정
 ├── tsconfig.json        # TypeScript 설정
@@ -116,9 +138,13 @@ console.log('My page loaded!');
 npm run build
 
 # 개발 서버 실행 (자동 빌드 + 라이브 리로드)
-npm run dev:basic      # basic 페이지
-npm run dev:draggable  # draggable 페이지
-npm run dev:scroll     # scroll 페이지
+npm run dev:basic           # basic 페이지
+npm run dev:draggable       # draggable 페이지
+npm run dev:scroll          # scroll 페이지
+npm run dev:line-matching   # line-matching 페이지
+npm run dev:custom-cursor   # custom-cursor 페이지
+npm run dev:stroke-preview  # stroke-preview 페이지
+npm run dev:preview         # preview 페이지
 
 # 모든 페이지 자동 감지하여 빌드
 npm run build:watch
@@ -149,6 +175,7 @@ npm run build 실행 시:
 1. TypeScript 컴파일 (src/lib → dist/lib)
 2. 페이지 번들링 (src/pages/*/main.ts → dist/pages/*/main.js)
 3. 에셋 복사 (HTML, CSS → dist/pages)
+4. 인덱스 자동 생성 (dist/pages/index.html)
 ```
 
 ## 🎯 라이브러리 사용 방법
@@ -172,14 +199,20 @@ import { createLineMatching } from '../../lib/advanced/line-matching';
 
 ```bash
 # 빌드
-npm run build              # 전체 빌드 (TypeScript + 에셋 복사)
+npm run build              # 전체 빌드 (TypeScript + 에셋 복사 + 인덱스 생성)
 npm run build:watch        # 파일 변경 시 자동 빌드
 npm run copy:assets        # HTML/CSS만 복사
+npm run generate:index     # 페이지 목록 인덱스 생성
 
 # 개발
+npm run dev                # 인덱스 페이지 열기
 npm run dev:basic          # basic 페이지 개발 모드
 npm run dev:draggable      # draggable 페이지 개발 모드
 npm run dev:scroll         # scroll 페이지 개발 모드
+npm run dev:line-matching  # line-matching 페이지 개발 모드
+npm run dev:custom-cursor  # custom-cursor 페이지 개발 모드
+npm run dev:stroke-preview # stroke-preview 페이지 개발 모드
+npm run dev:preview        # preview 페이지 개발 모드
 
 # 타입 체크
 npm run type-check         # TypeScript 타입 오류 확인
@@ -193,7 +226,9 @@ npm run type-check         # TypeScript 타입 오류 확인
 - [ ] `index.html` 작성 (GSAP CDN + ./main.js 포함)
 - [ ] `style.css` 작성
 - [ ] `main.ts` 작성 (라이브러리 import)
+- [ ] `scripts/generate-index.js`에 페이지 메타데이터 추가 (아이콘, 제목, 설명, 태그)
 - [ ] `npm run build` 실행 → `dist/pages/[페이지명]/` 확인
+- [ ] `dist/pages/index.html`에 자동 추가되었는지 확인
 - [ ] package.json에 `dev:[페이지명]` 스크립트 추가 (선택사항)
 
 ## 🎨 장점
@@ -206,6 +241,7 @@ npm run type-check         # TypeScript 타입 오류 확인
 ### 2. 자동화된 빌드
 - `src/pages/**/main.ts`를 자동 탐색
 - 새 페이지 추가 시 rollup 설정 수정 불필요
+- 페이지 목록 index.html 자동 생성
 
 ### 3. 재사용 가능한 라이브러리
 - `src/lib` 함수들은 모든 페이지에서 사용 가능
@@ -226,10 +262,12 @@ npm run type-check         # TypeScript 타입 오류 확인
 
 **변경 후 (2025.10)**
 ```
-- src/pages/ 폴더에 페이지별 독립 관리
+- src/pages/ 폴더에 페이지별 독립 관리 (총 7개 페이지)
 - HTML, CSS, TS 파일 분리
 - src/lib/ 폴더로 공통 라이브러리 관리
 - Rollup으로 자동 번들링
+- examples/ 폴더 삭제 (완전 마이그레이션 완료)
+- 빌드 시 페이지 목록 index.html 자동 생성
 ```
 
 ## 📚 참고
