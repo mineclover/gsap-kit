@@ -7,7 +7,7 @@
 
     /* 출력 설정 */
     "outDir": "./dist",
-    "rootDir": "./src-ts",
+    "rootDir": "./src",
 
     /* 타입 체크 */
     "strict": true,
@@ -34,7 +34,7 @@
     "checkJs": false
   },
   "include": [
-    "src-ts/**/*"
+    "src/**/*"
   ],
   "exclude": [
     "node_modules",

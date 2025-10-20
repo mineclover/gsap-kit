@@ -1,0 +1,320 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  min-height: 100vh;
+  padding: 40px 20px;
+}
+
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+h1 {
+  color: white;
+  text-align: center;
+  margin-bottom: 20px;
+  font-size: 3rem;
+}
+
+.subtitle {
+  color: rgba(255, 255, 255, 0.9);
+  text-align: center;
+  margin-bottom: 50px;
+  font-size: 1.2rem;
+}
+
+.section {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  padding: 40px;
+  margin-bottom: 30px;
+}
+
+.section-title {
+  color: white;
+  font-size: 1.8rem;
+  margin-bottom: 20px;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+  padding-bottom: 10px;
+}
+
+.section-description {
+  color: rgba(255, 255, 255, 0.8);
+  margin-bottom: 30px;
+  font-size: 1rem;
+}
+
+/* 기본 드래그 */
+.demo-area {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 15px;
+  padding: 40px;
+  min-height: 300px;
+  position: relative;
+}
+
+.drag-box {
+  width: 120px;
+  height: 120px;
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  border-radius: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: bold;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  cursor: grab;
+  user-select: none;
+  position: absolute;
+  left: 20px;
+  top: 20px;
+}
+
+.drag-box:active {
+  cursor: grabbing;
+}
+
+.drag-box.small {
+  width: 80px;
+  height: 80px;
+  font-size: 0.9rem;
+}
+
+/* X축 드래그 */
+.drag-box-x {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  left: 20px;
+  top: 50px;
+}
+
+/* Y축 드래그 */
+.drag-box-y {
+  background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+  left: 50px;
+  top: 20px;
+}
+
+/* 관성 드래그 */
+.drag-box-inertia {
+  background: linear-gradient(135deg, #30cfd0 0%, #330867 100%);
+  left: 100px;
+  top: 80px;
+}
+
+/* 회전 */
+.rotate-box {
+  width: 150px;
+  height: 150px;
+  background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+  border-radius: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #333;
+  font-weight: bold;
+  font-size: 1.2rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  cursor: grab;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  margin-left: -75px;
+  margin-top: -75px;
+}
+
+.rotate-box::before {
+  content: '↻';
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 2rem;
+}
+
+/* 그리드 스냅 */
+.grid-demo {
+  background: rgba(255, 255, 255, 0.1);
+  background-image:
+    repeating-linear-gradient(0deg, rgba(255,255,255,0.1) 0px, rgba(255,255,255,0.1) 1px, transparent 1px, transparent 50px),
+    repeating-linear-gradient(90deg, rgba(255,255,255,0.1) 0px, rgba(255,255,255,0.1) 1px, transparent 1px, transparent 50px);
+  background-size: 50px 50px;
+}
+
+.snap-box {
+  background: linear-gradient(135deg, #f5af19 0%, #f12711 100%);
+  left: 50px;
+  top: 50px;
+}
+
+/* 슬라이더 */
+.slider-container {
+  margin: 40px 0;
+}
+
+.slider-track {
+  width: 100%;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+  position: relative;
+  margin-bottom: 10px;
+}
+
+.slider-handle {
+  width: 40px;
+  height: 40px;
+  background: white;
+  border-radius: 50%;
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  cursor: grab;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.slider-value {
+  color: white;
+  font-size: 1.5rem;
+  font-weight: bold;
+  text-align: center;
+}
+
+/* 정렬 가능한 리스트 */
+.sortable-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.sortable-item {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 20px 30px;
+  border-radius: 10px;
+  color: white;
+  font-weight: bold;
+  cursor: grab;
+  user-select: none;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  transition: box-shadow 0.3s;
+}
+
+.sortable-item:hover {
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+}
+
+.sortable-item::before {
+  content: '☰';
+  font-size: 1.5rem;
+  opacity: 0.6;
+}
+
+/* 스와이프 */
+.swipe-card {
+  width: 300px;
+  height: 400px;
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+  cursor: grab;
+  position: relative;
+  overflow: hidden;
+}
+
+.swipe-card img {
+  width: 100%;
+  height: 60%;
+  object-fit: cover;
+}
+
+.swipe-card .content {
+  padding: 20px;
+  text-align: center;
+}
+
+.swipe-card h3 {
+  color: #333;
+  margin-bottom: 10px;
+}
+
+.swipe-card p {
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.swipe-info {
+  color: white;
+  text-align: center;
+  margin-top: 20px;
+  font-size: 1.1rem;
+}
+
+/* 정보 박스 */
+.info-box {
+  background: rgba(255, 255, 255, 0.1);
+  border-left: 4px solid white;
+  padding: 15px 20px;
+  margin-top: 20px;
+  border-radius: 5px;
+  color: white;
+}
+
+.controls {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+  flex-wrap: wrap;
+}
+
+button {
+  background: white;
+  color: #667eea;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+button:hover {
+  background: #667eea;
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+}
+
+/* 자유 드래그 */
+.drag-free {
+  left: 100px;
+  top: 80px;
+}
+
+/* 경계 제한 드래그 */
+.drag-bounded {
+  background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+  left: 40px !important;
+  top: 40px !important;
+}
+
+/* 제어 가능한 드래그 */
+.drag-controllable {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  left: 100px;
+  top: 80px;
+}

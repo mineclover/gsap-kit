@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>기본 애니메이션 예제 - GSAP Kit</title>
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>GSAP Kit 기본 예제</h1>
+
+    <!-- Fade 애니메이션 -->
+    <div class="section">
+      <h2 class="section-title">Fade 애니메이션</h2>
+      <div class="grid">
+        <div class="box fade-box">Fade In</div>
+        <div class="box fade-up-box">Fade In Up</div>
+        <div class="box fade-down-box">Fade In Down</div>
+        <div class="box fade-left-box">Fade In Left</div>
+        <div class="box fade-right-box">Fade In Right</div>
+        <div class="box fade-scale-box">Fade In Scale</div>
+      </div>
+      <div class="controls">
+        <button onclick="runFadeAnimations()">애니메이션 재생</button>
+      </div>
+    </div>
+
+    <!-- Slide 애니메이션 -->
+    <div class="section">
+      <h2 class="section-title">Slide 애니메이션</h2>
+      <div class="grid">
+        <div class="box slide-left-box">Slide In Left</div>
+        <div class="box slide-right-box">Slide In Right</div>
+        <div class="box slide-up-box">Slide In Up</div>
+        <div class="box slide-down-box">Slide In Down</div>
+      </div>
+      <div class="controls">
+        <button onclick="runSlideAnimations()">애니메이션 재생</button>
+      </div>
+    </div>
+
+    <!-- Rotate 애니메이션 -->
+    <div class="section">
+      <h2 class="section-title">Rotate 애니메이션</h2>
+      <div class="grid">
+        <div class="box rotate-box">Rotate</div>
+        <div class="box rotate-in-box">Rotate In</div>
+        <div class="box flip-x-box">Flip X</div>
+        <div class="box flip-y-box">Flip Y</div>
+      </div>
+      <div class="controls">
+        <button onclick="runRotateAnimations()">애니메이션 재생</button>
+      </div>
+    </div>
+
+    <!-- Stagger 예제 -->
+    <div class="section">
+      <h2 class="section-title">Stagger (순차 애니메이션)</h2>
+      <div class="grid">
+        <div class="box stagger-box">Box 1</div>
+        <div class="box stagger-box">Box 2</div>
+        <div class="box stagger-box">Box 3</div>
+        <div class="box stagger-box">Box 4</div>
+        <div class="box stagger-box">Box 5</div>
+        <div class="box stagger-box">Box 6</div>
+      </div>
+      <div class="controls">
+        <button onclick="runStaggerAnimation()">애니메이션 재생</button>
+      </div>
+    </div>
+
+    <div class="info">
+      <p>각 버튼을 클릭하여 애니메이션을 확인하세요.</p>
+      <p>박스를 클릭하면 개별 애니메이션이 실행됩니다.</p>
+    </div>
+  </div>
+
+  <!-- GSAP CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.13/dist/gsap.min.js"></script>
+
+  <!-- 페이지 번들 -->
+  <script src="./main.js"></script>
+</body>
+</html>

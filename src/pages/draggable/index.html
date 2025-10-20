@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Draggable 예제 - GSAP Kit</title>
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>🎯 Draggable 예제</h1>
+    <p class="subtitle">마우스나 터치로 요소를 드래그해보세요</p>
+
+    <!-- 기본 드래그 -->
+    <div class="section">
+      <h2 class="section-title">1. 기본 드래그</h2>
+      <p class="section-description">자유롭게 모든 방향으로 드래그할 수 있습니다.</p>
+      <div class="demo-area">
+        <div class="drag-box drag-free">자유 드래그</div>
+      </div>
+    </div>
+
+    <!-- X/Y축 드래그 -->
+    <div class="section">
+      <h2 class="section-title">2. 축 제한 드래그</h2>
+      <p class="section-description">특정 축으로만 이동합니다.</p>
+      <div class="demo-area" style="min-height: 200px;">
+        <div class="drag-box drag-box-x small">X축만</div>
+      </div>
+      <div class="demo-area" style="min-height: 200px; margin-top: 20px;">
+        <div class="drag-box drag-box-y small">Y축만</div>
+      </div>
+    </div>
+
+    <!-- 경계 제한 -->
+    <div class="section">
+      <h2 class="section-title">3. 경계 제한 드래그</h2>
+      <p class="section-description">부모 요소 영역을 벗어날 수 없습니다. (회색 박스 안에서만 드래그 가능)</p>
+      <p class="section-description" style="color: #ffeb3b; font-weight: bold;">⚠️ 박스를 클릭해서 드래그해보세요. 콘솔(F12)에서 로그 확인</p>
+      <div class="demo-area" id="bounded-area" style="border: 3px dashed rgba(255,255,255,0.5);">
+        <div class="drag-box drag-bounded" id="bounded-box">경계 제한<br><small>클릭!</small></div>
+      </div>
+    </div>
+
+    <!-- 관성 드래그 -->
+    <div class="section">
+      <h2 class="section-title">4. 관성(던지기) 드래그</h2>
+      <p class="section-description">던지면 관성으로 계속 움직입니다.</p>
+      <div class="demo-area" id="inertia-area">
+        <div class="drag-box drag-box-inertia">던지기</div>
+      </div>
+    </div>
+
+    <!-- 회전 -->
+    <div class="section">
+      <h2 class="section-title">5. 회전</h2>
+      <p class="section-description">드래그하여 요소를 회전시킵니다.</p>
+      <div class="demo-area">
+        <div class="rotate-box">회전 드래그</div>
+      </div>
+    </div>
+
+    <!-- 그리드 스냅 -->
+    <div class="section">
+      <h2 class="section-title">6. 그리드 스냅</h2>
+      <p class="section-description">50px 그리드에 맞춰 스냅됩니다.</p>
+      <div class="demo-area grid-demo">
+        <div class="drag-box snap-box">그리드 스냅</div>
+      </div>
+    </div>
+
+    <!-- 슬라이더 -->
+    <div class="section">
+      <h2 class="section-title">7. 슬라이더</h2>
+      <p class="section-description">드래그하여 값을 조절합니다.</p>
+      <div class="slider-container">
+        <div class="slider-track">
+          <div class="slider-handle"></div>
+        </div>
+        <div class="slider-value">값: <span id="slider-value">50</span></div>
+      </div>
+    </div>
+
+    <!-- 정렬 가능한 리스트 -->
+    <div class="section">
+      <h2 class="section-title">8. 정렬 가능한 리스트</h2>
+      <p class="section-description">아이템을 드래그하여 순서를 변경하세요.</p>
+      <div class="sortable-list">
+        <div class="sortable-item">Item 1</div>
+        <div class="sortable-item">Item 2</div>
+        <div class="sortable-item">Item 3</div>
+        <div class="sortable-item">Item 4</div>
+        <div class="sortable-item">Item 5</div>
+      </div>
+    </div>
+
+    <!-- 스와이프 -->
+    <div class="section">
+      <h2 class="section-title">9. 스와이프 카드</h2>
+      <p class="section-description">카드를 좌우로 스와이프하세요.</p>
+      <div class="swipe-card">
+        <div class="content">
+          <h3>스와이프 해보세요</h3>
+          <p>👈 왼쪽 또는 오른쪽 👉</p>
+          <p style="margin-top: 20px; font-size: 3rem;">🎴</p>
+        </div>
+      </div>
+      <div class="swipe-info" id="swipe-info">스와이프 방향이 여기에 표시됩니다</div>
+    </div>
+
+    <!-- 제어 예제 -->
+    <div class="section">
+      <h2 class="section-title">10. 드래그 제어</h2>
+      <p class="section-description">버튼으로 드래그를 활성화/비활성화할 수 있습니다.</p>
+      <div class="demo-area" id="controllable-area">
+        <div class="drag-box drag-controllable">제어 가능</div>
+      </div>
+      <div class="controls">
+        <button onclick="disableControl()">드래그 비활성화</button>
+        <button onclick="enableControl()">드래그 활성화</button>
+        <button onclick="resetControl()">위치 초기화</button>
+      </div>
+    </div>
+
+    <div class="info-box">
+      <strong>💡 팁:</strong> 모바일에서는 터치로 드래그할 수 있습니다. GSAP Draggable은 터치 이벤트를 자동으로 지원합니다.
+    </div>
+  </div>
+
+  <!-- GSAP CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.13/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.13/dist/Draggable.min.js"></script>
+
+  <!-- 페이지 번들 -->
+  <script src="./main.js"></script>
+</body>
+</html>
