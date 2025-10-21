@@ -107,6 +107,17 @@ export class MouseSimulator {
       throw new Error(`Element not found: ${target}`);
     }
 
+    // line-matching-point가 있는지 확인 (line-matching 인터랙션용)
+    const matchingPoint = element.querySelector('.line-matching-point') as HTMLElement;
+    if (matchingPoint) {
+      const pointRect = matchingPoint.getBoundingClientRect();
+      debug(`[MouseSimulator] Found line-matching-point in ${target}`);
+      return {
+        x: pointRect.left + pointRect.width / 2,
+        y: pointRect.top + pointRect.height / 2,
+      };
+    }
+
     const rect = element.getBoundingClientRect();
 
     // 위치에 따라 좌표 계산
@@ -114,6 +125,26 @@ export class MouseSimulator {
       case 'center':
         return {
           x: rect.left + rect.width / 2,
+          y: rect.top + rect.height / 2,
+        };
+      case 'top':
+        return {
+          x: rect.left + rect.width / 2,
+          y: rect.top,
+        };
+      case 'bottom':
+        return {
+          x: rect.left + rect.width / 2,
+          y: rect.bottom,
+        };
+      case 'left':
+        return {
+          x: rect.left,
+          y: rect.top + rect.height / 2,
+        };
+      case 'right':
+        return {
+          x: rect.right,
           y: rect.top + rect.height / 2,
         };
       case 'top-left':

@@ -99,7 +99,12 @@ function defineTests(): void {
       '#english-1',
       () => {
         // 검증: 정답 연결이 되었는지
-        return correctCount > 0;
+        const passed = correctCount > 0;
+        log(
+          `  ✓ Assertion: correctCount=${correctCount} (expected > 0) → ${passed ? 'PASS' : 'FAIL'}`,
+          passed ? 'success' : 'error'
+        );
+        return passed;
       },
       {
         description: 'Should connect 사과 to Apple correctly',
@@ -108,8 +113,6 @@ function defineTests(): void {
           to: '#english-1',
           duration: baseDuration,
           curvature: 0.3,
-          fromPosition: 'right',
-          toPosition: 'left',
           dispatchEvents: true,
         },
         visualization: visualizeEnabled
@@ -120,30 +123,43 @@ function defineTests(): void {
               removeDelay: 1000,
             }
           : undefined,
-        setup: () => {
+        setup: async () => {
           resetGame();
+          // line-matching-point 생성을 위한 대기
+          await new Promise(resolve => setTimeout(resolve, 200));
         },
       }
     ),
 
-    testDrag('Drag 바나나 to Banana (Correct)', '#fruit-2', '#english-3', () => correctCount >= 1, {
-      description: 'Should connect 바나나 to Banana correctly',
-      simulation: {
-        from: '#fruit-2',
-        to: '#english-3',
-        duration: baseDuration,
-        curvature: 0.4,
-        fromPosition: 'right',
-        toPosition: 'left',
+    testDrag(
+      'Drag 바나나 to Banana (Correct)',
+      '#fruit-2',
+      '#english-3',
+      () => {
+        const passed = correctCount >= 1;
+        log(
+          `  ✓ Assertion: correctCount=${correctCount} (expected >= 1) → ${passed ? 'PASS' : 'FAIL'}`,
+          passed ? 'success' : 'error'
+        );
+        return passed;
       },
-      visualization: visualizeEnabled
-        ? {
-            pathColor: '#48bb78',
-            showCursor: true,
-            autoRemove: true,
-          }
-        : undefined,
-    }),
+      {
+        description: 'Should connect 바나나 to Banana correctly',
+        simulation: {
+          from: '#fruit-2',
+          to: '#english-3',
+          duration: baseDuration,
+          curvature: 0.4,
+        },
+        visualization: visualizeEnabled
+          ? {
+              pathColor: '#48bb78',
+              showCursor: true,
+              autoRemove: true,
+            }
+          : undefined,
+      }
+    ),
 
     testDrag(
       'Drag 사과 to Orange (Incorrect)',
@@ -151,7 +167,12 @@ function defineTests(): void {
       '#english-2',
       () => {
         // 오답이므로 incorrectCount가 증가해야 함
-        return incorrectCount > 0;
+        const passed = incorrectCount > 0;
+        log(
+          `  ✓ Assertion: incorrectCount=${incorrectCount} (expected > 0) → ${passed ? 'PASS' : 'FAIL'}`,
+          passed ? 'success' : 'error'
+        );
+        return passed;
       },
       {
         description: 'Should detect incorrect connection',
@@ -160,8 +181,6 @@ function defineTests(): void {
           to: '#english-2',
           duration: baseDuration,
           curvature: 0.5,
-          fromPosition: 'right',
-          toPosition: 'left',
         },
         visualization: visualizeEnabled
           ? {
@@ -170,45 +189,55 @@ function defineTests(): void {
               autoRemove: true,
             }
           : undefined,
-        setup: () => {
+        setup: async () => {
           resetGame();
+          await new Promise(resolve => setTimeout(resolve, 200));
         },
       }
     ),
 
-    testDrag('Complete All Matches', '#fruit-1', '#english-1', () => correctCount === 3, {
-      description: 'Should complete all correct matches',
-      simulation: {
-        from: '#fruit-1',
-        to: '#english-1',
-        duration: baseDuration,
-        fromPosition: 'right',
-        toPosition: 'left',
+    testDrag(
+      'Complete All Matches',
+      '#fruit-1',
+      '#english-1',
+      () => {
+        const passed = correctCount === 3;
+        log(
+          `  ✓ Assertion: correctCount=${correctCount} (expected === 3) → ${passed ? 'PASS' : 'FAIL'}`,
+          passed ? 'success' : 'error'
+        );
+        return passed;
       },
-      visualization: visualizeEnabled
-        ? {
-            pathColor: '#667eea',
-            showCursor: true,
-            autoRemove: true,
-          }
-        : undefined,
-      setup: async () => {
-        resetGame();
-        // 시뮬레이션을 사용하여 나머지 매칭 완료
-        const { simulateDrag } = await import('../../lib/testing');
-        await simulateDrag('#fruit-2', '#english-3', {
-          duration: baseDuration / 2,
-          fromPosition: 'right',
-          toPosition: 'left',
-        });
-        await new Promise(resolve => setTimeout(resolve, 500));
-        await simulateDrag('#fruit-3', '#english-2', {
-          duration: baseDuration / 2,
-          fromPosition: 'right',
-          toPosition: 'left',
-        });
-      },
-    }),
+      {
+        description: 'Should complete all correct matches',
+        simulation: {
+          from: '#fruit-1',
+          to: '#english-1',
+          duration: baseDuration,
+        },
+        visualization: visualizeEnabled
+          ? {
+              pathColor: '#667eea',
+              showCursor: true,
+              autoRemove: true,
+            }
+          : undefined,
+        setup: async () => {
+          resetGame();
+          await new Promise(resolve => setTimeout(resolve, 200));
+          // 시뮬레이션을 사용하여 나머지 매칭 완료
+          const { simulateDrag } = await import('../../lib/testing');
+          await simulateDrag('#fruit-2', '#english-3', {
+            duration: baseDuration / 2,
+          });
+          await new Promise(resolve => setTimeout(resolve, 500));
+          await simulateDrag('#fruit-3', '#english-2', {
+            duration: baseDuration / 2,
+          });
+          await new Promise(resolve => setTimeout(resolve, 500));
+        },
+      }
+    ),
   ];
 
   describe('Line Matching: Drag Interactions', dragTests, {
