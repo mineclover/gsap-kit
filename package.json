@@ -12,7 +12,22 @@
       "require": "./dist/main.umd.js"
     }
   },
+  "files": [
+    "dist",
+    "src",
+    "build.config.js",
+    "README.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
+    "clean": "rimraf dist",
+    "prebuild": "npm run clean",
     "serve": "npx http-server -p 8000 -o",
     "dev": "npx http-server -p 8000 -o /dist/pages",
     "dev:basic": "concurrently \"npm run build:watch\" \"live-server --port=8000 --open=/dist/pages/basic --watch=dist,src/pages --no-css-inject\"",
@@ -23,10 +38,13 @@
     "dev:stroke-preview": "concurrently \"npm run build:watch\" \"live-server --port=8000 --open=/dist/pages/stroke-preview --watch=dist,src/pages --no-css-inject\"",
     "dev:preview": "concurrently \"npm run build:watch\" \"live-server --port=8000 --open=/dist/pages/preview --watch=dist,src/pages --no-css-inject\"",
     "build": "npm run build:cdn",
-    "build:cdn": "rollup -c --environment BUILD_MODE:cdn && npm run copy:assets && npm run generate:index",
-    "build:bundle": "rollup -c --environment BUILD_MODE:bundle",
-    "build:watch": "concurrently \"rollup -c --watch --environment BUILD_MODE:cdn\" \"node scripts/copy-assets.js --watch\" \"npm run generate:index:watch\"",
-    "build:bundle:watch": "rollup -c --watch --environment BUILD_MODE:bundle",
+    "build:cdn": "cross-env BUILD_MODE=cdn rollup -c && npm run copy:assets && npm run generate:index",
+    "build:bundle": "cross-env BUILD_MODE=bundle rollup -c",
+    "build:all": "npm run build:cdn && npm run build:bundle",
+    "build:dev": "cross-env NODE_ENV=development BUILD_MODE=cdn rollup -c && npm run copy:assets && npm run generate:index",
+    "build:prod": "cross-env NODE_ENV=production npm run build:all",
+    "build:watch": "concurrently \"cross-env BUILD_MODE=cdn rollup -c --watch\" \"node scripts/copy-assets.js --watch\" \"npm run generate:index:watch\"",
+    "build:bundle:watch": "cross-env BUILD_MODE=bundle rollup -c --watch",
     "copy:assets": "node scripts/copy-assets.js",
     "generate:index": "node scripts/generate-index.js",
     "generate:index:watch": "node scripts/generate-index.js --watch",
@@ -37,12 +55,18 @@
     "format:write": "biome format --write .",
     "check": "biome check .",
     "check:write": "biome check --write .",
+    "prepare": "husky",
     "dev:ts": "concurrently \"npm run build:watch\" \"npm run serve:live\"",
     "dev:ts:bg": "concurrently -k \"npm run build:watch\" \"npm run serve:live\" > dev.log 2>&1 &",
     "serve:live": "live-server --port=8000 --open=/dist/pages/basic --watch=dist,src/pages --no-css-inject",
     "stop": "pkill -f 'nodemon|live-server' || true",
     "logs": "tail -f dev.log",
     "status": "ps aux | grep -E 'nodemon|live-server' | grep -v grep"
+  },
+  "lint-staged": {
+    "*.{js,ts}": [
+      "biome check --write"
+    ]
   },
   "keywords": [
     "gsap",
@@ -58,6 +82,14 @@
   ],
   "author": "",
   "license": "MIT",
+  "peerDependencies": {
+    "gsap": "^3.13.0"
+  },
+  "peerDependenciesMeta": {
+    "gsap": {
+      "optional": false
+    }
+  },
   "devDependencies": {
     "@biomejs/biome": "2.2.6",
     "@rollup/plugin-node-resolve": "16.0.3",
@@ -66,9 +98,13 @@
     "@types/gsap": "^3.0.0",
     "@types/node": "^20.10.0",
     "concurrently": "^8.2.2",
+    "cross-env": "10.1.0",
     "glob": "^10.3.10",
+    "husky": "9.1.7",
+    "lint-staged": "16.2.5",
     "live-server": "^1.2.2",
     "nodemon": "^3.0.2",
+    "rimraf": "6.0.1",
     "rollup": "4.52.5",
     "typescript": "^5.3.3"
   }

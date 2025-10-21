@@ -10,13 +10,21 @@ import { buildConfig } from './build.config.js';
  * - cdn: CDN 방식 (개별 파일로 빌드, script 태그 사용)
  * - bundle: NPM 번들러 방식 (단일 main.js, import 사용)
  *
+ * 환경
+ * - development: Source map 포함, minify 없음
+ * - production: Minified, optimized (기본값)
+ *
  * 사용법:
  * BUILD_MODE=cdn npm run build
  * BUILD_MODE=bundle npm run build
+ * NODE_ENV=development BUILD_MODE=cdn npm run build
  */
 const BUILD_MODE = process.env.BUILD_MODE || 'cdn';
+const NODE_ENV = process.env.NODE_ENV || 'production';
+const isDev = NODE_ENV === 'development';
 
 console.log(`🔧 빌드 모드: ${BUILD_MODE.toUpperCase()}`);
+console.log(`🌍 환경: ${NODE_ENV.toUpperCase()}`);
 
 // 페이지별 엔트리 자동 탐색 (CDN 모드에서만 사용)
 const pageEntries = glob.sync('src/pages/**/main.ts').reduce((entries, file) => {
@@ -30,7 +38,7 @@ if (BUILD_MODE === 'cdn') {
 }
 
 // 공통 설정
-const createConfig = (input, output, name, minify = false, format = 'iife') => ({
+const createConfig = (input, output, name, minify = false, format = 'iife', generateTypes = false) => ({
   input,
   output: {
     file: output,
@@ -48,15 +56,17 @@ const createConfig = (input, output, name, minify = false, format = 'iife') => (
     nodeResolve(),
     typescript({
       tsconfig: './tsconfig.json',
-      declaration: false,
-      declarationMap: false,
+      declaration: generateTypes,
+      declarationDir: generateTypes ? 'dist' : undefined,
+      declarationMap: generateTypes,
       compilerOptions: {
         target: 'ES2020',
         module: 'ESNext',
         moduleResolution: 'node',
       },
     }),
-    ...(minify ? [terser()] : []),
+    // Production 모드에서만 minify (또는 명시적으로 minify=true인 경우)
+    ...(minify || (!isDev && format !== 'iife') ? [terser()] : []),
   ],
 });
 
@@ -65,7 +75,7 @@ let configs = [];
 
 // CDN 모드: 개별 파일로 빌드
 if (BUILD_MODE === 'cdn') {
-  const cdnConfigs = buildConfig.cdnEntries.map((entry) =>
+  const cdnConfigs = buildConfig.cdnEntries.map(entry =>
     createConfig(entry.input, entry.output, entry.name, entry.minify || false)
   );
 
@@ -85,12 +95,12 @@ if (BUILD_MODE === 'bundle') {
   console.log(`✅ Bundle 빌드: ${output}`);
 
   configs = [
-    // ESM 번들 (import 사용)
-    createConfig(input, output.replace('.js', '.esm.js'), name, false, 'esm'),
+    // ESM 번들 (import 사용) - 타입 정의 생성
+    createConfig(input, output.replace('.js', '.esm.js'), name, false, 'esm', true),
     // UMD 번들 (브라우저 + Node.js 호환)
-    createConfig(input, output.replace('.js', '.umd.js'), name, false, 'umd'),
+    createConfig(input, output.replace('.js', '.umd.js'), name, false, 'umd', false),
     // Minified UMD
-    createConfig(input, output.replace('.js', '.umd.min.js'), name, true, 'umd'),
+    createConfig(input, output.replace('.js', '.umd.min.js'), name, true, 'umd', false),
   ];
 }
 
