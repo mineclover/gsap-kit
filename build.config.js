@@ -68,6 +68,33 @@ export const buildConfig = {
       output: 'dist/lib/types.js',
       name: null,
     },
+
+    // Testing
+    {
+      input: 'src/lib/testing/mouse-simulator.ts',
+      output: 'dist/lib/testing/mouse-simulator.js',
+      name: 'MouseSimulator',
+    },
+    {
+      input: 'src/lib/testing/path-visualizer.ts',
+      output: 'dist/lib/testing/path-visualizer.js',
+      name: 'PathVisualizer',
+    },
+    {
+      input: 'src/lib/testing/test-runner.ts',
+      output: 'dist/lib/testing/test-runner.js',
+      name: 'TestRunner',
+    },
+    {
+      input: 'src/lib/testing/reporter.ts',
+      output: 'dist/lib/testing/reporter.js',
+      name: 'TestReporter',
+    },
+    {
+      input: 'src/lib/testing/index.ts',
+      output: 'dist/lib/testing/index.js',
+      name: 'GSAPKitTesting',
+    },
   ],
 
   // Bundle 방식의 진입점

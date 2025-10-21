@@ -18,9 +18,9 @@ export * from './lib/core';
 export * from './lib/draggable/advanced';
 // Draggable
 export * from './lib/draggable/basic';
-
+// Testing
+export * from './lib/testing';
 // Types
 export * from './lib/types';
-
 // Utils
 export * from './lib/utils/helpers';

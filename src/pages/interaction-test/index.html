@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Interaction Test Runner - GSAP Kit</title>
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <div class="container">
+    <header class="page-header">
+      <h1>🧪 Interaction Test Runner</h1>
+      <p>Automated testing for GSAP Kit interactions with mouse simulation & path visualization</p>
+    </header>
+
+    <div class="controls">
+      <button id="runAllTests" class="btn btn-primary">▶ Run All Tests</button>
+      <button id="runDragTests" class="btn btn-secondary">Run Drag Tests</button>
+      <button id="clearTests" class="btn btn-danger">Clear Results</button>
+      <div class="controls-right">
+        <label>
+          <input type="checkbox" id="visualizeToggle" checked>
+          Visualize Paths
+        </label>
+        <label>
+          <input type="checkbox" id="slowMotionToggle">
+          Slow Motion (3x)
+        </label>
+      </div>
+    </div>
+
+    <!-- Test Target: Line Matching Game -->
+    <div id="test-area" class="test-area">
+      <h2>Test Target: Line Matching</h2>
+      <div class="matching-game">
+        <div class="group group-a">
+          <div class="match-item" id="fruit-1" data-match-id="a1">사과 🍎</div>
+          <div class="match-item" id="fruit-2" data-match-id="a2">바나나 🍌</div>
+          <div class="match-item" id="fruit-3" data-match-id="a3">오렌지 🍊</div>
+        </div>
+
+        <div class="group group-b">
+          <div class="match-item" id="english-1" data-match-id="b1">Apple</div>
+          <div class="match-item" id="english-2" data-match-id="b2">Orange</div>
+          <div class="match-item" id="english-3" data-match-id="b3">Banana</div>
+        </div>
+      </div>
+
+      <div class="game-status">
+        <p>정답: <span id="correctCount">0</span></p>
+        <p>오답: <span id="incorrectCount">0</span></p>
+        <button id="resetGame" class="btn btn-sm">Reset Game</button>
+      </div>
+    </div>
+
+    <!-- Test Results -->
+    <div id="test-results" class="test-results">
+      <h2>Test Results</h2>
+      <div id="reporter-container"></div>
+    </div>
+
+    <!-- Test Log -->
+    <div class="test-log">
+      <h3>Test Log</h3>
+      <div id="log-container"></div>
+    </div>
+  </div>
+
+  <!-- GSAP CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.13/dist/gsap.min.js"></script>
+
+  <!-- Main Script -->
+  <script src="./main.js"></script>
+</body>
+</html>
