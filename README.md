@@ -147,6 +147,42 @@ gsap-kit/
 | `makeSwipeable()` | 스와이프 감지 (모바일) |
 | `makeDraggableWithRange()` | 값 매핑 드래그 |
 
+### 🏗️ Core System (Validator & Builder)
+
+| 클래스/함수 | 설명 |
+|------------|------|
+| `DOMValidator` | DOM 조건 검증 시스템 |
+| `InteractionBuilder` | 조건 검증 후 인터렉션 자동 생성 |
+| `buildWithValidation()` | 빠른 검증 후 빌드 헬퍼 |
+| `autoDetectAndBuild()` | 데이터 속성 기반 자동 감지 |
+
+**주요 기능:**
+- ✅ 요소 개수 검증 (min, max, exact)
+- ✅ 상위 요소 검증 (requiredParent)
+- ✅ 필수 속성 검증 (requiredAttributes)
+- ✅ 커스텀 검증 로직
+- ✅ 조건 만족 시 자동 인터렉션 생성
+- 🚀 데이터 속성 기반 자동 초기화
+
+**사용 예시:**
+```typescript
+import { InteractionBuilder } from 'gsap-kit';
+import { createLineMatching } from 'gsap-kit';
+
+const builder = new InteractionBuilder({
+  validation: {
+    selector: '.item',
+    minElements: 4,
+    exactElements: 8
+  }
+});
+
+const matching = builder.build(createLineMatching, {
+  items: { /* ... */ },
+  pairs: { /* ... */ }
+});
+```
+
 ### ⭐ Line Matching (선 연결 매칭)
 
 | 함수 | 설명 |
@@ -728,12 +764,27 @@ function customAnimation(
 - Safari (최신)
 - Edge (최신)
 
+## 📚 가이드 문서
+
+프로젝트를 더 깊이 이해하고 활용하기 위한 문서들:
+
+- **[🚀 QUICK_START.md](./QUICK_START.md)** - 5분 안에 첫 인터렉션 만들기
+- **[🏗️ INTERACTION_BUILDER_GUIDE.md](./INTERACTION_BUILDER_GUIDE.md)** - 인터렉션 빌더 설계 가이드
+- **[💡 BUILDER_USAGE_EXAMPLES.md](./BUILDER_USAGE_EXAMPLES.md)** - Validator & Builder 사용 예제
+- **[📦 BUILD_SYSTEM_GUIDE.md](./BUILD_SYSTEM_GUIDE.md)** - 이중 빌드 시스템 가이드 (CDN vs Bundle)
+- **[📁 PROJECT_STRUCTURE.md](./PROJECT_STRUCTURE.md)** - 프로젝트 구조 상세 가이드
+
 ## 참고 자료
 
+### GSAP 공식 문서
 - [GSAP 공식 문서](https://gsap.com/docs/)
 - [GSAP Draggable](https://gsap.com/docs/v3/Plugins/Draggable/)
 - [GSAP ScrollTrigger](https://gsap.com/docs/v3/Plugins/ScrollTrigger/)
 - [GSAP Easing](https://gsap.com/docs/v3/Eases)
+
+### 빌드 도구
+- [Rollup 공식 문서](https://rollupjs.org/)
+- [TypeScript 핸드북](https://www.typescriptlang.org/docs/)
 
 ## 라이센스
 
@@ -751,15 +802,24 @@ MIT License
 
 ## 로드맵
 
+### 완료된 기능 ✅
 - [x] ⭐ Line Matching 시스템 구현 (SVG 기반 선 연결)
-- [x] Rollup 번들러 설정 (IIFE 포맷)
+- [x] Rollup 번들러 설정 (이중 빌드: CDN + Bundle 모드)
 - [x] TypeScript 타입 정의 및 export
+- [x] 🏗️ Core System (Validator & Builder) 구현
+- [x] 📚 온보딩 문서 작성 (5개 가이드 문서)
+- [x] 🎨 인터렉션 빌더 아키텍처 설계
+- [x] 📦 페이지 중심 개발 방식으로 전환
+
+### 진행 예정 🚧
+- [ ] 새 인터렉션: Puzzle Drag & Drop
+- [ ] 새 인터렉션: Keyboard Control
+- [ ] Registry 시스템 (인터렉션 자동 등록)
+- [ ] 데이터 속성 기반 완전 자동 초기화
 - [ ] 추가 드래그 함수 (충돌 감지, 드롭존 등)
 - [ ] 더 많은 Line Matching 옵션 (곡선, 커스텀 마커 등)
-- [ ] 더 많은 애니메이션 프리셋
 - [ ] npm 패키지 배포
 - [ ] 온라인 데모 사이트
-- [ ] 더 많은 예제
 
 ## 스타 히스토리
 

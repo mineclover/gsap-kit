@@ -8,6 +8,18 @@
 export const buildConfig = {
   // CDN 방식으로 빌드할 라이브러리 목록
   cdnEntries: [
+    // Core System
+    {
+      input: 'src/lib/core/validator.ts',
+      output: 'dist/lib/core/validator.js',
+      name: 'DOMValidator',
+    },
+    {
+      input: 'src/lib/core/builder.ts',
+      output: 'dist/lib/core/builder.js',
+      name: 'InteractionBuilder',
+    },
+
     // Advanced Features
     {
       input: 'src/lib/advanced/line-matching.ts',

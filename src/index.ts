@@ -6,18 +6,18 @@
  * import { fadeIn, slideInLeft, createDraggable } from 'gsap-kit';
  */
 
-// Animations
-export * from './lib/animations/fade';
-export * from './lib/animations/slide';
-export * from './lib/animations/rotate';
-export * from './lib/animations/scroll';
-
-// Draggable
-export * from './lib/draggable/basic';
-export * from './lib/draggable/advanced';
-
 // Advanced Features
 export * from './lib/advanced/line-matching';
+// Animations
+export * from './lib/animations/fade';
+export * from './lib/animations/rotate';
+export * from './lib/animations/scroll';
+export * from './lib/animations/slide';
+// Core System (Validator & Builder)
+export * from './lib/core';
+export * from './lib/draggable/advanced';
+// Draggable
+export * from './lib/draggable/basic';
 
 // Types
 export * from './lib/types';
