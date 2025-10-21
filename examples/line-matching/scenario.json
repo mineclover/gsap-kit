@@ -1,0 +1,118 @@
+{
+  "name": "Line Matching Example & Test Suite",
+  "target": {
+    "html": "./index.html",
+    "waitForSelector": ".line-matching-point",
+    "viewport": {
+      "width": 1280,
+      "height": 800
+    },
+    "timeout": 5000
+  },
+  "tests": [
+    {
+      "id": "correct-apple",
+      "name": "사과 → Apple (정답)",
+      "actions": [
+        {
+          "type": "drag",
+          "from": "#fruit-1",
+          "to": "#english-1",
+          "duration": 1000
+        }
+      ],
+      "assertions": [
+        {
+          "eval": "window.testState.correctCount > 0"
+        },
+        {
+          "eval": "window.testState.correctCount",
+          "expected": 1
+        }
+      ],
+      "capturePoints": ["start", "middle", "end"]
+    },
+    {
+      "id": "correct-banana",
+      "name": "바나나 → Banana (정답)",
+      "actions": [
+        {
+          "type": "drag",
+          "from": "#fruit-2",
+          "to": "#english-3",
+          "duration": 1000
+        }
+      ],
+      "assertions": [
+        {
+          "eval": "window.testState.correctCount > 0"
+        }
+      ],
+      "capturePoints": ["start", "middle", "end"]
+    },
+    {
+      "id": "incorrect-match",
+      "name": "사과 → Orange (오답)",
+      "actions": [
+        {
+          "type": "drag",
+          "from": "#fruit-1",
+          "to": "#english-2",
+          "duration": 1000
+        }
+      ],
+      "assertions": [
+        {
+          "eval": "window.testState.incorrectCount > 0"
+        },
+        {
+          "eval": "window.testState.correctCount",
+          "expected": 0
+        }
+      ],
+      "capturePoints": ["start", "middle", "end"]
+    },
+    {
+      "id": "complete-all",
+      "name": "전체 매칭 완료",
+      "actions": [
+        {
+          "type": "drag",
+          "from": "#fruit-1",
+          "to": "#english-1",
+          "duration": 800
+        },
+        {
+          "type": "wait",
+          "delay": 500
+        },
+        {
+          "type": "drag",
+          "from": "#fruit-2",
+          "to": "#english-3",
+          "duration": 800
+        },
+        {
+          "type": "wait",
+          "delay": 500
+        },
+        {
+          "type": "drag",
+          "from": "#fruit-3",
+          "to": "#english-2",
+          "duration": 800
+        }
+      ],
+      "assertions": [
+        {
+          "eval": "window.testState.correctCount",
+          "expected": 3
+        },
+        {
+          "eval": "window.testState.completed"
+        }
+      ],
+      "capturePoints": ["start", "end"]
+    }
+  ]
+}

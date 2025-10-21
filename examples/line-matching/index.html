@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Line Matching Example - GSAP Kit</title>
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <div class="container">
+    <header class="header">
+      <h1>Line Matching Example</h1>
+      <p>선을 연결하여 과일과 영어 이름을 매칭하세요</p>
+    </header>
+
+    <div class="game-area">
+      <div class="group group-a">
+        <div class="item" id="fruit-1" data-match-id="a1">
+          <span class="emoji">🍎</span>
+          <span class="label">사과</span>
+        </div>
+        <div class="item" id="fruit-2" data-match-id="a2">
+          <span class="emoji">🍌</span>
+          <span class="label">바나나</span>
+        </div>
+        <div class="item" id="fruit-3" data-match-id="a3">
+          <span class="emoji">🍊</span>
+          <span class="label">오렌지</span>
+        </div>
+      </div>
+
+      <div class="group group-b">
+        <div class="item" id="english-1" data-match-id="b1">
+          <span class="label">Apple</span>
+        </div>
+        <div class="item" id="english-2" data-match-id="b2">
+          <span class="label">Orange</span>
+        </div>
+        <div class="item" id="english-3" data-match-id="b3">
+          <span class="label">Banana</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="status">
+      <div class="stat">
+        <span class="stat-label">정답:</span>
+        <span class="stat-value" id="correctCount">0</span>
+      </div>
+      <div class="stat">
+        <span class="stat-label">오답:</span>
+        <span class="stat-value" id="incorrectCount">0</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- GSAP CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.13/dist/gsap.min.js"></script>
+
+  <!-- GSAP Kit Library (file:// 프로토콜 대응) -->
+  <script>
+    const libPath = window.location.protocol === 'file:'
+      ? window.location.pathname.replace(/\/examples\/[^/]+\/index\.html$/, '/dist/lib/line-matching.min.js')
+      : '../../dist/lib/line-matching.min.js';
+
+    document.write(`<script src="${libPath}"><\/script>`);
+  </script>
+
+  <script>
+    // Test State (for Playwright assertions)
+    window.testState = {
+      correctCount: 0,
+      incorrectCount: 0,
+      completed: false,
+    };
+
+    // Initialize Line Matching (window.createLineMatching 로드 대기)
+    window.addEventListener('load', function() {
+      if (!window.createLineMatching) {
+        console.error('createLineMatching not loaded!');
+        return;
+      }
+
+      const matching = window.createLineMatching({
+      items: {
+        a1: { selector: '#fruit-1', point: { x: 'right', y: 'center' } },
+        a2: { selector: '#fruit-2', point: { x: 'right', y: 'center' } },
+        a3: { selector: '#fruit-3', point: { x: 'right', y: 'center' } },
+        b1: { selector: '#english-1', point: { x: 'left', y: 'center' } },
+        b2: { selector: '#english-2', point: { x: 'left', y: 'center' } },
+        b3: { selector: '#english-3', point: { x: 'left', y: 'center' } },
+      },
+      pairs: {
+        a1: 'b1', // 사과 - Apple
+        a2: 'b3', // 바나나 - Banana
+        a3: 'b2', // 오렌지 - Orange
+      },
+      lineWidth: 3,
+      correctColor: '#4CAF50',
+      incorrectColor: '#F44336',
+      lineStyle: 'arrow',
+      allowMultipleAttempts: true,
+      showFeedback: true,
+      onCorrect: (fromId, toId) => {
+        window.testState.correctCount++;
+        document.getElementById('correctCount').textContent = window.testState.correctCount;
+        console.log(`✅ Correct: ${fromId} → ${toId}`);
+      },
+      onIncorrect: (fromId, toId) => {
+        window.testState.incorrectCount++;
+        document.getElementById('incorrectCount').textContent = window.testState.incorrectCount;
+        console.log(`❌ Incorrect: ${fromId} → ${toId}`);
+      },
+      onComplete: (score, total) => {
+        window.testState.completed = true;
+        console.log(`🎉 Complete! Score: ${score}/${total}`);
+      },
+    });
+
+      console.log('✓ Line Matching initialized');
+      console.log('✓ Test state available at window.testState');
+    });
+  </script>
+</body>
+</html>

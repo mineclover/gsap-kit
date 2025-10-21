@@ -30,6 +30,9 @@
     "prebuild": "npm run clean",
     "serve": "npx http-server -p 8000 -o",
     "dev": "npx http-server -p 8000 -o /dist/pages",
+    "example": "ts-node scripts/example-runner.ts",
+    "example:all": "ts-node scripts/example-runner.ts --all",
+    "example:viewer": "npm run build:cdn && live-server --port=8000 --open=/dist/pages/test-viewer --watch=dist,src/pages/test-viewer --no-css-inject",
     "dev:basic": "concurrently \"npm run build:watch\" \"live-server --port=8000 --open=/dist/pages/basic --watch=dist,src/pages --no-css-inject\"",
     "dev:draggable": "concurrently \"npm run build:watch\" \"live-server --port=8000 --open=/dist/pages/draggable --watch=dist,src/pages --no-css-inject\"",
     "dev:scroll": "concurrently \"npm run build:watch\" \"live-server --port=8000 --open=/dist/pages/scroll --watch=dist,src/pages --no-css-inject\"",
@@ -96,7 +99,7 @@
     "@rollup/plugin-terser": "0.4.4",
     "@rollup/plugin-typescript": "12.1.4",
     "@types/gsap": "^3.0.0",
-    "@types/node": "^20.10.0",
+    "@types/node": "20.19.23",
     "concurrently": "^8.2.2",
     "cross-env": "10.1.0",
     "glob": "^10.3.10",
@@ -104,8 +107,10 @@
     "lint-staged": "16.2.5",
     "live-server": "^1.2.2",
     "nodemon": "^3.0.2",
+    "playwright": "1.56.1",
     "rimraf": "6.0.1",
     "rollup": "4.52.5",
+    "ts-node": "10.9.2",
     "typescript": "^5.3.3"
   }
 }
