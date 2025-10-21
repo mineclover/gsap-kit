@@ -5,7 +5,7 @@
 
 /// <reference types="gsap" />
 
-import { AnimationTarget, BaseAnimationOptions } from '../types';
+import type { AnimationTarget, BaseAnimationOptions } from '../types';
 
 /**
  * ScrollTrigger 등록
@@ -64,10 +64,7 @@ export interface ScrollPinOptions {
 /**
  * 스크롤 시 페이드 인
  */
-export function scrollFadeIn(
-  target: AnimationTarget,
-  options: ScrollOptions = {}
-): gsap.core.Tween {
+export function scrollFadeIn(target: AnimationTarget, options: ScrollOptions = {}): gsap.core.Tween {
   const defaults: ScrollOptions = {
     duration: 1,
     ease: 'power2.out',
@@ -76,7 +73,7 @@ export function scrollFadeIn(
     end: 'bottom 20%',
     toggleActions: 'play none none none',
     scrub: false,
-    markers: false
+    markers: false,
   };
 
   const config = { ...defaults, ...options };
@@ -92,18 +89,15 @@ export function scrollFadeIn(
       end: config.end,
       toggleActions: config.toggleActions,
       scrub: config.scrub,
-      markers: config.markers
-    }
+      markers: config.markers,
+    },
   });
 }
 
 /**
  * 스크롤 시 왼쪽에서 슬라이드 인
  */
-export function scrollSlideInLeft(
-  target: AnimationTarget,
-  options: ScrollOptions = {}
-): gsap.core.Tween {
+export function scrollSlideInLeft(target: AnimationTarget, options: ScrollOptions = {}): gsap.core.Tween {
   const defaults: ScrollOptions = {
     duration: 1,
     ease: 'power2.out',
@@ -111,7 +105,7 @@ export function scrollSlideInLeft(
     start: 'top 80%',
     toggleActions: 'play none none none',
     scrub: false,
-    markers: false
+    markers: false,
   };
 
   const config = { ...defaults, ...options };
@@ -126,18 +120,15 @@ export function scrollSlideInLeft(
       start: config.start,
       toggleActions: config.toggleActions,
       scrub: config.scrub,
-      markers: config.markers
-    }
+      markers: config.markers,
+    },
   });
 }
 
 /**
  * 스크롤 시 오른쪽에서 슬라이드 인
  */
-export function scrollSlideInRight(
-  target: AnimationTarget,
-  options: ScrollOptions = {}
-): gsap.core.Tween {
+export function scrollSlideInRight(target: AnimationTarget, options: ScrollOptions = {}): gsap.core.Tween {
   const defaults: ScrollOptions = {
     duration: 1,
     ease: 'power2.out',
@@ -145,7 +136,7 @@ export function scrollSlideInRight(
     start: 'top 80%',
     toggleActions: 'play none none none',
     scrub: false,
-    markers: false
+    markers: false,
   };
 
   const config = { ...defaults, ...options };
@@ -160,24 +151,21 @@ export function scrollSlideInRight(
       start: config.start,
       toggleActions: config.toggleActions,
       scrub: config.scrub,
-      markers: config.markers
-    }
+      markers: config.markers,
+    },
   });
 }
 
 /**
  * 스크롤 진행도에 따라 애니메이션 (scrub 모드)
  */
-export function scrollProgress(
-  target: AnimationTarget,
-  options: ScrollProgressOptions = {}
-): gsap.core.Tween {
+export function scrollProgress(target: AnimationTarget, options: ScrollProgressOptions = {}): gsap.core.Tween {
   const defaults: ScrollProgressOptions = {
     to: { y: 100 },
     start: 'top bottom',
     end: 'bottom top',
     scrub: true,
-    markers: false
+    markers: false,
   };
 
   const config = { ...defaults, ...options };
@@ -189,23 +177,20 @@ export function scrollProgress(
       start: config.start,
       end: config.end,
       scrub: config.scrub,
-      markers: config.markers
-    }
+      markers: config.markers,
+    },
   });
 }
 
 /**
  * 패럴랙스 효과 (요소가 다른 속도로 스크롤)
  */
-export function parallax(
-  target: AnimationTarget,
-  options: ParallaxOptions = {}
-): gsap.core.Tween {
+export function parallax(target: AnimationTarget, options: ParallaxOptions = {}): gsap.core.Tween {
   const defaults: ParallaxOptions = {
     speed: 0.5,
     start: 'top bottom',
     end: 'bottom top',
-    markers: false
+    markers: false,
   };
 
   const config = { ...defaults, ...options };
@@ -219,23 +204,20 @@ export function parallax(
       start: config.start,
       end: config.end,
       scrub: true,
-      markers: config.markers
-    }
+      markers: config.markers,
+    },
   });
 }
 
 /**
  * 스크롤 시 핀 고정 (요소를 화면에 고정)
  */
-export function scrollPin(
-  target: gsap.DOMTarget,
-  options: ScrollPinOptions = {}
-): ScrollTrigger {
+export function scrollPin(target: gsap.DOMTarget, options: ScrollPinOptions = {}): ScrollTrigger {
   const defaults: ScrollPinOptions = {
     start: 'top top',
     end: '+=500',
     pin: true,
-    markers: false
+    markers: false,
   };
 
   const config = { ...defaults, ...options };
@@ -245,7 +227,7 @@ export function scrollPin(
     start: config.start,
     end: config.end,
     pin: config.pin,
-    markers: config.markers
+    markers: config.markers,
   });
 }
 
@@ -263,7 +245,7 @@ export function scrollStagger(
     y: 50,
     start: 'top 80%',
     toggleActions: 'play none none none',
-    markers: false
+    markers: false,
   };
 
   const config = { ...defaults, ...options };
@@ -278,7 +260,7 @@ export function scrollStagger(
       trigger: config.trigger || (target as gsap.DOMTarget),
       start: config.start,
       toggleActions: config.toggleActions,
-      markers: config.markers
-    }
+      markers: config.markers,
+    },
   });
 }

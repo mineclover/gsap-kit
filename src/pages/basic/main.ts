@@ -1,6 +1,6 @@
-import { fadeIn, fadeInUp, fadeInDown, fadeInLeft, fadeInRight, fadeInScale } from '../../lib/animations/fade';
-import { slideInLeft, slideInRight, slideInUp, slideInDown } from '../../lib/animations/slide';
-import { rotate, rotateIn, flipX, flipY } from '../../lib/animations/rotate';
+import { fadeIn, fadeInDown, fadeInLeft, fadeInRight, fadeInScale, fadeInUp } from '../../lib/animations/fade';
+import { flipX, flipY, rotate, rotateIn } from '../../lib/animations/rotate';
+import { slideInDown, slideInLeft, slideInRight, slideInUp } from '../../lib/animations/slide';
 
 // Fade 애니메이션 실행
 function runFadeAnimations() {
@@ -32,7 +32,7 @@ function runRotateAnimations() {
 function runStaggerAnimation() {
   fadeInUp('.stagger-box', {
     stagger: 0.1,
-    duration: 0.6
+    duration: 0.6,
   });
 }
 
@@ -44,13 +44,13 @@ function runStaggerAnimation() {
 
 // 개별 박스 클릭 이벤트
 document.querySelectorAll('.box').forEach(box => {
-  box.addEventListener('click', function(this: HTMLElement) {
+  box.addEventListener('click', function (this: HTMLElement) {
     gsap.to(this, {
       scale: 1.1,
       duration: 0.3,
       yoyo: true,
       repeat: 1,
-      ease: "power2.inOut"
+      ease: 'power2.inOut',
     });
   });
 });
@@ -61,7 +61,7 @@ window.addEventListener('load', () => {
     opacity: 0,
     y: -50,
     duration: 1,
-    ease: "power3.out"
+    ease: 'power3.out',
   });
 
   gsap.from('.section-title', {
@@ -69,6 +69,6 @@ window.addEventListener('load', () => {
     x: -50,
     duration: 0.8,
     stagger: 0.2,
-    ease: "power2.out"
+    ease: 'power2.out',
   });
 });

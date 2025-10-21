@@ -48,16 +48,16 @@ try {
   const drag = makeDraggable('#test-box', {
     type: 'x,y',
     bounds: '#demo-area',
-    onDragStart: function(this: Draggable.Vars) {
+    onDragStart: function (this: Draggable.Vars) {
       addLog('✅ 드래그 시작!');
     },
-    onDrag: function(this: Draggable.Vars) {
+    onDrag: function (this: Draggable.Vars) {
       // 너무 많은 로그 방지를 위해 주석 처리
       // addLog(`드래그 중: x=${Math.round(this.x)}, y=${Math.round(this.y)}`);
     },
-    onDragEnd: function(this: Draggable.Vars) {
+    onDragEnd: function (this: Draggable.Vars) {
       addLog(`✅ 드래그 종료: x=${Math.round(this.x)}, y=${Math.round(this.y)}`);
-    }
+    },
   });
 
   if (drag && drag.length > 0) {

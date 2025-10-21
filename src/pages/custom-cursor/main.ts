@@ -15,17 +15,17 @@ function createInstance(hideCursor: boolean): void {
   currentInstance = createLineMatching({
     container: '#demo-custom-cursor',
     items: {
-      'a': { selector: '[data-id="a"]', point: { x: 'right', y: 'center' } },
-      'b1': { selector: '[data-id="b1"]', point: { x: 'left', y: 'center' } },
-      'b2': { selector: '[data-id="b2"]', point: { x: 'left', y: 'center' } }
+      a: { selector: '[data-id="a"]', point: { x: 'right', y: 'center' } },
+      b1: { selector: '[data-id="b1"]', point: { x: 'left', y: 'center' } },
+      b2: { selector: '[data-id="b2"]', point: { x: 'left', y: 'center' } },
     },
     pairs: {
-      'a': ['b1', 'b2']  // A는 B1 또는 B2와 연결 가능
+      a: ['b1', 'b2'], // A는 B1 또는 B2와 연결 가능
     },
     lineStyle: 'arrow',
     lineWidth: 3,
     arrowSize: 15,
-    hideCursor: hideCursor,  // 커서 숨김 옵션
+    hideCursor: hideCursor, // 커서 숨김 옵션
     lineColor: '#667eea',
     correctColor: '#4CAF50',
     allowMultipleAttempts: true,
@@ -35,7 +35,7 @@ function createInstance(hideCursor: boolean): void {
     },
     onIncorrect: (fromId: string, toId: string) => {
       console.log(`❌ 오답: ${fromId} → ${toId}`);
-    }
+    },
   });
 
   updateModeStatus();
@@ -157,10 +157,13 @@ function unfreezeDragState(): void {
 
 // Polygon points를 스케일링하는 함수
 function scalePolygonPoints(points: string, scale: number): string {
-  return points.split(' ').map(pair => {
-    const [x, y] = pair.split(',').map(Number);
-    return `${x * scale},${y * scale}`;
-  }).join(' ');
+  return points
+    .split(' ')
+    .map(pair => {
+      const [x, y] = pair.split(',').map(Number);
+      return `${x * scale},${y * scale}`;
+    })
+    .join(' ');
 }
 
 // Shape 값을 파싱하는 함수
@@ -170,7 +173,12 @@ function parseShapeValue(shapeValue: string): { type: string; data: string } {
 }
 
 // Marker 엘리먼트 생성 (polygon, circle, chevron 등)
-function createMarkerElement(type: string, data: string, color: string, scale: number): { element: SVGElement; code: string } {
+function createMarkerElement(
+  type: string,
+  data: string,
+  color: string,
+  scale: number
+): { element: SVGElement; code: string } {
   const ns = 'http://www.w3.org/2000/svg';
 
   if (type === 'polygon') {
@@ -181,7 +189,7 @@ function createMarkerElement(type: string, data: string, color: string, scale: n
     return { element: polygon, code: `<polygon points="${scaledPoints}" fill="${color}" />` };
   } else if (type === 'circle') {
     const circle = document.createElementNS(ns, 'circle');
-    const radius = parseFloat(data) * scale;
+    const radius = Number.parseFloat(data) * scale;
     circle.setAttribute('cx', radius.toString());
     circle.setAttribute('cy', radius.toString());
     circle.setAttribute('r', radius.toString());
@@ -190,7 +198,7 @@ function createMarkerElement(type: string, data: string, color: string, scale: n
   } else if (type === 'circle-stroke') {
     // 빈 원형: 배경 원 + 테두리 원 (선을 가리기 위해)
     const g = document.createElementNS(ns, 'g');
-    const radius = parseFloat(data) * scale;
+    const radius = Number.parseFloat(data) * scale;
     const strokeWidth = Math.max(1, radius * 0.2);
 
     // 배경 원 (흰색, 선을 가림)
@@ -219,7 +227,7 @@ function createMarkerElement(type: string, data: string, color: string, scale: n
   } else if (type === 'chevron') {
     // 열린 삼각형: 꺾인 막대기 형태 (polyline with stroke)
     // 꼭지점이 오른쪽(선 끝)에 오도록 배치
-    const size = parseFloat(data) * scale;
+    const size = Number.parseFloat(data) * scale;
     const strokeWidth = Math.max(1.5, size * 0.15);
 
     // V 형태의 polyline - 꼭지점이 오른쪽에 위치
@@ -233,7 +241,10 @@ function createMarkerElement(type: string, data: string, color: string, scale: n
     polyline.setAttribute('stroke-linecap', 'round');
     polyline.setAttribute('stroke-linejoin', 'round');
 
-    return { element: polyline, code: `<polyline points="${points}" fill="none" stroke="${color}" stroke-width="${strokeWidth}" stroke-linecap="round" stroke-linejoin="round" />` };
+    return {
+      element: polyline,
+      code: `<polyline points="${points}" fill="none" stroke="${color}" stroke-width="${strokeWidth}" stroke-linecap="round" stroke-linejoin="round" />`,
+    };
   }
 
   // Fallback
@@ -251,21 +262,21 @@ function calculateMarkerDimensions(type: string, data: string, scale: number): {
     const maxY = Math.max(...points.map(p => p.y));
     return {
       width: maxX * scale,
-      height: maxY * scale
+      height: maxY * scale,
     };
   } else if (type === 'circle' || type === 'circle-stroke') {
-    const radius = parseFloat(data);
+    const radius = Number.parseFloat(data);
     const diameter = radius * 2 * scale;
     return {
       width: diameter,
-      height: diameter
+      height: diameter,
     };
   } else if (type === 'chevron') {
-    const size = parseFloat(data) * scale;
+    const size = Number.parseFloat(data) * scale;
     const height = size * 0.7;
     return {
       width: size,
-      height: size + height // 1.7 * size
+      height: size + height, // 1.7 * size
     };
   }
   return { width: 15, height: 15 }; // fallback
@@ -274,11 +285,11 @@ function calculateMarkerDimensions(type: string, data: string, scale: number): {
 // Marker 파라미터 업데이트
 function updateMarkerParams(): void {
   // 파라미터 값 읽기
-  const refX = parseFloat((document.getElementById('refX') as HTMLInputElement).value);
-  const refY = parseFloat((document.getElementById('refY') as HTMLInputElement).value);
+  const refX = Number.parseFloat((document.getElementById('refX') as HTMLInputElement).value);
+  const refY = Number.parseFloat((document.getElementById('refY') as HTMLInputElement).value);
   const shapeValue = (document.getElementById('polygonShape') as HTMLSelectElement).value;
-  const lineWidth = parseFloat((document.getElementById('lineWidth') as HTMLInputElement).value);
-  const markerScale = parseFloat((document.getElementById('markerScale') as HTMLInputElement).value);
+  const lineWidth = Number.parseFloat((document.getElementById('lineWidth') as HTMLInputElement).value);
+  const markerScale = Number.parseFloat((document.getElementById('markerScale') as HTMLInputElement).value);
   const markerColor = (document.getElementById('markerColor') as HTMLInputElement).value;
   const useStrokeWidth = (document.getElementById('markerUnits') as HTMLInputElement).checked;
 
@@ -326,11 +337,33 @@ function updateMarkerParams(): void {
   if (paramCode) paramCode.textContent = code;
 
   // SVG 프리뷰 렌더링
-  updateSvgPreview(markerWidth, markerHeight, scaledRefX, scaledRefY, type, data, markerScale, lineWidth, markerColor, useStrokeWidth);
+  updateSvgPreview(
+    markerWidth,
+    markerHeight,
+    scaledRefX,
+    scaledRefY,
+    type,
+    data,
+    markerScale,
+    lineWidth,
+    markerColor,
+    useStrokeWidth
+  );
 
   // 디버그 SVG가 있으면 실시간 업데이트
   if (debugSvg) {
-    updateDebugSvgWithParams(markerWidth, markerHeight, scaledRefX, scaledRefY, type, data, markerScale, lineWidth, markerColor, useStrokeWidth);
+    updateDebugSvgWithParams(
+      markerWidth,
+      markerHeight,
+      scaledRefX,
+      scaledRefY,
+      type,
+      data,
+      markerScale,
+      lineWidth,
+      markerColor,
+      useStrokeWidth
+    );
   }
 }
 
@@ -345,7 +378,7 @@ function updateSvgPreview(
   scale: number,
   lineWidth: number,
   markerColor: string,
-  useStrokeWidth: boolean = false
+  useStrokeWidth = false
 ): void {
   const previewContainer = document.getElementById('svgPreview');
   if (!previewContainer) return;
@@ -383,7 +416,7 @@ function updateSvgPreview(
   const lines = [
     { x1: 20, y1: 50, x2: 80, y2: 50, label: '→' },
     { x1: 100, y1: 70, x2: 150, y2: 30, label: '↗' },
-    { x1: 170, y1: 30, x2: 220, y2: 70, label: '↘' }
+    { x1: 170, y1: 30, x2: 220, y2: 70, label: '↘' },
   ];
 
   lines.forEach(({ x1, y1, x2, y2 }) => {
@@ -412,7 +445,7 @@ function updateDebugSvgWithParams(
   scale: number,
   lineWidth: number,
   markerColor: string,
-  useStrokeWidth: boolean = false
+  useStrokeWidth = false
 ): void {
   if (!debugSvg) return;
 

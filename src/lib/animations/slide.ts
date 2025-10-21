@@ -4,7 +4,7 @@
 
 /// <reference types="gsap" />
 
-import { AnimationTarget, BaseAnimationOptions } from '../types';
+import type { AnimationTarget, BaseAnimationOptions } from '../types';
 
 /**
  * 슬라이드 애니메이션 옵션
@@ -17,16 +17,13 @@ export interface SlideOptions extends BaseAnimationOptions {
 /**
  * 요소를 왼쪽에서 슬라이드 인
  */
-export function slideInLeft(
-  target: AnimationTarget,
-  options: SlideOptions = {}
-): gsap.core.Tween | gsap.core.Timeline {
+export function slideInLeft(target: AnimationTarget, options: SlideOptions = {}): gsap.core.Tween | gsap.core.Timeline {
   const defaults: SlideOptions = {
     duration: 1,
     delay: 0,
     ease: 'power3.out',
     x: -100,
-    stagger: 0
+    stagger: 0,
   };
 
   const config = { ...defaults, ...options };
@@ -36,7 +33,7 @@ export function slideInLeft(
     duration: config.duration,
     delay: config.delay,
     ease: config.ease,
-    stagger: config.stagger
+    stagger: config.stagger,
   });
 }
 
@@ -52,7 +49,7 @@ export function slideInRight(
     delay: 0,
     ease: 'power3.out',
     x: 100,
-    stagger: 0
+    stagger: 0,
   };
 
   const config = { ...defaults, ...options };
@@ -62,23 +59,20 @@ export function slideInRight(
     duration: config.duration,
     delay: config.delay,
     ease: config.ease,
-    stagger: config.stagger
+    stagger: config.stagger,
   });
 }
 
 /**
  * 요소를 위에서 슬라이드 인
  */
-export function slideInUp(
-  target: AnimationTarget,
-  options: SlideOptions = {}
-): gsap.core.Tween | gsap.core.Timeline {
+export function slideInUp(target: AnimationTarget, options: SlideOptions = {}): gsap.core.Tween | gsap.core.Timeline {
   const defaults: SlideOptions = {
     duration: 1,
     delay: 0,
     ease: 'power3.out',
     y: -100,
-    stagger: 0
+    stagger: 0,
   };
 
   const config = { ...defaults, ...options };
@@ -88,23 +82,20 @@ export function slideInUp(
     duration: config.duration,
     delay: config.delay,
     ease: config.ease,
-    stagger: config.stagger
+    stagger: config.stagger,
   });
 }
 
 /**
  * 요소를 아래에서 슬라이드 인
  */
-export function slideInDown(
-  target: AnimationTarget,
-  options: SlideOptions = {}
-): gsap.core.Tween | gsap.core.Timeline {
+export function slideInDown(target: AnimationTarget, options: SlideOptions = {}): gsap.core.Tween | gsap.core.Timeline {
   const defaults: SlideOptions = {
     duration: 1,
     delay: 0,
     ease: 'power3.out',
     y: 100,
-    stagger: 0
+    stagger: 0,
   };
 
   const config = { ...defaults, ...options };
@@ -114,7 +105,7 @@ export function slideInDown(
     duration: config.duration,
     delay: config.delay,
     ease: config.ease,
-    stagger: config.stagger
+    stagger: config.stagger,
   });
 }
 
@@ -130,7 +121,7 @@ export function slideOutLeft(
     delay: 0,
     ease: 'power3.in',
     x: -100,
-    stagger: 0
+    stagger: 0,
   };
 
   const config = { ...defaults, ...options };
@@ -140,7 +131,7 @@ export function slideOutLeft(
     duration: config.duration,
     delay: config.delay,
     ease: config.ease,
-    stagger: config.stagger
+    stagger: config.stagger,
   });
 }
 
@@ -156,7 +147,7 @@ export function slideOutRight(
     delay: 0,
     ease: 'power3.in',
     x: 100,
-    stagger: 0
+    stagger: 0,
   };
 
   const config = { ...defaults, ...options };
@@ -166,7 +157,7 @@ export function slideOutRight(
     duration: config.duration,
     delay: config.delay,
     ease: config.ease,
-    stagger: config.stagger
+    stagger: config.stagger,
   });
 }
 

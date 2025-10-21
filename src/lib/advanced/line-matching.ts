@@ -131,8 +131,8 @@ export interface LineMatchingOptions {
  */
 interface Point {
   id: string;
-  element: HTMLElement;       // 원본 요소
-  pointDiv: HTMLElement;      // 포인트 div
+  element: HTMLElement; // 원본 요소
+  pointDiv: HTMLElement; // 포인트 div
   position: Required<PointPosition>;
 }
 
@@ -143,8 +143,8 @@ interface Connection {
   fromId: string;
   toId: string;
   line: SVGLineElement;
-  svg: SVGSVGElement;  // 각 선마다 독립적인 SVG
-  arrow?: SVGPolygonElement;  // 화살표 polygon (arrow 스타일일 때만)
+  svg: SVGSVGElement; // 각 선마다 독립적인 SVG
+  arrow?: SVGPolygonElement; // 화살표 polygon (arrow 스타일일 때만)
   isCorrect: boolean;
 }
 
@@ -165,7 +165,7 @@ class LineMatchingInstance {
 
   // 클릭 모드 상태 (클래스 레벨로 이동)
   private firstSelectedPoint: Point | null = null;
-  private isDragging: boolean = false;
+  private isDragging = false;
   private dragStartPoint: Point | null = null;
 
   constructor(options: LineMatchingOptions) {
@@ -214,7 +214,7 @@ class LineMatchingInstance {
       onComplete: options.onComplete || (() => {}),
       allowMultipleAttempts: options.allowMultipleAttempts ?? true,
       showFeedback: options.showFeedback ?? true,
-      bidirectional: options.bidirectional ?? false
+      bidirectional: options.bidirectional ?? false,
     };
 
     this.init();
@@ -282,7 +282,9 @@ class LineMatchingInstance {
       }
 
       if (elements.length > 1) {
-        console.warn(`[GSAP Kit] 아이템 "${id}": 선택자 "${item.selector}"에 ${elements.length}개의 요소가 있습니다. 첫 번째 요소만 사용됩니다.`);
+        console.warn(
+          `[GSAP Kit] 아이템 "${id}": 선택자 "${item.selector}"에 ${elements.length}개의 요소가 있습니다. 첫 번째 요소만 사용됩니다.`
+        );
       }
 
       const element = elements[0] as HTMLElement;
@@ -290,7 +292,7 @@ class LineMatchingInstance {
       // 포인트 위치 설정 (기본값: center)
       const position: Required<PointPosition> = {
         x: item.point?.x ?? 'center',
-        y: item.point?.y ?? 'center'
+        y: item.point?.y ?? 'center',
       };
 
       // 포인트 div 생성
@@ -300,7 +302,7 @@ class LineMatchingInstance {
         id,
         element,
         pointDiv,
-        position
+        position,
       };
 
       this.points.set(id, point);
@@ -354,7 +356,7 @@ class LineMatchingInstance {
    * 포인트 위치 업데이트
    */
   private updatePointPosition(pointDiv: HTMLElement, element: HTMLElement, position: Required<PointPosition>): void {
-    const rect = element.getBoundingClientRect();
+    const _rect = element.getBoundingClientRect();
     const halfSize = this.options.pointSize / 2;
 
     // X 좌표 계산
@@ -368,7 +370,7 @@ class LineMatchingInstance {
     } else if (typeof position.x === 'string' && position.x.includes('%')) {
       left = `calc(${position.x} - ${halfSize}px)`;
     } else {
-      const px = typeof position.x === 'number' ? position.x : parseFloat(position.x);
+      const px = typeof position.x === 'number' ? position.x : Number.parseFloat(position.x);
       left = `${px - halfSize}px`;
     }
 
@@ -383,7 +385,7 @@ class LineMatchingInstance {
     } else if (typeof position.y === 'string' && position.y.includes('%')) {
       top = `calc(${position.y} - ${halfSize}px)`;
     } else {
-      const px = typeof position.y === 'number' ? position.y : parseFloat(position.y);
+      const px = typeof position.y === 'number' ? position.y : Number.parseFloat(position.y);
       top = `${px - halfSize}px`;
     }
 
@@ -431,41 +433,6 @@ class LineMatchingInstance {
     this.container.appendChild(svg);
 
     return svg;
-  }
-
-  /**
-   * 커서 트래커 생성 (화살표가 커서를 따라다님)
-   */
-  private createCursorTracker(): void {
-    if (this.cursorTracker) return;
-
-    const tracker = document.createElement('div');
-    tracker.style.position = 'fixed';
-    tracker.style.pointerEvents = 'none';
-    tracker.style.zIndex = '10000';
-    tracker.style.display = 'none';
-    tracker.style.transformOrigin = 'center center';
-
-    // SVG로 화살표 그리기
-    const size = this.options.arrowSize;
-    const halfWidth = size / 2;
-
-    tracker.innerHTML = `
-      <svg width="${size}" height="${size}" style="display: block;">
-        <polygon
-          points="
-            ${size / 2},${size * 0.6}
-            ${size / 2 - halfWidth},${size * 0.4}
-            ${size / 2 + halfWidth},${size * 0.4}
-          "
-          fill="${this.options.lineColor}"
-          style="filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));"
-        />
-      </svg>
-    `;
-
-    document.body.appendChild(tracker);
-    this.cursorTracker = tracker;
   }
 
   /**
@@ -538,7 +505,9 @@ class LineMatchingInstance {
       0,${size * 0.6}
       ${-halfWidth},${-size * 0.4}
       ${halfWidth},${-size * 0.4}
-    `.trim().replace(/\s+/g, ' ');
+    `
+      .trim()
+      .replace(/\s+/g, ' ');
 
     arrow.setAttribute('points', points);
     arrow.setAttribute('fill', color);
@@ -549,7 +518,7 @@ class LineMatchingInstance {
     const angleDeg = angle * (180 / Math.PI);
 
     // SVG 좌표계 내에서의 상대 위치 계산
-    const containerRect = this.container.getBoundingClientRect();
+    const _containerRect = this.container.getBoundingClientRect();
     const svgRect = svg.getBoundingClientRect();
 
     const relX = toPos.x - svgRect.left;
@@ -593,7 +562,7 @@ class LineMatchingInstance {
       });
 
       // 마우스 다운 - 드래그 시작 또는 클릭 시작
-      pointDiv.addEventListener('mousedown', (e) => {
+      pointDiv.addEventListener('mousedown', e => {
         e.preventDefault();
         e.stopPropagation();
         debug(`포인트 ${id} 마우스 다운`);
@@ -639,7 +608,7 @@ class LineMatchingInstance {
       });
 
       // 마우스 업 - 드래그 종료 또는 클릭
-      pointDiv.addEventListener('mouseup', (e) => {
+      pointDiv.addEventListener('mouseup', e => {
         e.stopPropagation();
         debug(`포인트 ${id} 마우스 업, isDragging: ${this.isDragging}`);
 
@@ -692,7 +661,7 @@ class LineMatchingInstance {
       });
 
       // 클릭 이벤트 (드래그하지 않은 경우)
-      pointDiv.addEventListener('click', (e) => {
+      pointDiv.addEventListener('click', e => {
         e.stopPropagation();
 
         // 드래그 중이면 클릭 무시
@@ -791,7 +760,7 @@ class LineMatchingInstance {
     });
 
     // 마우스 이동 시 임시 선 업데이트
-    document.addEventListener('mousemove', (e) => {
+    document.addEventListener('mousemove', e => {
       if (this.firstSelectedPoint && this.tempLine && this.tempSvg) {
         const startPos = this.getPointCenter(this.firstSelectedPoint.pointDiv);
         const mousePos = { x: e.clientX, y: e.clientY };
@@ -829,7 +798,7 @@ class LineMatchingInstance {
     });
 
     // 배경 클릭 시 선택 취소
-    document.addEventListener('click', (e) => {
+    document.addEventListener('click', e => {
       const target = e.target as HTMLElement;
       if (!target.classList.contains('line-matching-point') && this.firstSelectedPoint && !this.isDragging) {
         debug('배경 클릭 - 선택 취소');
@@ -910,9 +879,7 @@ class LineMatchingInstance {
     debug(`연결 시도: ${fromId} → ${toId} (${isCorrect ? '정답' : '오답'})`);
 
     // 이미 연결되어 있는지 확인
-    const existingConnection = this.connections.find(
-      conn => conn.fromId === fromId && conn.toId === toId
-    );
+    const existingConnection = this.connections.find(conn => conn.fromId === fromId && conn.toId === toId);
 
     if (existingConnection) {
       debug('이미 연결되어 있음');
@@ -938,7 +905,7 @@ class LineMatchingInstance {
       line,
       svg,
       arrow,
-      isCorrect
+      isCorrect,
     };
 
     this.connections.push(connection);
@@ -996,7 +963,7 @@ class LineMatchingInstance {
     });
 
     // 클릭 시 연결 해제 및 재연결 시작
-    line.addEventListener('click', (e) => {
+    line.addEventListener('click', e => {
       e.stopPropagation();
       debug(`선 클릭: ${connection.fromId} → ${connection.toId}`);
       this.reconnectFromPoint(connection, e);
@@ -1175,7 +1142,7 @@ class LineMatchingInstance {
         line.setAttribute('stroke-linecap', 'round');
         return undefined;
 
-      case 'animated-dash':
+      case 'animated-dash': {
         // 애니메이션 점선
         line.setAttribute('stroke-dasharray', this.options.dashArray);
         line.setAttribute('stroke-dashoffset', '0');
@@ -1184,7 +1151,7 @@ class LineMatchingInstance {
         line.classList.add('animated-dash');
 
         // 인라인 스타일로 애니메이션 정의
-        const dashLength = this.options.dashArray.split(',').reduce((sum, val) => sum + parseFloat(val), 0);
+        const dashLength = this.options.dashArray.split(',').reduce((sum, val) => sum + Number.parseFloat(val), 0);
         line.style.animation = `dash-animation 1s linear infinite`;
 
         // 스타일시트에 애니메이션 추가 (한 번만)
@@ -1201,12 +1168,11 @@ class LineMatchingInstance {
           document.head.appendChild(styleSheet);
         }
         return undefined;
+      }
 
       case 'arrow':
         // 화살표 폴리곤 생성 (꼭짓점 아래 방향 기본, 선 방향으로 회전)
         return this.createArrowPolygon(svg, start, end, color);
-
-      case 'solid':
       default:
         // 기본 실선 (추가 속성 없음)
         return undefined;
@@ -1281,7 +1247,7 @@ class LineMatchingInstance {
     const rect = pointDiv.getBoundingClientRect();
     return {
       x: rect.left + rect.width / 2,
-      y: rect.top + rect.height / 2
+      y: rect.top + rect.height / 2,
     };
   }
 
@@ -1327,7 +1293,9 @@ class LineMatchingInstance {
    */
   public reset(): void {
     // 모든 SVG 및 선 제거
-    this.connections.forEach(conn => conn.svg.remove());
+    for (const conn of this.connections) {
+      conn.svg.remove();
+    }
     this.connections = [];
 
     // 임시 선 제거
@@ -1357,7 +1325,9 @@ class LineMatchingInstance {
     this.reset();
 
     // 포인트 div 제거
-    this.points.forEach(point => point.pointDiv.remove());
+    for (const point of this.points.values()) {
+      point.pointDiv.remove();
+    }
     this.points.clear();
 
     debug('인스턴스 파괴 완료');

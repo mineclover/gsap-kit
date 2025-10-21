@@ -1,5 +1,5 @@
-import { readdirSync, readFileSync, writeFileSync, mkdirSync, existsSync } from 'fs';
-import { join, dirname } from 'path';
+import { existsSync, mkdirSync, readdirSync, writeFileSync, watch } from 'fs';
+import { dirname, join } from 'path';
 import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -8,55 +8,7 @@ const __dirname = dirname(__filename);
 const SRC_PAGES = join(__dirname, '../src/pages');
 const DIST_PAGES = join(__dirname, '../dist/pages');
 
-// 페이지 메타데이터 설정 (아이콘, 태그 등)
-const PAGE_METADATA = {
-  'basic': {
-    icon: '✨',
-    title: '기본 애니메이션',
-    description: 'Fade, Slide, Rotate 등 기본 애니메이션 효과를 테스트할 수 있습니다.',
-    tags: ['Fade', 'Slide', 'Rotate']
-  },
-  'draggable': {
-    icon: '🎯',
-    title: '드래그 & 인터랙션',
-    description: 'GSAP Draggable 플러그인을 활용한 다양한 드래그 기능을 체험할 수 있습니다.',
-    tags: ['Draggable', 'Snap', 'Slider']
-  },
-  'scroll': {
-    icon: '📜',
-    title: '스크롤 애니메이션',
-    description: 'ScrollTrigger 플러그인을 활용한 스크롤 기반 애니메이션 효과입니다.',
-    tags: ['ScrollTrigger', 'Parallax', 'Pin']
-  },
-  'line-matching': {
-    icon: '🔗',
-    title: '선 연결 매칭',
-    description: 'SVG 기반 포인트 간 선 연결 매칭 게임입니다. 드래그 앤 드롭으로 선을 연결하고 정답/오답 피드백을 받을 수 있습니다.',
-    tags: ['SVG', 'Matching', 'Interactive'],
-    badge: 'NEW'
-  },
-  'custom-cursor': {
-    icon: '🎨',
-    title: 'SVG Marker-End 데모',
-    description: 'SVG marker-end 속성을 활용한 화살표 렌더링 데모입니다. 실시간으로 파라미터를 조정하고 결과를 확인할 수 있습니다.',
-    tags: ['SVG', 'Marker', 'Interactive'],
-    badge: 'NEW'
-  },
-  'stroke-preview': {
-    icon: '✏️',
-    title: 'Stroke 프리뷰',
-    description: '다양한 선 스타일(solid, dashed, dotted, animated-dash, arrow)을 비교하고 테스트할 수 있는 페이지입니다.',
-    tags: ['SVG', 'Stroke', 'Styles']
-  },
-  'preview': {
-    icon: '👁️',
-    title: '개발 프리뷰',
-    description: 'TypeScript 개발용 라이브 프리뷰 페이지입니다. 코드 변경사항을 실시간으로 확인할 수 있습니다.',
-    tags: ['Dev', 'Preview', 'TypeScript']
-  }
-};
-
-// 페이지 폴더 스캔
+// 페이지 폴더 스캔 (자동 감지)
 function scanPages() {
   const pages = [];
 
@@ -73,46 +25,40 @@ function scanPages() {
       const indexPath = join(SRC_PAGES, pageName, 'index.html');
 
       if (existsSync(indexPath)) {
-        const metadata = PAGE_METADATA[pageName] || {
-          icon: '📄',
-          title: pageName.charAt(0).toUpperCase() + pageName.slice(1),
-          description: `${pageName} 페이지입니다.`,
-          tags: ['Demo']
-        };
-
         pages.push({
           name: pageName,
-          ...metadata
+          title: pageName
+            .split('-')
+            .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+            .join(' '),
         });
       }
     }
   }
 
-  return pages;
+  // 알파벳 순 정렬
+  return pages.sort((a, b) => a.name.localeCompare(b.name));
 }
 
-// HTML 생성
+// 간단한 HTML 생성 (그루핑 없이)
 function generateIndexHTML(pages) {
-  const cardsHTML = pages.map((page, index) => {
-    const badgeHTML = page.badge ? `<span class="new-badge">${page.badge}</span>` : '';
-    const tagsHTML = page.tags.map(tag => `<span class="example-tag">${tag}</span>`).join('\n        ');
-
-    return `      <a href="${page.name}/index.html" class="example-card" style="animation-delay: ${(index + 1) * 0.1}s;">
-        <div class="example-icon">${page.icon}</div>
-        <div class="example-title">${page.title}${badgeHTML}</div>
-        <div class="example-description">
-          ${page.description}
-        </div>
-        ${tagsHTML}
-      </a>`;
-  }).join('\n\n');
+  const linksHTML = pages
+    .map(
+      page => `      <li>
+        <a href="${page.name}/index.html" class="page-link">
+          <span class="page-name">${page.title}</span>
+          <span class="arrow">→</span>
+        </a>
+      </li>`
+    )
+    .join('\n');
 
   return `<!DOCTYPE html>
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>GSAP Kit - Examples</title>
+  <title>GSAP Kit - Pages</title>
   <style>
     * {
       margin: 0;
@@ -121,7 +67,7 @@ function generateIndexHTML(pages) {
     }
 
     body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       min-height: 100vh;
       padding: 40px 20px;
@@ -129,14 +75,14 @@ function generateIndexHTML(pages) {
     }
 
     .container {
-      max-width: 1200px;
+      max-width: 800px;
       margin: 0 auto;
     }
 
     h1 {
       text-align: center;
       color: white;
-      font-size: 3rem;
+      font-size: 2.5rem;
       margin-bottom: 20px;
       text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
     }
@@ -144,103 +90,80 @@ function generateIndexHTML(pages) {
     .subtitle {
       text-align: center;
       color: rgba(255, 255, 255, 0.9);
-      font-size: 1.2rem;
-      margin-bottom: 50px;
-    }
-
-    .examples-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-      gap: 30px;
+      font-size: 1.1rem;
       margin-bottom: 40px;
     }
 
-    .example-card {
+    .page-list {
       background: white;
       border-radius: 15px;
-      padding: 30px;
+      padding: 30px 40px;
       box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-      transition: all 0.3s ease;
-      cursor: pointer;
-      text-decoration: none;
-      color: inherit;
-      display: block;
     }
 
-    .example-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+    ul {
+      list-style: none;
     }
 
-    .example-icon {
-      font-size: 3rem;
-      margin-bottom: 15px;
-    }
-
-    .example-title {
-      font-size: 1.5rem;
-      font-weight: bold;
-      color: #667eea;
+    li {
       margin-bottom: 10px;
     }
 
-    .example-description {
-      font-size: 1rem;
-      color: #666;
-      line-height: 1.6;
-      margin-bottom: 15px;
+    .page-link {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 15px 20px;
+      background: #f8f9fa;
+      border-radius: 8px;
+      text-decoration: none;
+      color: #333;
+      transition: all 0.3s ease;
+      border: 2px solid transparent;
     }
 
-    .example-tag {
-      display: inline-block;
-      background: rgba(102, 126, 234, 0.1);
-      color: #667eea;
-      padding: 5px 12px;
-      border-radius: 20px;
-      font-size: 0.85rem;
-      font-weight: bold;
-      margin-right: 8px;
-      margin-top: 8px;
-    }
-
-    .new-badge {
-      background: #4CAF50;
+    .page-link:hover {
+      background: #667eea;
       color: white;
-      padding: 4px 12px;
-      border-radius: 12px;
-      font-size: 0.75rem;
-      font-weight: bold;
-      margin-left: 10px;
+      border-color: #667eea;
+      transform: translateX(5px);
+    }
+
+    .page-name {
+      font-weight: 600;
+      font-size: 1.1rem;
+    }
+
+    .arrow {
+      font-size: 1.3rem;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .page-link:hover .arrow {
+      opacity: 1;
     }
 
     .footer {
       text-align: center;
       color: rgba(255, 255, 255, 0.9);
-      margin-top: 50px;
-      padding: 20px;
-    }
-
-    .footer a {
-      color: white;
-      text-decoration: none;
-      font-weight: bold;
-    }
-
-    .footer a:hover {
-      text-decoration: underline;
-    }
-
-    .build-info {
-      text-align: center;
-      color: rgba(255, 255, 255, 0.7);
+      margin-top: 40px;
       font-size: 0.9rem;
-      margin-top: 20px;
     }
 
-    @keyframes fadeInUp {
+    .count {
+      display: inline-block;
+      background: rgba(255, 255, 255, 0.2);
+      padding: 5px 15px;
+      border-radius: 20px;
+      margin-top: 10px;
+      font-weight: 600;
+    }
+
+    @keyframes fadeIn {
       from {
         opacity: 0;
-        transform: translateY(30px);
+        transform: translateY(20px);
       }
       to {
         opacity: 1;
@@ -248,30 +171,29 @@ function generateIndexHTML(pages) {
       }
     }
 
-    .example-card {
-      animation: fadeInUp 0.6s ease-out backwards;
+    li {
+      animation: fadeIn 0.5s ease-out backwards;
     }
+
+    ${pages.map((_, i) => `li:nth-child(${i + 1}) { animation-delay: ${i * 0.05}s; }`).join('\n    ')}
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>🎯 GSAP Kit Examples</h1>
-    <p class="subtitle">순수 JavaScript와 GSAP CDN을 사용하는 재사용 가능한 인터랙션 함수 라이브러리</p>
+    <h1>🎯 GSAP Kit</h1>
+    <p class="subtitle">Available Pages</p>
 
-    <div class="examples-grid">
-${cardsHTML}
+    <div class="page-list">
+      <ul>
+${linksHTML}
+      </ul>
     </div>
 
     <div class="footer">
-      <p>
-        <strong>GSAP Kit</strong> - 순수 JavaScript로 만드는 아름다운 인터랙션 ✨
-      </p>
-      <p style="margin-top: 10px;">
-        <a href="https://github.com/mineclover/gsap-kit" target="_blank">GitHub</a> |
-        <a href="https://gsap.com/docs/" target="_blank">GSAP Docs</a>
-      </p>
-      <p class="build-info">
-        Generated on ${new Date().toLocaleString('ko-KR')} | ${pages.length} pages
+      <p><strong>GSAP Kit</strong> - Animation Library</p>
+      <p class="count">${pages.length} pages available</p>
+      <p style="margin-top: 10px; opacity: 0.8;">
+        Generated on ${new Date().toLocaleString('ko-KR')}
       </p>
     </div>
   </div>
@@ -280,28 +202,72 @@ ${cardsHTML}
 `;
 }
 
-// 메인 실행
-console.log('🔍 Scanning pages...');
-const pages = scanPages();
+// 인덱스 생성
+function generateIndex() {
+  console.log('🔍 Scanning pages...');
+  const pages = scanPages();
 
-if (pages.length === 0) {
-  console.error('❌ No pages found!');
-  process.exit(1);
+  if (pages.length === 0) {
+    console.error('❌ No pages found!');
+    return false;
+  }
+
+  console.log(`✅ Found ${pages.length} pages:`);
+  for (const page of pages) {
+    console.log(`   - ${page.title} (${page.name})`);
+  }
+
+  console.log('\n📝 Generating index.html...');
+  const html = generateIndexHTML(pages);
+
+  // dist/pages 디렉토리 확인 및 생성
+  if (!existsSync(DIST_PAGES)) {
+    mkdirSync(DIST_PAGES, { recursive: true });
+  }
+
+  const outputPath = join(DIST_PAGES, 'index.html');
+  writeFileSync(outputPath, html, 'utf-8');
+
+  console.log(`✅ Index generated at: ${outputPath}`);
+  console.log(`🎉 Done!\n`);
+  return true;
 }
 
-console.log(`✅ Found ${pages.length} pages:`);
-pages.forEach(page => console.log(`   - ${page.icon} ${page.title} (${page.name})`));
+// Watch 모드
+function startWatchMode() {
+  console.log('👀 Watch mode started...');
+  console.log(`📁 Watching: ${SRC_PAGES}\n`);
 
-console.log('\n📝 Generating index.html...');
-const html = generateIndexHTML(pages);
+  // 초기 생성
+  generateIndex();
 
-// dist/pages 디렉토리 확인 및 생성
-if (!existsSync(DIST_PAGES)) {
-  mkdirSync(DIST_PAGES, { recursive: true });
+  // 디렉토리 변경 감지
+  const watcher = watch(
+    SRC_PAGES,
+    { recursive: true },
+    (eventType, filename) => {
+      if (filename) {
+        console.log(`📝 File changed: ${filename}`);
+        console.log(`🔄 Regenerating index...\n`);
+        generateIndex();
+      }
+    }
+  );
+
+  // Ctrl+C 처리
+  process.on('SIGINT', () => {
+    console.log('\n👋 Stopping watch mode...');
+    watcher.close();
+    process.exit(0);
+  });
 }
 
-const outputPath = join(DIST_PAGES, 'index.html');
-writeFileSync(outputPath, html, 'utf-8');
+// CLI 실행
+const args = process.argv.slice(2);
+const isWatchMode = args.includes('--watch') || args.includes('-w');
 
-console.log(`✅ Index generated at: ${outputPath}`);
-console.log(`🎉 Done! You can now open dist/pages/index.html to view all examples.`);
+if (isWatchMode) {
+  startWatchMode();
+} else {
+  generateIndex();
+}

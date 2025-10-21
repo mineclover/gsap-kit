@@ -16,5 +16,7 @@
 console.log('[GSAP Kit] 사용 가능한 애니메이션 카테고리:');
 console.log('- Fade: fadeIn, fadeOut, fadeInUp, fadeInDown, fadeInLeft, fadeInRight, fadeInScale');
 console.log('- Slide: slideInLeft, slideInRight, slideInUp, slideInDown, slideOutLeft, slideOutRight');
-console.log('- Scroll: scrollFadeIn, scrollSlideInLeft, scrollSlideInRight, scrollProgress, parallax, scrollPin, scrollStagger');
+console.log(
+  '- Scroll: scrollFadeIn, scrollSlideInLeft, scrollSlideInRight, scrollProgress, parallax, scrollPin, scrollStagger'
+);
 console.log('- Rotate: rotate, rotateIn, rotateOut, flipY, flipX, spinInfinite');

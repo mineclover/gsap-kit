@@ -4,7 +4,7 @@
 
 /// <reference types="gsap" />
 
-import { AnimationTarget, BaseAnimationOptions } from '../types';
+import type { AnimationTarget, BaseAnimationOptions } from '../types';
 
 /**
  * 회전 애니메이션 옵션
@@ -20,16 +20,13 @@ export interface RotateOptions extends BaseAnimationOptions {
 /**
  * 요소를 회전시킵니다
  */
-export function rotate(
-  target: AnimationTarget,
-  options: RotateOptions = {}
-): gsap.core.Tween {
+export function rotate(target: AnimationTarget, options: RotateOptions = {}): gsap.core.Tween {
   const defaults: RotateOptions = {
     duration: 1,
     delay: 0,
     ease: 'power2.out',
     rotation: 360,
-    stagger: 0
+    stagger: 0,
   };
 
   const config = { ...defaults, ...options };
@@ -39,24 +36,21 @@ export function rotate(
     duration: config.duration,
     delay: config.delay,
     ease: config.ease,
-    stagger: config.stagger
+    stagger: config.stagger,
   });
 }
 
 /**
  * 요소를 회전하면서 페이드 인
  */
-export function rotateIn(
-  target: AnimationTarget,
-  options: RotateOptions = {}
-): gsap.core.Tween {
+export function rotateIn(target: AnimationTarget, options: RotateOptions = {}): gsap.core.Tween {
   const defaults: RotateOptions = {
     duration: 1,
     delay: 0,
     ease: 'back.out(1.5)',
     rotation: -180,
     scale: 0.5,
-    stagger: 0
+    stagger: 0,
   };
 
   const config = { ...defaults, ...options };
@@ -68,24 +62,21 @@ export function rotateIn(
     duration: config.duration,
     delay: config.delay,
     ease: config.ease,
-    stagger: config.stagger
+    stagger: config.stagger,
   });
 }
 
 /**
  * 요소를 회전하면서 페이드 아웃
  */
-export function rotateOut(
-  target: AnimationTarget,
-  options: RotateOptions = {}
-): gsap.core.Tween {
+export function rotateOut(target: AnimationTarget, options: RotateOptions = {}): gsap.core.Tween {
   const defaults: RotateOptions = {
     duration: 1,
     delay: 0,
     ease: 'back.in(1.5)',
     rotation: 180,
     scale: 0.5,
-    stagger: 0
+    stagger: 0,
   };
 
   const config = { ...defaults, ...options };
@@ -97,23 +88,20 @@ export function rotateOut(
     duration: config.duration,
     delay: config.delay,
     ease: config.ease,
-    stagger: config.stagger
+    stagger: config.stagger,
   });
 }
 
 /**
  * 요소를 3D Y축 기준으로 회전 (플립)
  */
-export function flipY(
-  target: AnimationTarget,
-  options: RotateOptions = {}
-): gsap.core.Tween {
+export function flipY(target: AnimationTarget, options: RotateOptions = {}): gsap.core.Tween {
   const defaults: RotateOptions = {
     duration: 1,
     delay: 0,
     ease: 'power2.inOut',
     rotationY: 360,
-    stagger: 0
+    stagger: 0,
   };
 
   const config = { ...defaults, ...options };
@@ -124,23 +112,20 @@ export function flipY(
     delay: config.delay,
     ease: config.ease,
     stagger: config.stagger,
-    transformPerspective: 1000
+    transformPerspective: 1000,
   });
 }
 
 /**
  * 요소를 3D X축 기준으로 회전 (플립)
  */
-export function flipX(
-  target: AnimationTarget,
-  options: RotateOptions = {}
-): gsap.core.Tween {
+export function flipX(target: AnimationTarget, options: RotateOptions = {}): gsap.core.Tween {
   const defaults: RotateOptions = {
     duration: 1,
     delay: 0,
     ease: 'power2.inOut',
     rotationX: 360,
-    stagger: 0
+    stagger: 0,
   };
 
   const config = { ...defaults, ...options };
@@ -151,21 +136,18 @@ export function flipX(
     delay: config.delay,
     ease: config.ease,
     stagger: config.stagger,
-    transformPerspective: 1000
+    transformPerspective: 1000,
   });
 }
 
 /**
  * 요소를 무한 회전
  */
-export function spinInfinite(
-  target: AnimationTarget,
-  options: RotateOptions = {}
-): gsap.core.Tween {
+export function spinInfinite(target: AnimationTarget, options: RotateOptions = {}): gsap.core.Tween {
   const defaults: RotateOptions = {
     duration: 2,
     ease: 'none',
-    clockwise: true
+    clockwise: true,
   };
 
   const config = { ...defaults, ...options };
@@ -175,7 +157,7 @@ export function spinInfinite(
     rotation: rotation,
     duration: config.duration,
     ease: config.ease,
-    repeat: -1
+    repeat: -1,
   });
 }
 

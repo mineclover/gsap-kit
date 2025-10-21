@@ -1,11 +1,11 @@
 import {
+  disableDraggable,
+  enableDraggable,
   makeDraggable,
+  makeDraggableWithInertia,
   makeDraggableX,
   makeDraggableY,
-  makeDraggableWithInertia,
   makeRotatable,
-  enableDraggable,
-  disableDraggable
 } from '../../lib/draggable/basic';
 
 // 1. 기본 자유 드래그
@@ -31,12 +31,12 @@ if (boundedBox && boundedArea) {
     bounds: '#bounded-area',
     cursor: 'grab',
     activeCursor: 'grabbing',
-    onDragStart: function() {
+    onDragStart: () => {
       console.log('드래그 시작!');
     },
-    onDrag: function() {
+    onDrag: function () {
       console.log('드래그 중...', this.x, this.y);
-    }
+    },
   });
 
   console.log('경계 제한 드래그 인스턴스:', boundedDrag);
@@ -46,7 +46,7 @@ if (boundedBox && boundedArea) {
 
 // 5. 관성 효과
 makeDraggableWithInertia('.drag-box-inertia', {
-  bounds: '#inertia-area'
+  bounds: '#inertia-area',
 });
 
 // 6. 회전
@@ -54,15 +54,15 @@ makeRotatable('.rotate-box');
 
 // 7. 그리드 스냅 - 기본 드래그로 대체
 makeDraggable('.snap-box', {
-  bounds: '.grid-demo'
+  bounds: '.grid-demo',
 });
 
 // 8-10. 고급 기능들은 향후 구현 예정
 console.log('슬라이더, 정렬 가능한 리스트, 스와이프 기능은 고급 기능으로 향후 구현 예정');
 
 // 11. 제어 가능한 드래그
-let controllableInstance = makeDraggable('.drag-controllable', {
-  bounds: '#controllable-area'
+const controllableInstance = makeDraggable('.drag-controllable', {
+  bounds: '#controllable-area',
 });
 
 function disableControl() {
@@ -78,7 +78,7 @@ function resetControl() {
     x: 0,
     y: 0,
     duration: 0.5,
-    ease: "back.out(1.5)"
+    ease: 'back.out(1.5)',
   });
 }
 
@@ -93,7 +93,7 @@ gsap.from('.section', {
   y: 50,
   duration: 0.6,
   stagger: 0.1,
-  ease: "power2.out"
+  ease: 'power2.out',
 });
 
 console.log('[GSAP Kit] Draggable 예제가 로드되었습니다');

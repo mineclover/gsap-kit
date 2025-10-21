@@ -1,29 +1,47 @@
-import typescript from '@rollup/plugin-typescript';
 import { nodeResolve } from '@rollup/plugin-node-resolve';
 import terser from '@rollup/plugin-terser';
+import typescript from '@rollup/plugin-typescript';
 import { glob } from 'glob';
 import path from 'path';
+import { buildConfig } from './build.config.js';
 
-// 페이지별 엔트리 자동 탐색
+/**
+ * 빌드 모드
+ * - cdn: CDN 방식 (개별 파일로 빌드, script 태그 사용)
+ * - bundle: NPM 번들러 방식 (단일 main.js, import 사용)
+ *
+ * 사용법:
+ * BUILD_MODE=cdn npm run build
+ * BUILD_MODE=bundle npm run build
+ */
+const BUILD_MODE = process.env.BUILD_MODE || 'cdn';
+
+console.log(`🔧 빌드 모드: ${BUILD_MODE.toUpperCase()}`);
+
+// 페이지별 엔트리 자동 탐색 (CDN 모드에서만 사용)
 const pageEntries = glob.sync('src/pages/**/main.ts').reduce((entries, file) => {
   const pageName = path.basename(path.dirname(file));
   entries[pageName] = file;
   return entries;
 }, {});
 
-console.log('📦 페이지 번들링 목록:', Object.keys(pageEntries));
+if (BUILD_MODE === 'cdn') {
+  console.log('📦 페이지 번들링 목록:', Object.keys(pageEntries));
+}
 
 // 공통 설정
-const createConfig = (input, output, name, minify = false) => ({
+const createConfig = (input, output, name, minify = false, format = 'iife') => ({
   input,
   output: {
     file: output,
-    format: 'iife',
+    format,
     name: name || undefined,
     sourcemap: true,
-    globals: {
-      'gsap': 'gsap'
-    }
+    ...(format === 'iife' && {
+      globals: {
+        gsap: 'gsap',
+      },
+    }),
   },
   external: ['gsap'],
   plugins: [
@@ -35,73 +53,45 @@ const createConfig = (input, output, name, minify = false) => ({
       compilerOptions: {
         target: 'ES2020',
         module: 'ESNext',
-        moduleResolution: 'node'
-      }
+        moduleResolution: 'node',
+      },
     }),
-    ...(minify ? [terser()] : [])
-  ]
+    ...(minify ? [terser()] : []),
+  ],
 });
 
-// 페이지별 번들 생성
-const pageConfigs = Object.entries(pageEntries).map(([pageName, entryFile]) =>
-  createConfig(
-    entryFile,
-    `dist/pages/${pageName}/main.js`,
-    null
-  )
-);
+// 빌드 설정 생성
+let configs = [];
 
-export default [
-  // 라이브러리 번들 (기존 방식 유지)
-  // Line Matching (minified)
-  createConfig(
-    'src/lib/advanced/line-matching.ts',
-    'dist/lib/line-matching.min.js',
-    'createLineMatching',
-    true
-  ),
+// CDN 모드: 개별 파일로 빌드
+if (BUILD_MODE === 'cdn') {
+  const cdnConfigs = buildConfig.cdnEntries.map((entry) =>
+    createConfig(entry.input, entry.output, entry.name, entry.minify || false)
+  );
 
-  // Animations
-  createConfig(
-    'src/lib/animations/fade.ts',
-    'dist/lib/animations/fade.js',
-    null
-  ),
-  createConfig(
-    'src/lib/animations/slide.ts',
-    'dist/lib/animations/slide.js',
-    null
-  ),
-  createConfig(
-    'src/lib/animations/rotate.ts',
-    'dist/lib/animations/rotate.js',
-    null
-  ),
-  createConfig(
-    'src/lib/animations/scroll.ts',
-    'dist/lib/animations/scroll.js',
-    null
-  ),
+  const pageConfigs = Object.entries(pageEntries).map(([pageName, entryFile]) =>
+    createConfig(entryFile, `dist/pages/${pageName}/main.js`, null)
+  );
 
-  // Draggable
-  createConfig(
-    'src/lib/draggable/basic.ts',
-    'dist/lib/draggable/basic.js',
-    null
-  ),
-  createConfig(
-    'src/lib/draggable/advanced.ts',
-    'dist/lib/draggable/advanced.js',
-    null
-  ),
+  console.log(`✅ CDN 빌드: ${buildConfig.cdnEntries.length}개 라이브러리 + ${pageConfigs.length}개 페이지`);
 
-  // Types (유틸리티 함수들)
-  createConfig(
-    'src/lib/types.ts',
-    'dist/lib/types.js',
-    null
-  ),
+  configs = [...cdnConfigs, ...pageConfigs];
+}
 
-  // 페이지별 번들
-  ...pageConfigs
-];
+// Bundle 모드: 단일 main.js로 빌드
+if (BUILD_MODE === 'bundle') {
+  const { input, output, name } = buildConfig.bundleEntry;
+
+  console.log(`✅ Bundle 빌드: ${output}`);
+
+  configs = [
+    // ESM 번들 (import 사용)
+    createConfig(input, output.replace('.js', '.esm.js'), name, false, 'esm'),
+    // UMD 번들 (브라우저 + Node.js 호환)
+    createConfig(input, output.replace('.js', '.umd.js'), name, false, 'umd'),
+    // Minified UMD
+    createConfig(input, output.replace('.js', '.umd.min.js'), name, true, 'umd'),
+  ];
+}
+
+export default configs;

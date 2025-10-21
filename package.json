@@ -3,7 +3,15 @@
   "version": "1.0.0",
   "type": "module",
   "description": "순수 JavaScript와 GSAP CDN을 사용하는 재사용 가능한 드래그 & 인터랙션 함수 라이브러리",
-  "main": "src/animations/index.js",
+  "main": "dist/main.umd.js",
+  "module": "dist/main.esm.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/main.esm.js",
+      "require": "./dist/main.umd.js"
+    }
+  },
   "scripts": {
     "serve": "npx http-server -p 8000 -o",
     "dev": "npx http-server -p 8000 -o /dist/pages",
@@ -14,11 +22,21 @@
     "dev:custom-cursor": "concurrently \"npm run build:watch\" \"live-server --port=8000 --open=/dist/pages/custom-cursor --watch=dist,src/pages --no-css-inject\"",
     "dev:stroke-preview": "concurrently \"npm run build:watch\" \"live-server --port=8000 --open=/dist/pages/stroke-preview --watch=dist,src/pages --no-css-inject\"",
     "dev:preview": "concurrently \"npm run build:watch\" \"live-server --port=8000 --open=/dist/pages/preview --watch=dist,src/pages --no-css-inject\"",
-    "build": "rollup -c && npm run copy:assets && npm run generate:index",
-    "build:watch": "rollup -c --watch",
+    "build": "npm run build:cdn",
+    "build:cdn": "rollup -c --environment BUILD_MODE:cdn && npm run copy:assets && npm run generate:index",
+    "build:bundle": "rollup -c --environment BUILD_MODE:bundle",
+    "build:watch": "concurrently \"rollup -c --watch --environment BUILD_MODE:cdn\" \"node scripts/copy-assets.js --watch\" \"npm run generate:index:watch\"",
+    "build:bundle:watch": "rollup -c --watch --environment BUILD_MODE:bundle",
     "copy:assets": "node scripts/copy-assets.js",
     "generate:index": "node scripts/generate-index.js",
+    "generate:index:watch": "node scripts/generate-index.js --watch",
     "type-check": "tsc --noEmit",
+    "lint": "biome lint .",
+    "lint:fix": "biome lint --write .",
+    "format": "biome format .",
+    "format:write": "biome format --write .",
+    "check": "biome check .",
+    "check:write": "biome check --write .",
     "dev:ts": "concurrently \"npm run build:watch\" \"npm run serve:live\"",
     "dev:ts:bg": "concurrently -k \"npm run build:watch\" \"npm run serve:live\" > dev.log 2>&1 &",
     "serve:live": "live-server --port=8000 --open=/dist/pages/basic --watch=dist,src/pages --no-css-inject",
@@ -41,6 +59,7 @@
   "author": "",
   "license": "MIT",
   "devDependencies": {
+    "@biomejs/biome": "2.2.6",
     "@rollup/plugin-node-resolve": "16.0.3",
     "@rollup/plugin-terser": "0.4.4",
     "@rollup/plugin-typescript": "12.1.4",

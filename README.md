@@ -211,6 +211,109 @@ gsap-kit/
 | `flipY()` | Y축 기준 플립 |
 | `spinInfinite()` | 무한 회전 |
 
+## 빌드 모드
+
+GSAP Kit는 두 가지 빌드 방식을 지원합니다:
+
+### 1. CDN 모드 (기본값)
+
+**개별 파일로 빌드하여 script 태그로 사용하는 방식**
+
+```bash
+npm run build:cdn
+# 또는
+npm run build
+```
+
+**출력 파일:**
+- `dist/lib/animations/fade.js`
+- `dist/lib/animations/slide.js`
+- `dist/lib/draggable/basic.js`
+- `dist/lib/line-matching.min.js`
+- `dist/pages/*/main.js`
+
+**사용법:**
+```html
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13/dist/gsap.min.js"></script>
+<script src="./dist/lib/animations/fade.js"></script>
+<script src="./dist/lib/draggable/basic.js"></script>
+
+<script>
+  fadeIn('.box');
+  makeDraggable('.box');
+</script>
+```
+
+### 2. Bundle 모드
+
+**모든 모듈을 하나의 파일로 번들링하여 NPM import로 사용하는 방식**
+
+```bash
+npm run build:bundle
+```
+
+**출력 파일:**
+- `dist/main.esm.js` - ESM 포맷 (import 사용)
+- `dist/main.umd.js` - UMD 포맷 (브라우저 + Node.js)
+- `dist/main.umd.min.js` - Minified UMD
+
+**사용법:**
+```javascript
+// ESM (Vite, Webpack 등)
+import { fadeIn, makeDraggable, createLineMatching } from 'gsap-kit';
+
+fadeIn('.box');
+makeDraggable('.box');
+```
+
+```html
+<!-- UMD (브라우저에서 직접 사용) -->
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13/dist/gsap.min.js"></script>
+<script src="./dist/main.umd.min.js"></script>
+
+<script>
+  const { fadeIn, makeDraggable } = GSAPKit;
+  fadeIn('.box');
+</script>
+```
+
+### 빌드 설정 관리
+
+CDN으로 제공할 경로들은 `build.config.js`에서 관리됩니다:
+
+```javascript
+export const buildConfig = {
+  // CDN 방식으로 빌드할 라이브러리 목록
+  cdnEntries: [
+    {
+      input: 'src/lib/animations/fade.ts',
+      output: 'dist/lib/animations/fade.js',
+      name: null,
+    },
+    // ...
+  ],
+
+  // Bundle 방식의 진입점
+  bundleEntry: {
+    input: 'src/index.ts',
+    output: 'dist/main.js',
+    name: 'GSAPKit',
+  },
+};
+```
+
+새로운 라이브러리를 CDN으로 배포하려면 `cdnEntries` 배열에 추가하세요.
+
+### Watch 모드
+
+```bash
+# CDN 모드 감시
+npm run build:watch
+
+# Bundle 모드 감시
+npm run build:bundle:watch
+```
+
 ## 사용 예제
 
 ### 🎯 드래그 기능

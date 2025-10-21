@@ -15,26 +15,26 @@ function initGame(): void {
     // 아이템 정의 (ID와 선택자, 포인트 위치)
     items: {
       // A 그룹 (위쪽) - 포인트를 아래쪽에 배치
-      'a0': { selector: '#a1', point: { x: 'center', y: 'bottom' } },
-      'a1': { selector: '#a2', point: { x: 'center', y: 'bottom' } },
-      'a2': { selector: '#a3', point: { x: 'center', y: 'bottom' } },
-      'a3': { selector: '#a4', point: { x: 'center', y: 'bottom' } },
+      a0: { selector: '#a1', point: { x: 'center', y: 'bottom' } },
+      a1: { selector: '#a2', point: { x: 'center', y: 'bottom' } },
+      a2: { selector: '#a3', point: { x: 'center', y: 'bottom' } },
+      a3: { selector: '#a4', point: { x: 'center', y: 'bottom' } },
 
       // B 그룹 (아래쪽) - 포인트를 위쪽에 배치
-      'b0': { selector: '#b1', point: { x: 'center', y: 'top' } },
-      'b1': { selector: '#b2', point: { x: 'center', y: 'top' } },
-      'b2': { selector: '#b3', point: { x: 'center', y: 'top' } },
-      'b3': { selector: '#b4', point: { x: 'center', y: 'top' } }
+      b0: { selector: '#b1', point: { x: 'center', y: 'top' } },
+      b1: { selector: '#b2', point: { x: 'center', y: 'top' } },
+      b2: { selector: '#b3', point: { x: 'center', y: 'top' } },
+      b3: { selector: '#b4', point: { x: 'center', y: 'top' } },
     },
 
     // 정답 매핑 (더 직관적!)
     // 단일 정답: 'a0': 'b1'
     // 다중 정답: 'a0': ['b1', 'b2'] (여러 개가 정답일 때)
     pairs: {
-      'a0': 'b1',  // 사과 - Apple
-      'a1': 'b3',  // 바나나 - Banana
-      'a2': 'b2',  // 오렌지 - Orange
-      'a3': 'b0'   // 포도 - Grape
+      a0: 'b1', // 사과 - Apple
+      a1: 'b3', // 바나나 - Banana
+      a2: 'b2', // 오렌지 - Orange
+      a3: 'b0', // 포도 - Grape
       // 다중 정답 예시: 'a0': ['b1', 'b2'] - a0은 b1 또는 b2 모두 정답
     },
 
@@ -58,7 +58,7 @@ function initGame(): void {
     // 옵션
     allowMultipleAttempts: true,
     showFeedback: true,
-    bidirectional: false,  // A에서 B로만 연결 가능
+    bidirectional: false, // A에서 B로만 연결 가능
 
     // 콜백
     onCorrect: (fromId: string, toId: string) => {
@@ -74,7 +74,7 @@ function initGame(): void {
     onComplete: (score: number, total: number) => {
       console.log(`🎉 완료! ${score}/${total}`);
       showCompleteFeedback();
-    }
+    },
   });
 }
 

@@ -5,7 +5,7 @@
 
 /// <reference types="gsap" />
 
-import { DOMTarget, BaseDraggableOptions, validateTarget, debug, toElementArray } from '../types';
+import { type BaseDraggableOptions, type DOMTarget, debug, toElementArray, validateTarget } from '../types';
 
 /**
  * Draggable 플러그인 등록
@@ -31,10 +31,7 @@ interface DraggableOptions extends BaseDraggableOptions {
  * @param options - 드래그 옵션
  * @returns Draggable 인스턴스 배열
  */
-export function makeDraggable(
-  target: DOMTarget,
-  options: DraggableOptions = {}
-): Draggable[] | null {
+export function makeDraggable(target: DOMTarget, options: DraggableOptions = {}): Draggable[] | null {
   if (!validateTarget(target, 'makeDraggable')) {
     return null;
   }
@@ -42,7 +39,7 @@ export function makeDraggable(
   const defaults: DraggableOptions = {
     type: 'x,y',
     inertia: false,
-    cursor: 'grab'
+    cursor: 'grab',
   };
 
   const config = { ...defaults, ...options };
@@ -56,7 +53,7 @@ export function makeDraggable(
     onDrag: config.onDrag,
     onDragEnd: config.onDragEnd,
     cursor: config.cursor,
-    activeCursor: 'grabbing'
+    activeCursor: 'grabbing',
   });
 
   return draggableInstances;
@@ -65,53 +62,41 @@ export function makeDraggable(
 /**
  * X축(가로)으로만 드래그 가능하게 만듭니다
  */
-export function makeDraggableX(
-  target: DOMTarget,
-  options: DraggableOptions = {}
-): Draggable[] | null {
+export function makeDraggableX(target: DOMTarget, options: DraggableOptions = {}): Draggable[] | null {
   return makeDraggable(target, {
     ...options,
-    type: 'x'
+    type: 'x',
   });
 }
 
 /**
  * Y축(세로)으로만 드래그 가능하게 만듭니다
  */
-export function makeDraggableY(
-  target: DOMTarget,
-  options: DraggableOptions = {}
-): Draggable[] | null {
+export function makeDraggableY(target: DOMTarget, options: DraggableOptions = {}): Draggable[] | null {
   return makeDraggable(target, {
     ...options,
-    type: 'y'
+    type: 'y',
   });
 }
 
 /**
  * 경계 내에서만 드래그 가능하게 만듭니다
  */
-export function makeDraggableWithBounds(
-  target: DOMTarget,
-  options: DraggableOptions = {}
-): Draggable[] | null {
+export function makeDraggableWithBounds(target: DOMTarget, options: DraggableOptions = {}): Draggable[] | null {
   const defaults: DraggableOptions = {
-    bounds: window
+    bounds: window,
   };
 
   return makeDraggable(target, {
     ...defaults,
-    ...options
+    ...options,
   });
 }
 
 /**
  * 부모 요소 내에서만 드래그 가능하게 만듭니다
  */
-export function makeDraggableInParent(
-  target: DOMTarget,
-  options: DraggableOptions = {}
-): Draggable[] | null {
+export function makeDraggableInParent(target: DOMTarget, options: DraggableOptions = {}): Draggable[] | null {
   if (!validateTarget(target, 'makeDraggableInParent')) {
     return null;
   }
@@ -119,7 +104,7 @@ export function makeDraggableInParent(
   const defaults: DraggableOptions = {
     type: 'x,y',
     inertia: false,
-    cursor: 'grab'
+    cursor: 'grab',
   };
 
   const config = { ...defaults, ...options };
@@ -145,7 +130,7 @@ export function makeDraggableInParent(
       onDrag: config.onDrag,
       onDragEnd: config.onDragEnd,
       cursor: config.cursor,
-      activeCursor: 'grabbing'
+      activeCursor: 'grabbing',
     });
 
     instances.push(...draggable);
@@ -157,10 +142,7 @@ export function makeDraggableInParent(
 /**
  * 관성(던지기) 효과와 함께 드래그 가능하게 만듭니다
  */
-export function makeDraggableWithInertia(
-  target: DOMTarget,
-  options: DraggableOptions = {}
-): Draggable[] | null {
+export function makeDraggableWithInertia(target: DOMTarget, options: DraggableOptions = {}): Draggable[] | null {
   debug('makeDraggableWithInertia 호출됨:', { target, options });
 
   // 속도 추적을 위한 변수
@@ -175,7 +157,7 @@ export function makeDraggableWithInertia(
     bounds: options.bounds,
     cursor: 'grab',
     ...options,
-    onDragStart: function(this: Draggable) {
+    onDragStart: function (this: Draggable) {
       debug('Inertia Drag Start');
       lastX = this.x;
       lastY = this.y;
@@ -185,7 +167,7 @@ export function makeDraggableWithInertia(
         options.onDragStart.call(this);
       }
     },
-    onDrag: function(this: Draggable) {
+    onDrag: function (this: Draggable) {
       const now = Date.now();
       const dt = now - lastTime;
 
@@ -202,7 +184,7 @@ export function makeDraggableWithInertia(
         options.onDrag.call(this);
       }
     },
-    onDragEnd: function(this: Draggable) {
+    onDragEnd: function (this: Draggable) {
       debug('Inertia Drag End - Velocity:', velocityX, velocityY);
 
       // 관성 효과 적용 (속도가 충분히 클 때만)
@@ -228,7 +210,7 @@ export function makeDraggableWithInertia(
 
           debug('Bounds applied:', {
             bounds: { minX, minY, maxX, maxY },
-            clamped: { x: targetX, y: targetY }
+            clamped: { x: targetX, y: targetY },
           });
         }
 
@@ -238,14 +220,14 @@ export function makeDraggableWithInertia(
           x: targetX,
           y: targetY,
           duration: 1.2,
-          ease: 'power2.out'
+          ease: 'power2.out',
         });
       }
 
       if (options.onDragEnd) {
         options.onDragEnd.call(this);
       }
-    }
+    },
   };
 
   debug('Inertia 설정:', config);
@@ -255,13 +237,10 @@ export function makeDraggableWithInertia(
 /**
  * 요소를 회전 가능하게 만듭니다
  */
-export function makeRotatable(
-  target: DOMTarget,
-  options: DraggableOptions = {}
-): Draggable[] | null {
+export function makeRotatable(target: DOMTarget, options: DraggableOptions = {}): Draggable[] | null {
   return makeDraggable(target, {
     ...options,
-    type: 'rotation'
+    type: 'rotation',
   });
 }
 
@@ -270,7 +249,9 @@ export function makeRotatable(
  */
 export function disableDraggable(instances: Draggable[] | null): void {
   if (!instances) return;
-  instances.forEach(instance => instance.disable());
+  for (const instance of instances) {
+    instance.disable();
+  }
 }
 
 /**
@@ -278,7 +259,9 @@ export function disableDraggable(instances: Draggable[] | null): void {
  */
 export function enableDraggable(instances: Draggable[] | null): void {
   if (!instances) return;
-  instances.forEach(instance => instance.enable());
+  for (const instance of instances) {
+    instance.enable();
+  }
 }
 
 /**
@@ -286,7 +269,9 @@ export function enableDraggable(instances: Draggable[] | null): void {
  */
 export function killDraggable(instances: Draggable[] | null): void {
   if (!instances) return;
-  instances.forEach(instance => instance.kill());
+  for (const instance of instances) {
+    instance.kill();
+  }
 }
 
 // 전역으로 노출 (브라우저 환경)
