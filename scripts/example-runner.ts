@@ -1,12 +1,13 @@
 #!/usr/bin/env ts-node
+
 /**
  * GSAP Kit Example Runner
  * Playwright 기반 예제 실행 및 테스트 자동화
  */
 
-import { chromium, type Browser, type Page } from 'playwright';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
+import { type Browser, chromium, type Page } from 'playwright';
 
 // ==================== 타입 정의 ====================
 
@@ -136,12 +137,7 @@ class ExampleRunner {
 
     // 결과 디렉토리 생성
     const timestamp = new Date().toISOString().replace(/[:.]/g, '-').split('T')[0];
-    const resultDir = path.join(
-      process.cwd(),
-      'test-results',
-      scenarioPath,
-      `${timestamp}-${Date.now()}`
-    );
+    const resultDir = path.join(process.cwd(), 'test-results', scenarioPath, `${timestamp}-${Date.now()}`);
     ensureDir(resultDir);
 
     log(`Result directory: ${resultDir}`, 'info');
@@ -155,29 +151,50 @@ class ExampleRunner {
     log(`Loading HTML: ${htmlPath}`, 'info');
     await this.page.goto(`file://${htmlPath}`);
 
-    // 초기화 대기 (페이지 로드 후 충분한 대기)
-    await this.page.waitForLoadState('networkidle');
-    await this.page.waitForTimeout(1000); // 추가 대기
+    // 페이지 로드 대기
+    await this.page.waitForLoadState('domcontentloaded');
+
+    // GSAP 라이브러리가 로드될 때까지 대기
+    await this.page.waitForFunction('typeof gsap !== "undefined"', { timeout: 5000 });
+    log('GSAP loaded', 'success');
+
+    // 시나리오별 필요한 라이브러리 주입
+    const scenarioName = path.basename(scenarioDir);
+    const libPath = path.join(process.cwd(), 'dist', 'lib', `${scenarioName}.min.js`);
+
+    if (fs.existsSync(libPath)) {
+      log(`Injecting library: ${libPath}`, 'info');
+      await this.page.addScriptTag({ path: libPath });
+
+      // 라이브러리가 로드될 때까지 추가 대기
+      await this.page.waitForTimeout(500);
+    } else {
+      log(`Library not found: ${libPath}`, 'warning');
+    }
 
     if (scenario.target.waitForSelector) {
       const timeout = scenario.target.timeout ?? 10000;
       log(`Waiting for selector: ${scenario.target.waitForSelector}`, 'info');
       try {
         await this.page.waitForSelector(scenario.target.waitForSelector, { timeout });
+        log(`Selector found: ${scenario.target.waitForSelector}`, 'success');
       } catch (error) {
         // 디버깅을 위한 페이지 내용 출력
         const content = await this.page.content();
         log(`Page content length: ${content.length}`, 'warning');
         const hasSelector = await this.page.$(scenario.target.waitForSelector);
         log(`Selector found: ${!!hasSelector}`, 'warning');
+
+        // window 객체의 createLineMatching 확인
+        const hasCreate = await this.page.evaluate(() => typeof (window as any).createLineMatching !== 'undefined');
+        log(`window.createLineMatching exists: ${hasCreate}`, 'warning');
+
         throw error;
       }
     }
 
     // 테스트 필터링
-    const testsToRun = options.test
-      ? scenario.tests.filter((t) => t.id === options.test)
-      : scenario.tests;
+    const testsToRun = options.test ? scenario.tests.filter(t => t.id === options.test) : scenario.tests;
 
     if (testsToRun.length === 0) {
       log(`No tests found${options.test ? ` with id: ${options.test}` : ''}`, 'warning');
@@ -204,9 +221,9 @@ class ExampleRunner {
       scenario: scenario.name,
       timestamp: new Date().toISOString(),
       total: results.length,
-      passed: results.filter((r) => r.status === 'passed').length,
-      failed: results.filter((r) => r.status === 'failed').length,
-      error: results.filter((r) => r.status === 'error').length,
+      passed: results.filter(r => r.status === 'passed').length,
+      failed: results.filter(r => r.status === 'failed').length,
+      error: results.filter(r => r.status === 'error').length,
       results,
     };
 
@@ -250,7 +267,7 @@ class ExampleRunner {
 
         // Middle 캡처 (첫 번째 액션 중간)
         if (i === 0 && capturePoints.includes('middle')) {
-          await this.executeAction(action, page, async (progress) => {
+          await this.executeAction(action, page, async progress => {
             if (progress >= 0.5 && !result.screenshots!.middle) {
               const middlePath = path.join(testDir, 'middle.png');
               await page.screenshot({ path: middlePath });
@@ -430,12 +447,12 @@ Examples:
 
   const headed = args.includes('--headed') || args.includes('--show');
   const slowMoIndex = args.indexOf('--slow-mo');
-  const slowMo = slowMoIndex !== -1 ? parseInt(args[slowMoIndex + 1], 10) : 0;
+  const slowMo = slowMoIndex !== -1 ? Number.parseInt(args[slowMoIndex + 1], 10) : 0;
   const testIndex = args.indexOf('--test');
   const testId = testIndex !== -1 ? args[testIndex + 1] : undefined;
   const runAll = args.includes('--all');
 
-  const scenario = args.find((arg) => !arg.startsWith('--'));
+  const scenario = args.find(arg => !arg.startsWith('--'));
 
   if (!runAll && !scenario) {
     log('Error: Scenario name required', 'error');
@@ -451,7 +468,7 @@ Examples:
       const examplesDir = path.join(process.cwd(), 'examples');
       const scenarios = fs
         .readdirSync(examplesDir)
-        .filter((dir) => fs.existsSync(path.join(examplesDir, dir, 'scenario.json')));
+        .filter(dir => fs.existsSync(path.join(examplesDir, dir, 'scenario.json')));
 
       log(`Found ${scenarios.length} scenario(s)`, 'info');
 
@@ -470,4 +487,7 @@ Examples:
   }
 }
 
-main();
+main().catch(error => {
+  console.error('Unhandled error in main:', error);
+  process.exit(1);
+});

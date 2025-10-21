@@ -57,14 +57,7 @@
   <!-- GSAP CDN -->
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.13/dist/gsap.min.js"></script>
 
-  <!-- GSAP Kit Library (file:// 프로토콜 대응) -->
-  <script>
-    const libPath = window.location.protocol === 'file:'
-      ? window.location.pathname.replace(/\/examples\/[^/]+\/index\.html$/, '/dist/lib/line-matching.min.js')
-      : '../../dist/lib/line-matching.min.js';
-
-    document.write(`<script src="${libPath}"><\/script>`);
-  </script>
+  <!-- GSAP Kit Library (Playwright runner에서 주입됨) -->
 
   <script>
     // Test State (for Playwright assertions)

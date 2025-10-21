@@ -37,3 +37,6 @@ build/
 
 # Process IDs
 *.pid
+
+# Scripts
+scripts/*.js
