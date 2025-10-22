@@ -12,6 +12,8 @@
       "**/src/**/*.js",
       "**/scripts/**/*.js",
       "**/scripts/**/*.ts",
+      "**/tests/**/*.js",
+      "**/tests/**/*.ts",
       "**/*.config.js",
       "!**/node_modules",
       "!**/dist",

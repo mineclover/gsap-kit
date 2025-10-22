@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JSON Spec Test Runner - GSAP Kit</title>
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <div class="container">
+    <header class="page-header">
+      <h1>📋 JSON Spec Test Runner</h1>
+      <p>Run automated tests from JSON specification files</p>
+    </header>
+
+    <div class="controls">
+      <div class="control-group">
+        <h3>Predefined Specs</h3>
+        <button id="loadLineMatching" class="btn btn-primary">📝 Load Line Matching Spec</button>
+        <button id="loadDraggable" class="btn btn-secondary">🎯 Load Draggable Spec</button>
+      </div>
+
+      <div class="control-group">
+        <h3>Custom JSON File</h3>
+        <input type="file" id="jsonFileInput" accept=".json" class="file-input">
+        <button id="loadFile" class="btn btn-info">📂 Load Custom Spec</button>
+      </div>
+
+      <div class="control-group">
+        <button id="clearResults" class="btn btn-danger">🧹 Clear Results</button>
+        <button id="resetGame" class="btn btn-warning">🔄 Reset Game</button>
+      </div>
+    </div>
+
+    <div class="game-status">
+      <h3>Game Status</h3>
+      <div class="status-cards">
+        <div class="status-card correct">
+          <span class="status-label">Correct</span>
+          <span class="status-value" id="correctCount">0</span>
+        </div>
+        <div class="status-card incorrect">
+          <span class="status-label">Incorrect</span>
+          <span class="status-value" id="incorrectCount">0</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Line Matching Game Demo -->
+    <div class="demo-section" id="demo-line-matching">
+      <h2>Line Matching Demo</h2>
+      <div class="matching-container">
+        <div class="column column-left">
+          <div class="item" id="fruit-1">🍎 사과</div>
+          <div class="item" id="fruit-2">🍌 바나나</div>
+          <div class="item" id="fruit-3">🍊 오렌지</div>
+        </div>
+        <div class="column column-right">
+          <div class="item" id="english-1">Apple</div>
+          <div class="item" id="english-2">Orange</div>
+          <div class="item" id="english-3">Banana</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Test Results -->
+    <div class="results-section">
+      <h2>Test Results</h2>
+      <div id="reporter-container"></div>
+    </div>
+
+    <!-- Test Log -->
+    <div class="log-section">
+      <h2>Test Log</h2>
+      <div id="log-container" class="log-container"></div>
+    </div>
+  </div>
+
+  <!-- GSAP CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/Draggable.min.js"></script>
+
+  <!-- Main Script -->
+  <script type="module" src="./main.js"></script>
+</body>
+</html>

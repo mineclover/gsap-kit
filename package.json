@@ -67,7 +67,17 @@
     "serve:live": "live-server --port=8000 --open=/dist/pages/basic --watch=dist,src/pages --no-css-inject",
     "stop": "pkill -f 'nodemon|live-server' || true",
     "logs": "tail -f dev.log",
-    "status": "ps aux | grep -E 'nodemon|live-server' | grep -v grep"
+    "status": "ps aux | grep -E 'nodemon|live-server' | grep -v grep",
+    "test": "npm run test:e2e",
+    "test:e2e": "ts-node scripts/run-e2e-tests.ts",
+    "test:e2e:chromium": "playwright test --project=chromium",
+    "test:e2e:firefox": "playwright test --project=firefox",
+    "test:e2e:webkit": "playwright test --project=webkit",
+    "test:e2e:headed": "playwright test --headed",
+    "test:e2e:debug": "playwright test --debug",
+    "test:e2e:ui": "playwright test --ui",
+    "test:report": "playwright show-report test-results/html",
+    "test:install": "playwright install"
   },
   "lint-staged": {
     "*.ts": [
@@ -101,6 +111,7 @@
   },
   "devDependencies": {
     "@biomejs/biome": "2.2.6",
+    "@playwright/test": "1.56.1",
     "@rollup/plugin-node-resolve": "16.0.3",
     "@rollup/plugin-terser": "0.4.4",
     "@rollup/plugin-typescript": "12.1.4",

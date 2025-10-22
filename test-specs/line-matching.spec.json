@@ -1,0 +1,121 @@
+{
+  "version": "1.0.0",
+  "metadata": {
+    "title": "Line Matching Interaction Tests",
+    "description": "Line matching 게임 인터랙션 자동화 테스트",
+    "author": "GSAP Kit",
+    "tags": ["line-matching", "drag", "interaction"]
+  },
+  "config": {
+    "defaultDuration": 1000,
+    "defaultCurvature": 0.3,
+    "visualizationEnabled": true,
+    "slowMotion": false
+  },
+  "suites": [
+    {
+      "name": "Line Matching: Basic Drag Tests",
+      "description": "기본 드래그 연결 테스트",
+      "beforeAll": {
+        "executeFunction": "initGame",
+        "waitTime": 500
+      },
+      "beforeEach": {
+        "executeFunction": "resetGame",
+        "waitTime": 200
+      },
+      "tests": [
+        {
+          "name": "Drag 사과 to Apple (Correct)",
+          "description": "사과를 Apple로 정확하게 연결",
+          "type": "drag",
+          "simulation": {
+            "from": "#fruit-1",
+            "to": "#english-1",
+            "duration": 1000,
+            "curvature": 0.3,
+            "dispatchEvents": true
+          },
+          "visualization": {
+            "pathColor": "#667eea",
+            "showCursor": true,
+            "autoRemove": true,
+            "removeDelay": 1000
+          },
+          "assert": {
+            "type": "custom",
+            "customFunction": "() => { return window.correctCount > 0; }"
+          }
+        },
+        {
+          "name": "Drag 바나나 to Banana (Correct)",
+          "description": "바나나를 Banana로 정확하게 연결",
+          "type": "drag",
+          "simulation": {
+            "from": "#fruit-2",
+            "to": "#english-3",
+            "duration": 1000,
+            "curvature": 0.4
+          },
+          "visualization": {
+            "pathColor": "#48bb78",
+            "showCursor": true,
+            "autoRemove": true
+          },
+          "assert": {
+            "type": "custom",
+            "customFunction": "() => { return window.correctCount >= 1; }"
+          }
+        },
+        {
+          "name": "Drag 사과 to Orange (Incorrect)",
+          "description": "의도적으로 오답 연결하여 오류 처리 확인",
+          "type": "drag",
+          "simulation": {
+            "from": "#fruit-1",
+            "to": "#english-2",
+            "duration": 1000,
+            "curvature": 0.5
+          },
+          "visualization": {
+            "pathColor": "#f56565",
+            "showCursor": true,
+            "autoRemove": true
+          },
+          "assert": {
+            "type": "custom",
+            "customFunction": "() => { return window.incorrectCount > 0; }"
+          },
+          "setup": {
+            "resetFunction": "resetGame",
+            "waitTime": 200
+          }
+        },
+        {
+          "name": "Drag 오렌지 to Orange (Correct)",
+          "description": "오렌지를 Orange로 정확하게 연결",
+          "type": "drag",
+          "simulation": {
+            "from": "#fruit-3",
+            "to": "#english-2",
+            "duration": 1000,
+            "curvature": 0.4
+          },
+          "visualization": {
+            "pathColor": "#ed8936",
+            "showCursor": true,
+            "autoRemove": true
+          },
+          "assert": {
+            "type": "custom",
+            "customFunction": "() => { const total = window.correctCount + window.incorrectCount; return total >= 1; }"
+          },
+          "setup": {
+            "resetFunction": "resetGame",
+            "waitTime": 200
+          }
+        }
+      ]
+    }
+  ]
+}

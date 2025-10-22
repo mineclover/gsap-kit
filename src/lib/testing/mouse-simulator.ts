@@ -75,6 +75,8 @@ export class MouseSimulator {
   private options: Required<MouseSimulatorOptions>;
   private path: Point[] = [];
   private animationFrameId: number | null = null;
+  private startElement: HTMLElement | null = null;
+  private endElement: HTMLElement | null = null;
 
   constructor(options: MouseSimulatorOptions) {
     this.options = {
@@ -93,9 +95,9 @@ export class MouseSimulator {
   }
 
   /**
-   * 셀렉터 또는 좌표를 실제 좌표로 변환
+   * 셀렉터 또는 좌표를 실제 좌표로 변환하고 타겟 요소 저장
    */
-  private resolvePoint(target: string | Point, position: string): Point {
+  private resolvePoint(target: string | Point, position: string, isStart: boolean): Point {
     // 이미 좌표인 경우
     if (typeof target === 'object' && 'x' in target && 'y' in target) {
       return target;
@@ -112,10 +114,25 @@ export class MouseSimulator {
     if (matchingPoint) {
       const pointRect = matchingPoint.getBoundingClientRect();
       debug(`[MouseSimulator] Found line-matching-point in ${target}`);
+
+      // 요소 레퍼런스 저장
+      if (isStart) {
+        this.startElement = matchingPoint;
+      } else {
+        this.endElement = matchingPoint;
+      }
+
       return {
         x: pointRect.left + pointRect.width / 2,
         y: pointRect.top + pointRect.height / 2,
       };
+    }
+
+    // 일반 요소인 경우에도 레퍼런스 저장
+    if (isStart) {
+      this.startElement = element;
+    } else {
+      this.endElement = element;
     }
 
     const rect = element.getBoundingClientRect();
@@ -214,8 +231,17 @@ export class MouseSimulator {
   /**
    * 마우스 이벤트 디스패치
    */
-  private dispatchMouseEvent(type: 'mousedown' | 'mousemove' | 'mouseup' | 'click', point: Point): void {
-    const element = document.elementFromPoint(point.x, point.y);
+  private dispatchMouseEvent(
+    type: 'mousedown' | 'mousemove' | 'mouseup' | 'click',
+    point: Point,
+    targetElement?: HTMLElement | null
+  ): void {
+    // 타겟 요소가 지정되면 그것을 사용, 아니면 좌표로 요소 찾기
+    let element = targetElement;
+    if (!element) {
+      element = document.elementFromPoint(point.x, point.y) as HTMLElement;
+    }
+
     if (!element) return;
 
     const event = new MouseEvent(type, {
@@ -231,7 +257,9 @@ export class MouseSimulator {
     });
 
     element.dispatchEvent(event);
-    debug(`[MouseSimulator] ${type} at (${Math.round(point.x)}, ${Math.round(point.y)})`);
+    debug(
+      `[MouseSimulator] ${type} at (${Math.round(point.x)}, ${Math.round(point.y)}) on ${element.className || element.tagName}`
+    );
   }
 
   /**
@@ -240,9 +268,9 @@ export class MouseSimulator {
   async simulate(): Promise<void> {
     debug('[MouseSimulator] Simulation started');
 
-    // 시작점과 끝점 계산
-    const start = this.resolvePoint(this.options.from, this.options.fromPosition);
-    const end = this.resolvePoint(this.options.to, this.options.toPosition);
+    // 시작점과 끝점 계산 (요소 레퍼런스도 저장)
+    const start = this.resolvePoint(this.options.from, this.options.fromPosition, true);
+    const end = this.resolvePoint(this.options.to, this.options.toPosition, false);
 
     debug(
       `[MouseSimulator] Path: (${Math.round(start.x)}, ${Math.round(start.y)}) → (${Math.round(end.x)}, ${Math.round(end.y)})`
@@ -254,9 +282,9 @@ export class MouseSimulator {
     // 시작 콜백
     this.options.onStart();
 
-    // mousedown 이벤트
+    // mousedown 이벤트 - 시작 요소에 디스패치
     if (this.options.dispatchEvents) {
-      this.dispatchMouseEvent('mousedown', start);
+      this.dispatchMouseEvent('mousedown', start, this.startElement);
     }
 
     // 경로를 따라 이동
@@ -268,8 +296,14 @@ export class MouseSimulator {
         if (frameIndex >= this.path.length) {
           // 종료
           if (this.options.dispatchEvents) {
-            this.dispatchMouseEvent('mouseup', end);
-            this.dispatchMouseEvent('click', end);
+            // mouseup과 click은 끝 요소에 디스패치
+            this.dispatchMouseEvent('mouseup', end, this.endElement);
+
+            // click 이벤트는 동기적으로 디스패치
+            // (setTimeout을 사용하면 다음 테스트의 reset과 race condition 발생)
+            if (this.endElement) {
+              this.dispatchMouseEvent('click', end, this.endElement);
+            }
           }
 
           this.options.onEnd();
@@ -281,7 +315,7 @@ export class MouseSimulator {
         const point = this.path[frameIndex];
         const progress = frameIndex / (this.path.length - 1);
 
-        // mousemove 이벤트
+        // mousemove 이벤트 - 좌표에 있는 요소에 디스패치
         if (this.options.dispatchEvents && frameIndex > 0) {
           this.dispatchMouseEvent('mousemove', point);
         }

@@ -3,6 +3,14 @@
  * 인터렉션 자동화 테스트 시스템
  */
 
+// Automation
+export {
+  type AutomationOptions,
+  type AutomationResult,
+  setupGlobalAutomation,
+  TestAutomation,
+  waitForTestCompletion,
+} from './automation';
 // Mouse Simulator
 export {
   MouseSimulator,
@@ -11,7 +19,6 @@ export {
   simulateClick,
   simulateDrag,
 } from './mouse-simulator';
-
 // Path Visualizer
 export {
   PathVisualizer,
@@ -24,6 +31,20 @@ export {
   type ReporterOptions,
   TestReporter,
 } from './reporter';
+// Spec Loader
+export {
+  AssertionValidator,
+  type TestFileSpec,
+  type TestSpec,
+  TestSpecLoader,
+  type TestSuiteSpec,
+} from './spec-loader';
+// Spec Runner
+export {
+  runTestsFromFile,
+  runTestsFromObject,
+  SpecRunner,
+} from './spec-runner';
 // Test Runner
 export {
   describe,

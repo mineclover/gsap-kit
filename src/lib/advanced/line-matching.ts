@@ -1315,6 +1315,14 @@ class LineMatchingInstance {
     // 힌트 숨기기
     this.hideHints();
 
+    // 드래그 및 선택 상태 초기화
+    this.isDragging = false;
+    this.dragStartPoint = null;
+    this.firstSelectedPoint = null;
+
+    // 커서 트래커 숨기기
+    this.hideCursorTracker();
+
     debug('리셋 완료');
   }
 

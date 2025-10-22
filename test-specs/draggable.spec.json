@@ -1,0 +1,143 @@
+{
+  "version": "1.0.0",
+  "metadata": {
+    "title": "Draggable Tests",
+    "description": "드래그 기능 자동화 테스트",
+    "author": "GSAP Kit",
+    "tags": ["draggable", "drag", "gsap"]
+  },
+  "config": {
+    "defaultDuration": 800,
+    "defaultCurvature": 0.2,
+    "visualizationEnabled": true,
+    "slowMotion": false
+  },
+  "suites": [
+    {
+      "name": "Draggable: Free Movement",
+      "description": "자유 드래그 테스트",
+      "tests": [
+        {
+          "name": "Drag free box horizontally",
+          "description": "자유 드래그 박스를 가로로 이동",
+          "type": "drag",
+          "simulation": {
+            "from": ".drag-free",
+            "to": { "x": 100, "y": 0 }
+          },
+          "visualization": {
+            "pathColor": "#667eea",
+            "showCursor": true,
+            "autoRemove": true
+          },
+          "assert": {
+            "type": "selector-exists",
+            "selector": ".drag-free"
+          }
+        },
+        {
+          "name": "Drag free box vertically",
+          "description": "자유 드래그 박스를 세로로 이동",
+          "type": "drag",
+          "simulation": {
+            "from": ".drag-free",
+            "to": { "x": 0, "y": 100 }
+          },
+          "visualization": {
+            "pathColor": "#48bb78",
+            "showCursor": true,
+            "autoRemove": true
+          }
+        }
+      ]
+    },
+    {
+      "name": "Draggable: Axis Constraints",
+      "description": "축 제한 드래그 테스트",
+      "tests": [
+        {
+          "name": "Drag X-only box horizontally",
+          "description": "X축만 이동 가능한 박스를 가로로 드래그",
+          "type": "drag",
+          "simulation": {
+            "from": ".drag-box-x",
+            "to": { "x": 150, "y": 50 }
+          },
+          "visualization": {
+            "pathColor": "#f56565",
+            "showCursor": true,
+            "autoRemove": true
+          },
+          "assert": {
+            "type": "selector-exists",
+            "selector": ".drag-box-x"
+          }
+        },
+        {
+          "name": "Drag Y-only box vertically",
+          "description": "Y축만 이동 가능한 박스를 세로로 드래그",
+          "type": "drag",
+          "simulation": {
+            "from": ".drag-box-y",
+            "to": { "x": 50, "y": 150 }
+          },
+          "visualization": {
+            "pathColor": "#ed8936",
+            "showCursor": true,
+            "autoRemove": true
+          },
+          "assert": {
+            "type": "selector-exists",
+            "selector": ".drag-box-y"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Draggable: Boundary Constraints",
+      "description": "경계 제한 드래그 테스트",
+      "tests": [
+        {
+          "name": "Drag bounded box within bounds",
+          "description": "경계 내에서 박스 드래그",
+          "type": "drag",
+          "simulation": {
+            "from": "#bounded-box",
+            "to": { "x": 100, "y": 100 },
+            "duration": 1200
+          },
+          "visualization": {
+            "pathColor": "#9f7aea",
+            "showCursor": true,
+            "autoRemove": true
+          },
+          "assert": {
+            "type": "selector-exists",
+            "selector": "#bounded-box"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Draggable: Click Tests",
+      "description": "클릭 인터랙션 테스트",
+      "tests": [
+        {
+          "name": "Click on draggable element",
+          "description": "드래그 가능한 요소 클릭",
+          "type": "click",
+          "simulation": {
+            "from": ".drag-free",
+            "to": ".drag-free",
+            "duration": 100
+          },
+          "visualization": {
+            "pathColor": "#38b2ac",
+            "showCursor": true,
+            "autoRemove": true
+          }
+        }
+      ]
+    }
+  ]
+}
