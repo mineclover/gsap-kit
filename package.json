@@ -70,10 +70,12 @@
     "status": "ps aux | grep -E 'nodemon|live-server' | grep -v grep"
   },
   "lint-staged": {
-    "*.{js,ts}": [
+    "*.ts": [
       "biome check --write --files-ignore-unknown=true"
     ],
-    "!scripts/*.js": []
+    "*.js": [
+      "bash -c 'if [[ \"$0\" != scripts/validate-*.js && \"$0\" != scripts/auto-discover-*.js ]]; then biome check --write --files-ignore-unknown=true \"$0\"; fi'"
+    ]
   },
   "keywords": [
     "gsap",

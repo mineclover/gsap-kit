@@ -10,8 +10,8 @@
  */
 
 import fs from 'fs';
-import path from 'path';
 import { glob } from 'glob';
+import path from 'path';
 import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -36,7 +36,7 @@ function discoverLibraryEntries() {
     ignore: ['**/index.ts'],
   });
 
-  return files.map((input) => {
+  return files.map(input => {
     // src/lib/animations/fade.ts → dist/lib/animations/fade.js
     const output = input.replace(/^src\//, 'dist/').replace(/\.ts$/, '.js');
 
@@ -81,7 +81,7 @@ function discoverLibraryEntries() {
 function toPascalCase(str) {
   return str
     .split(/[-_]/)
-    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
     .join('');
 }
 
@@ -97,7 +97,7 @@ function mergeWithOverrides(autoEntries, overrides = {}) {
     overrideMap.set(input, config);
   });
 
-  autoEntries.forEach((entry) => {
+  autoEntries.forEach(entry => {
     if (overrideMap.has(entry.input)) {
       // Override가 있으면 병합
       const override = overrideMap.get(entry.input);
@@ -143,7 +143,7 @@ function generateBundleExports(entries) {
   const categorized = {};
 
   // 카테고리별로 그룹화
-  entries.forEach((entry) => {
+  entries.forEach(entry => {
     const parts = entry.input.split('/');
     if (parts[0] === 'src' && parts[1] === 'lib') {
       const category = parts[2];
@@ -157,20 +157,18 @@ function generateBundleExports(entries) {
   // 카테고리 순서
   const categoryOrder = ['core', 'advanced', 'animations', 'draggable', 'utils', 'testing', 'types'];
 
-  categoryOrder.forEach((category) => {
+  categoryOrder.forEach(category => {
     if (categorized[category]) {
       exportLines.push(`// ${category.charAt(0).toUpperCase() + category.slice(1)}`);
 
       // 같은 카테고리 내에서 index.ts가 있으면 그것만, 없으면 개별 파일들
-      const hasIndex = categorized[category].some((e) => e.input.endsWith('/index.ts'));
+      const hasIndex = categorized[category].some(e => e.input.endsWith('/index.ts'));
 
       if (hasIndex) {
         exportLines.push(`export * from './lib/${category}';`);
       } else {
-        categorized[category].forEach((entry) => {
-          const modulePath = entry.input
-            .replace(/^src\//, './')
-            .replace(/\.ts$/, '');
+        categorized[category].forEach(entry => {
+          const modulePath = entry.input.replace(/^src\//, './').replace(/\.ts$/, '');
           exportLines.push(`export * from '${modulePath}';`);
         });
       }
@@ -190,12 +188,12 @@ function displayResults(entries) {
   console.log('🔍 진입점 자동 탐색 결과');
   console.log(`${'='.repeat(60)}${colors.reset}\n`);
 
-  const auto = entries.filter((e) => e.auto);
-  const manual = entries.filter((e) => !e.auto);
+  const auto = entries.filter(e => e.auto);
+  const manual = entries.filter(e => !e.auto);
 
   console.log(`${colors.green}✅ 자동 탐색: ${auto.length}개${colors.reset}`);
   if (auto.length > 0) {
-    auto.forEach((e) => {
+    auto.forEach(e => {
       const nameStr = e.name ? `(name: ${e.name})` : '(no name)';
       const minifyStr = e.minify ? '[minified]' : '';
       console.log(`  - ${e.input} ${nameStr} ${minifyStr}`);
@@ -204,7 +202,7 @@ function displayResults(entries) {
 
   console.log(`\n${colors.yellow}⚙️  Override 적용: ${manual.length}개${colors.reset}`);
   if (manual.length > 0) {
-    manual.forEach((e) => {
+    manual.forEach(e => {
       const nameStr = e.name ? `(name: ${e.name})` : '(no name)';
       console.log(`  - ${e.input} ${nameStr}`);
     });
@@ -218,7 +216,7 @@ function displayResults(entries) {
  */
 function generateBuildConfig(entries, bundleEntry) {
   const entriesStr = entries
-    .map((e) => {
+    .map(e => {
       const auto = e.auto ? '// Auto-discovered' : '// Manual override';
       return `    ${auto}
     {
@@ -278,7 +276,7 @@ async function main() {
     try {
       const module = await import(configPath);
       overrides = module.buildConfig.overrides || {};
-    } catch (err) {
+    } catch (_err) {
       // 파싱 에러는 무시
     }
   }
@@ -289,7 +287,7 @@ async function main() {
 
   // 통계 출력
   const categories = {};
-  mergedEntries.forEach((e) => {
+  mergedEntries.forEach(e => {
     const category = path.dirname(e.input).split('/')[2] || 'other';
     categories[category] = (categories[category] || 0) + 1;
   });

@@ -11,10 +11,10 @@
  */
 
 import fs from 'fs';
-import path from 'path';
 import { glob } from 'glob';
-import { buildConfig } from '../build.config.js';
+import path from 'path';
 import { fileURLToPath } from 'url';
+import { buildConfig } from '../build.config.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -31,11 +31,11 @@ const colors = {
 };
 
 const log = {
-  error: (msg) => console.error(`${colors.red}❌ ${msg}${colors.reset}`),
-  warn: (msg) => console.warn(`${colors.yellow}⚠️  ${msg}${colors.reset}`),
-  success: (msg) => console.log(`${colors.green}✅ ${msg}${colors.reset}`),
-  info: (msg) => console.log(`${colors.cyan}ℹ️  ${msg}${colors.reset}`),
-  section: (msg) => console.log(`\n${colors.blue}${'='.repeat(60)}${colors.reset}`),
+  error: msg => console.error(`${colors.red}❌ ${msg}${colors.reset}`),
+  warn: msg => console.warn(`${colors.yellow}⚠️  ${msg}${colors.reset}`),
+  success: msg => console.log(`${colors.green}✅ ${msg}${colors.reset}`),
+  info: msg => console.log(`${colors.cyan}ℹ️  ${msg}${colors.reset}`),
+  section: _msg => console.log(`\n${colors.blue}${'='.repeat(60)}${colors.reset}`),
 };
 
 let hasErrors = false;
@@ -50,7 +50,7 @@ function validateConfigInputs() {
   const missingFiles = [];
   const existingFiles = [];
 
-  buildConfig.cdnEntries.forEach((entry) => {
+  buildConfig.cdnEntries.forEach(entry => {
     const filePath = path.resolve(rootDir, entry.input);
     if (fs.existsSync(filePath)) {
       existingFiles.push(entry.input);
@@ -62,7 +62,7 @@ function validateConfigInputs() {
 
   if (missingFiles.length > 0) {
     log.error(`build.config.js에 정의되었지만 존재하지 않는 파일 (${missingFiles.length}개):`);
-    missingFiles.forEach((file) => console.log(`  - ${file}`));
+    missingFiles.forEach(file => console.log(`  - ${file}`));
   }
 
   log.success(`build.config.js에 정의된 진입점: ${buildConfig.cdnEntries.length}개`);
@@ -84,14 +84,14 @@ function validateLibFiles() {
   });
 
   // build.config.js에 정의된 input 파일들
-  const configuredInputs = new Set(buildConfig.cdnEntries.map((entry) => entry.input));
+  const configuredInputs = new Set(buildConfig.cdnEntries.map(entry => entry.input));
 
   // 누락된 파일 찾기
-  const unregisteredFiles = libFiles.filter((file) => !configuredInputs.has(file));
+  const unregisteredFiles = libFiles.filter(file => !configuredInputs.has(file));
 
   if (unregisteredFiles.length > 0) {
     log.warn(`build.config.js에 등록되지 않은 src/lib 파일 (${unregisteredFiles.length}개):`);
-    unregisteredFiles.forEach((file) => console.log(`  - ${file}`));
+    unregisteredFiles.forEach(file => console.log(`  - ${file}`));
     log.info('👉 의도적으로 제외된 파일이라면 무시하세요.');
     hasWarnings = true;
   } else {
@@ -113,7 +113,7 @@ function validateDuplicates() {
   const inputCounts = {};
   const outputCounts = {};
 
-  buildConfig.cdnEntries.forEach((entry) => {
+  buildConfig.cdnEntries.forEach(entry => {
     inputCounts[entry.input] = (inputCounts[entry.input] || 0) + 1;
     outputCounts[entry.output] = (outputCounts[entry.output] || 0) + 1;
   });
@@ -168,17 +168,14 @@ function validateBundleEntry() {
 
   // 각 export 경로가 실제 존재하는지 확인
   const missingExports = [];
-  exports.forEach((exportPath) => {
+  exports.forEach(exportPath => {
     // './lib/...' 형태를 'src/lib/...'로 변환
     const filePath = exportPath.replace(/^\.\//, 'src/');
 
     // .ts 또는 /index.ts로 확인
-    const possiblePaths = [
-      path.resolve(rootDir, `${filePath}.ts`),
-      path.resolve(rootDir, `${filePath}/index.ts`),
-    ];
+    const possiblePaths = [path.resolve(rootDir, `${filePath}.ts`), path.resolve(rootDir, `${filePath}/index.ts`)];
 
-    const exists = possiblePaths.some((p) => fs.existsSync(p));
+    const exists = possiblePaths.some(p => fs.existsSync(p));
 
     if (!exists) {
       missingExports.push(exportPath);
@@ -188,7 +185,7 @@ function validateBundleEntry() {
 
   if (missingExports.length > 0) {
     log.error(`src/index.ts에서 export하지만 존재하지 않는 모듈 (${missingExports.length}개):`);
-    missingExports.forEach((exp) => console.log(`  - ${exp}`));
+    missingExports.forEach(exp => console.log(`  - ${exp}`));
   } else {
     log.success('src/index.ts의 모든 export가 유효합니다.');
   }
@@ -208,7 +205,7 @@ function validatePageEntries() {
 
   if (pageEntries.length > 0) {
     console.log('페이지 목록:');
-    pageEntries.forEach((page) => {
+    pageEntries.forEach(page => {
       const pageName = path.basename(path.dirname(page));
       console.log(`  - ${pageName} (${page})`);
     });
@@ -223,11 +220,11 @@ function validateOutputDirectories() {
   log.info('6. 빌드 출력 디렉토리 검증');
   log.section();
 
-  const outputs = buildConfig.cdnEntries.map((entry) => entry.output);
-  const outputDirs = new Set(outputs.map((output) => path.dirname(output)));
+  const outputs = buildConfig.cdnEntries.map(entry => entry.output);
+  const outputDirs = new Set(outputs.map(output => path.dirname(output)));
 
   log.info(`빌드 출력 디렉토리: ${outputDirs.size}개`);
-  outputDirs.forEach((dir) => console.log(`  - ${dir}`));
+  outputDirs.forEach(dir => console.log(`  - ${dir}`));
 
   return { outputDirs };
 }

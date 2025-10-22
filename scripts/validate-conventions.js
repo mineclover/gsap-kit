@@ -10,8 +10,8 @@
  */
 
 import fs from 'fs';
-import path from 'path';
 import { glob } from 'glob';
+import path from 'path';
 import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -28,10 +28,10 @@ const colors = {
 };
 
 const log = {
-  error: (msg) => console.error(`${colors.red}❌ ${msg}${colors.reset}`),
-  warn: (msg) => console.warn(`${colors.yellow}⚠️  ${msg}${colors.reset}`),
-  success: (msg) => console.log(`${colors.green}✅ ${msg}${colors.reset}`),
-  info: (msg) => console.log(`${colors.cyan}ℹ️  ${msg}${colors.reset}`),
+  error: msg => console.error(`${colors.red}❌ ${msg}${colors.reset}`),
+  warn: msg => console.warn(`${colors.yellow}⚠️  ${msg}${colors.reset}`),
+  success: msg => console.log(`${colors.green}✅ ${msg}${colors.reset}`),
+  info: msg => console.log(`${colors.cyan}ℹ️  ${msg}${colors.reset}`),
   section: () => console.log(`\n${colors.blue}${'='.repeat(60)}${colors.reset}\n`),
 };
 
@@ -81,11 +81,7 @@ function validateSingleSourceOfTruth(conventionsData) {
 
   const { content } = conventionsData;
 
-  const keywords = [
-    'Single Source of Truth',
-    '단일 원천',
-    '유일한 공식 문서',
-  ];
+  const keywords = ['Single Source of Truth', '단일 원천', '유일한 공식 문서'];
 
   const found = keywords.some(keyword => content.includes(keyword));
 
