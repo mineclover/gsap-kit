@@ -22,11 +22,14 @@ export interface TestSpec {
 
   /** 시뮬레이션 설정 */
   simulation: {
-    /** 시작 셀렉터 또는 좌표 */
-    from: string | { x: number; y: number };
+    /** 시작 셀렉터 또는 좌표 (drag/click) */
+    from?: string | { x: number; y: number };
 
-    /** 끝 셀렉터 또는 좌표 */
-    to: string | { x: number; y: number };
+    /** 끝 셀렉터 또는 좌표 (drag) */
+    to?: string | { x: number; y: number };
+
+    /** 타겟 셀렉터 (hover) */
+    target?: string;
 
     /** 시작 위치 */
     fromPosition?:
@@ -52,8 +55,29 @@ export interface TestSpec {
       | 'bottom-left'
       | 'bottom-right';
 
+    /** 타겟 위치 (hover) */
+    targetPosition?:
+      | 'center'
+      | 'top'
+      | 'bottom'
+      | 'left'
+      | 'right'
+      | 'top-left'
+      | 'top-right'
+      | 'bottom-left'
+      | 'bottom-right';
+
     /** 이동 시간 (ms) */
     duration?: number;
+
+    /** 진입 시간 (hover, ms) */
+    enterDuration?: number;
+
+    /** 호버 지속 시간 (hover, ms) */
+    hoverDuration?: number;
+
+    /** 탈출 시간 (hover, ms) */
+    exitDuration?: number;
 
     /** 경로 곡률 */
     curvature?: number;
@@ -61,6 +85,9 @@ export interface TestSpec {
     /** 이벤트 디스패치 여부 */
     dispatchEvents?: boolean;
   };
+
+  /** 검증 지연 시간 (ms) */
+  delay?: number;
 
   /** 시각화 설정 */
   visualization?: {
@@ -200,8 +227,13 @@ export class AssertionValidator {
   /**
    * Assertion 실행
    */
-  static async validate(assert: TestSpec['assert']): Promise<boolean> {
+  static async validate(assert: TestSpec['assert'], delay?: number): Promise<boolean> {
     if (!assert) return true;
+
+    // 지연 시간이 있으면 대기
+    if (delay && delay > 0) {
+      await new Promise(resolve => setTimeout(resolve, delay));
+    }
 
     switch (assert.type) {
       case 'selector-exists': {
@@ -221,7 +253,8 @@ export class AssertionValidator {
 
       case 'not-has-class': {
         const element = document.querySelector(assert.selector!);
-        return !element?.classList.contains(assert.expected) ?? false;
+        if (!element) return true; // Element doesn't exist, so class doesn't exist either
+        return !element.classList.contains(assert.expected);
       }
 
       case 'text-equals': {
@@ -294,10 +327,20 @@ export class TestSpecLoader {
       description: spec.description,
       type: spec.type,
       simulation: {
+        // Drag/Click properties
         from: spec.simulation.from,
         to: spec.simulation.to,
         fromPosition: spec.simulation.fromPosition,
         toPosition: spec.simulation.toPosition,
+
+        // Hover properties
+        target: spec.simulation.target,
+        targetPosition: spec.simulation.targetPosition,
+        enterDuration: spec.simulation.enterDuration,
+        hoverDuration: spec.simulation.hoverDuration,
+        exitDuration: spec.simulation.exitDuration,
+
+        // Common properties
         duration: spec.simulation.duration ?? config?.defaultDuration ?? 1000,
         curvature: spec.simulation.curvature ?? config?.defaultCurvature ?? 0.3,
         dispatchEvents: spec.simulation.dispatchEvents ?? true,
@@ -318,7 +361,7 @@ export class TestSpecLoader {
     // Assertion 설정
     if (spec.assert) {
       testCase.assert = async () => {
-        return AssertionValidator.validate(spec.assert);
+        return AssertionValidator.validate(spec.assert, spec.delay);
       };
     }
 

@@ -14,6 +14,20 @@ export interface Point {
 }
 
 /**
+ * 위치 타입
+ */
+export type PositionType =
+  | 'center'
+  | 'top'
+  | 'bottom'
+  | 'left'
+  | 'right'
+  | 'top-left'
+  | 'top-right'
+  | 'bottom-left'
+  | 'bottom-right';
+
+/**
  * 마우스 시뮬레이션 옵션
  */
 export interface MouseSimulatorOptions {
@@ -24,28 +38,10 @@ export interface MouseSimulatorOptions {
   to: string | Point;
 
   /** 시작 위치 (요소 내 상대 위치: 'center', 'top-left', 등) */
-  fromPosition?:
-    | 'center'
-    | 'top'
-    | 'bottom'
-    | 'left'
-    | 'right'
-    | 'top-left'
-    | 'top-right'
-    | 'bottom-left'
-    | 'bottom-right';
+  fromPosition?: PositionType;
 
   /** 끝 위치 */
-  toPosition?:
-    | 'center'
-    | 'top'
-    | 'bottom'
-    | 'left'
-    | 'right'
-    | 'top-left'
-    | 'top-right'
-    | 'bottom-left'
-    | 'bottom-right';
+  toPosition?: PositionType;
 
   /** 이동 시간 (ms) */
   duration?: number;
@@ -65,6 +61,44 @@ export interface MouseSimulatorOptions {
   /** 콜백 */
   onStart?: () => void;
   onMove?: (point: Point, progress: number) => void;
+  onEnd?: () => void;
+}
+
+/**
+ * Hover 시뮬레이션 옵션
+ */
+export interface HoverSimulatorOptions {
+  /** 호버할 대상 셀렉터 */
+  target: string;
+
+  /** 대상 내 위치 */
+  targetPosition?: PositionType;
+
+  /** 진입 애니메이션 시간 (ms) */
+  enterDuration?: number;
+
+  /** 호버 지속 시간 (ms) */
+  hoverDuration?: number;
+
+  /** 탈출 애니메이션 시간 (ms) */
+  exitDuration?: number;
+
+  /** 시작 위치 (선택적, 없으면 target 밖에서 시작) */
+  from?: string | Point;
+
+  /** 시작 위치 타입 */
+  fromPosition?: PositionType;
+
+  /** 프레임 레이트 */
+  fps?: number;
+
+  /** 이벤트 디스패치 여부 */
+  dispatchEvents?: boolean;
+
+  /** 콜백 */
+  onStart?: () => void;
+  onHoverStart?: () => void;
+  onHoverEnd?: () => void;
   onEnd?: () => void;
 }
 
@@ -383,9 +417,213 @@ export function simulateClick(target: string | Point, position: 'center' = 'cent
   simulator.simulate();
 }
 
+/**
+ * Hover 시뮬레이션 헬퍼
+ */
+export async function simulateHover(options: HoverSimulatorOptions): Promise<void> {
+  const {
+    target,
+    targetPosition = 'center',
+    enterDuration = 300,
+    hoverDuration = 500,
+    exitDuration = 300,
+    from,
+    fromPosition = 'center',
+    fps = 60,
+    dispatchEvents = true,
+    onStart,
+    onHoverStart,
+    onHoverEnd,
+    onEnd,
+  } = options;
+
+  debug('[simulateHover] Starting hover simulation');
+
+  // 타겟 요소 찾기
+  const targetElement = document.querySelector(target) as HTMLElement;
+  if (!targetElement) {
+    throw new Error(`Target element not found: ${target}`);
+  }
+
+  // 타겟 좌표 계산
+  const targetRect = targetElement.getBoundingClientRect();
+  const targetPoint = getPointFromPosition(targetRect, targetPosition);
+
+  // 시작 좌표 계산
+  let startPoint: Point;
+  if (from) {
+    if (typeof from === 'string') {
+      const fromElement = document.querySelector(from) as HTMLElement;
+      if (!fromElement) {
+        throw new Error(`From element not found: ${from}`);
+      }
+      const fromRect = fromElement.getBoundingClientRect();
+      startPoint = getPointFromPosition(fromRect, fromPosition);
+    } else {
+      startPoint = from;
+    }
+  } else {
+    // from이 없으면 타겟 왼쪽 밖에서 시작
+    startPoint = {
+      x: targetRect.left - 100,
+      y: targetPoint.y,
+    };
+  }
+
+  // 탈출 좌표 계산 (타겟 오른쪽 밖으로)
+  const exitPoint: Point = {
+    x: targetRect.right + 100,
+    y: targetPoint.y,
+  };
+
+  onStart?.();
+
+  // Phase 1: 진입 (from → target)
+  debug('[simulateHover] Phase 1: Enter');
+  await new Promise<void>(resolve => {
+    const enterPath = generateStraightPath(startPoint, targetPoint, Math.floor((enterDuration / 1000) * fps));
+    let frameIndex = 0;
+    const frameDelay = 1000 / fps;
+
+    const enterAnimate = () => {
+      if (frameIndex >= enterPath.length) {
+        // mouseenter 이벤트
+        if (dispatchEvents) {
+          dispatchMouseEventTo('mouseenter', targetPoint, targetElement);
+          dispatchMouseEventTo('mouseover', targetPoint, targetElement);
+        }
+        onHoverStart?.();
+        resolve();
+        return;
+      }
+
+      const point = enterPath[frameIndex];
+      if (dispatchEvents && frameIndex > 0) {
+        dispatchMouseEventTo('mousemove', point);
+      }
+
+      frameIndex++;
+      setTimeout(enterAnimate, frameDelay);
+    };
+
+    enterAnimate();
+  });
+
+  // Phase 2: 호버 지속
+  debug('[simulateHover] Phase 2: Hover');
+  await new Promise(resolve => setTimeout(resolve, hoverDuration));
+
+  // Phase 3: 탈출 (target → exit)
+  debug('[simulateHover] Phase 3: Exit');
+  await new Promise<void>(resolve => {
+    if (dispatchEvents) {
+      dispatchMouseEventTo('mouseleave', targetPoint, targetElement);
+      dispatchMouseEventTo('mouseout', targetPoint, targetElement);
+    }
+    onHoverEnd?.();
+
+    const exitPath = generateStraightPath(targetPoint, exitPoint, Math.floor((exitDuration / 1000) * fps));
+    let frameIndex = 0;
+    const frameDelay = 1000 / fps;
+
+    const exitAnimate = () => {
+      if (frameIndex >= exitPath.length) {
+        resolve();
+        return;
+      }
+
+      const point = exitPath[frameIndex];
+      if (dispatchEvents && frameIndex > 0) {
+        dispatchMouseEventTo('mousemove', point);
+      }
+
+      frameIndex++;
+      setTimeout(exitAnimate, frameDelay);
+    };
+
+    exitAnimate();
+  });
+
+  onEnd?.();
+  debug('[simulateHover] Hover simulation completed');
+}
+
+/**
+ * DOMRect와 위치 타입으로부터 좌표 계산
+ */
+function getPointFromPosition(rect: DOMRect, position: PositionType): Point {
+  switch (position) {
+    case 'center':
+      return { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
+    case 'top':
+      return { x: rect.left + rect.width / 2, y: rect.top };
+    case 'bottom':
+      return { x: rect.left + rect.width / 2, y: rect.bottom };
+    case 'left':
+      return { x: rect.left, y: rect.top + rect.height / 2 };
+    case 'right':
+      return { x: rect.right, y: rect.top + rect.height / 2 };
+    case 'top-left':
+      return { x: rect.left, y: rect.top };
+    case 'top-right':
+      return { x: rect.right, y: rect.top };
+    case 'bottom-left':
+      return { x: rect.left, y: rect.bottom };
+    case 'bottom-right':
+      return { x: rect.right, y: rect.bottom };
+    default:
+      return { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
+  }
+}
+
+/**
+ * 직선 경로 생성
+ */
+function generateStraightPath(start: Point, end: Point, frames: number): Point[] {
+  const path: Point[] = [];
+  for (let i = 0; i <= frames; i++) {
+    const t = i / frames;
+    path.push({
+      x: start.x + (end.x - start.x) * t,
+      y: start.y + (end.y - start.y) * t,
+    });
+  }
+  return path;
+}
+
+/**
+ * 마우스 이벤트 디스패치 (특정 요소에)
+ */
+function dispatchMouseEventTo(
+  type: 'mouseenter' | 'mouseleave' | 'mouseover' | 'mouseout' | 'mousemove',
+  point: Point,
+  targetElement?: HTMLElement
+): void {
+  const element = targetElement || (document.elementFromPoint(point.x, point.y) as HTMLElement);
+  if (!element) return;
+
+  const event = new MouseEvent(type, {
+    bubbles: type === 'mouseover' || type === 'mouseout' || type === 'mousemove',
+    cancelable: true,
+    view: window,
+    clientX: point.x,
+    clientY: point.y,
+    screenX: point.x,
+    screenY: point.y,
+    button: 0,
+    buttons: 0,
+  });
+
+  element.dispatchEvent(event);
+  debug(
+    `[simulateHover] ${type} at (${Math.round(point.x)}, ${Math.round(point.y)}) on ${element.className || element.tagName}`
+  );
+}
+
 // 전역으로 노출 (브라우저 환경)
 if (typeof window !== 'undefined') {
   (window as any).MouseSimulator = MouseSimulator;
   (window as any).simulateDrag = simulateDrag;
   (window as any).simulateClick = simulateClick;
+  (window as any).simulateHover = simulateHover;
 }

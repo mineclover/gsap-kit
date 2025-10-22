@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hover Test - GSAP Kit</title>
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <div class="container">
+    <header class="page-header">
+      <h1>🎯 Hover Test Page</h1>
+      <p>Test hover interactions</p>
+    </header>
+
+    <div class="test-section">
+      <h2>1. Tooltip Display</h2>
+      <div class="test-group">
+        <button id="tooltip-trigger" class="hover-button">
+          Hover Me
+        </button>
+        <div class="tooltip" id="tooltip">Tooltip Content</div>
+      </div>
+    </div>
+
+    <div class="test-section">
+      <h2>2. Background Color Change</h2>
+      <div class="test-group">
+        <div class="hover-box" id="hover-box">
+          Hover for color change
+        </div>
+      </div>
+    </div>
+
+    <div class="test-section">
+      <h2>3. Scale Animation</h2>
+      <div class="test-group">
+        <div class="hover-scale" id="hover-scale">
+          Hover to scale
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- GSAP CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
+
+  <!-- Main Script -->
+  <script type="module" src="./main.js"></script>
+</body>
+</html>

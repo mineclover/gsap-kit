@@ -4,7 +4,13 @@
  */
 
 import { debug } from '../types';
-import { MouseSimulator, type MouseSimulatorOptions, type Point } from './mouse-simulator';
+import {
+  type HoverSimulatorOptions,
+  MouseSimulator,
+  type MouseSimulatorOptions,
+  type Point,
+  simulateHover,
+} from './mouse-simulator';
 import { PathVisualizer, type VisualizerOptions } from './path-visualizer';
 
 /**
@@ -26,7 +32,7 @@ export interface TestCase {
   type: TestCaseType;
 
   /** 마우스 시뮬레이션 옵션 */
-  simulation: MouseSimulatorOptions;
+  simulation: MouseSimulatorOptions | HoverSimulatorOptions | any;
 
   /** 시각화 옵션 */
   visualization?: VisualizerOptions;
@@ -132,24 +138,32 @@ export class TestRunner {
       }
 
       // 마우스 시뮬레이션
-      const simulator = new MouseSimulator({
-        ...test.simulation,
-        onMove: (point, progress) => {
-          // 시각화가 있으면 경로 업데이트
-          if (test.simulation.onMove) {
-            test.simulation.onMove(point, progress);
-          }
-        },
-      });
+      let path: Point[] = [];
 
-      await simulator.simulate();
+      if (test.type === 'hover') {
+        // Hover 시뮬레이션
+        await simulateHover(test.simulation as HoverSimulatorOptions);
+        // Hover는 경로를 반환하지 않음
+      } else {
+        // 기존 drag/click 시뮬레이션
+        const simulator = new MouseSimulator({
+          ...test.simulation,
+          onMove: (point, progress) => {
+            // 시각화가 있으면 경로 업데이트
+            if (test.simulation.onMove) {
+              test.simulation.onMove(point, progress);
+            }
+          },
+        });
 
-      const path = simulator.getPath();
+        await simulator.simulate();
+        path = simulator.getPath();
 
-      // 경로 시각화
-      if (this.currentVisualizer && path.length > 0) {
-        this.currentVisualizer.visualize(path);
-        await this.currentVisualizer.animatePath(path);
+        // 경로 시각화
+        if (this.currentVisualizer && path.length > 0) {
+          this.currentVisualizer.visualize(path);
+          await this.currentVisualizer.animatePath(path);
+        }
       }
 
       // 검증

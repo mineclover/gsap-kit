@@ -39,3 +39,5 @@ build/
 scripts/*.js
 !scripts/validate-*.js
 !scripts/auto-discover-*.js
+!scripts/copy-assets.js
+!scripts/generate-index.js

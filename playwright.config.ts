@@ -4,7 +4,7 @@ import { defineConfig, devices } from '@playwright/test';
  * Playwright configuration for GSAP Kit E2E tests
  */
 export default defineConfig({
-  testDir: './tests/e2e',
+  testDir: './tests',
 
   // Maximum time one test can run for
   timeout: 30 * 1000,
@@ -15,10 +15,13 @@ export default defineConfig({
   retries: process.env.CI ? 2 : 0,
   workers: process.env.CI ? 1 : undefined,
 
+  // Test output folder
+  outputDir: 'test-output',
+
   // Reporter to use
   reporter: [
-    ['html', { outputFolder: 'test-results/html' }],
-    ['json', { outputFile: 'test-results/results.json' }],
+    ['html', { outputFolder: 'test-results' }],
+    ['json', { outputFile: 'test-output/results.json' }],
     ['list'],
   ],
 
@@ -67,7 +70,7 @@ export default defineConfig({
 
   // Run local dev server before starting tests
   webServer: {
-    command: 'npm run build:cdn && npx http-server -p 8000',
+    command: 'npm run build:cdn && npx http-server dist -p 8000',
     url: 'http://localhost:8000',
     reuseExistingServer: !process.env.CI,
     timeout: 120 * 1000,

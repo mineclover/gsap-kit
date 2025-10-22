@@ -1,0 +1,143 @@
+{
+  "page": "hover-test",
+  "suites": [
+    {
+      "name": "Hover: Tooltip Display",
+      "tests": [
+        {
+          "name": "Show tooltip on hover",
+          "type": "hover",
+          "simulation": {
+            "target": "#tooltip-trigger",
+            "targetPosition": "center",
+            "hoverDuration": 500
+          },
+          "assert": {
+            "type": "has-class",
+            "selector": ".tooltip",
+            "expected": "visible"
+          }
+        },
+        {
+          "name": "Hide tooltip after leaving",
+          "type": "hover",
+          "simulation": {
+            "target": "#tooltip-trigger",
+            "targetPosition": "center",
+            "hoverDuration": 200,
+            "exitDuration": 300
+          },
+          "assert": {
+            "type": "not-has-class",
+            "selector": ".tooltip",
+            "expected": "visible",
+            "delay": 400
+          }
+        }
+      ]
+    },
+    {
+      "name": "Hover: Background Color Change",
+      "tests": [
+        {
+          "name": "Background color changes on hover",
+          "type": "hover",
+          "simulation": {
+            "target": ".hover-box",
+            "targetPosition": "center",
+            "hoverDuration": 300
+          },
+          "assert": {
+            "type": "has-class",
+            "selector": ".hover-box",
+            "expected": "hovered"
+          }
+        },
+        {
+          "name": "Background color reverts after leaving",
+          "type": "hover",
+          "simulation": {
+            "target": ".hover-box",
+            "targetPosition": "center",
+            "hoverDuration": 200,
+            "exitDuration": 300
+          },
+          "assert": {
+            "type": "not-has-class",
+            "selector": ".hover-box",
+            "expected": "hovered",
+            "delay": 400
+          }
+        }
+      ]
+    },
+    {
+      "name": "Hover: Scale Animation",
+      "tests": [
+        {
+          "name": "Element scales up on hover",
+          "type": "hover",
+          "simulation": {
+            "target": "#hover-scale",
+            "targetPosition": "center",
+            "hoverDuration": 300
+          },
+          "assert": {
+            "type": "has-class",
+            "selector": "#hover-scale",
+            "expected": "scaled"
+          }
+        },
+        {
+          "name": "Element scales down after leaving",
+          "type": "hover",
+          "simulation": {
+            "target": "#hover-scale",
+            "targetPosition": "center",
+            "hoverDuration": 200,
+            "exitDuration": 300
+          },
+          "assert": {
+            "type": "not-has-class",
+            "selector": "#hover-scale",
+            "expected": "scaled",
+            "delay": 400
+          }
+        }
+      ]
+    },
+    {
+      "name": "Hover: Different Target Positions",
+      "tests": [
+        {
+          "name": "Hover from top-left position",
+          "type": "hover",
+          "simulation": {
+            "target": "#hover-box",
+            "targetPosition": "top-left",
+            "hoverDuration": 300
+          },
+          "assert": {
+            "type": "has-class",
+            "selector": ".hover-box",
+            "expected": "hovered"
+          }
+        },
+        {
+          "name": "Hover from bottom-right position",
+          "type": "hover",
+          "simulation": {
+            "target": "#hover-box",
+            "targetPosition": "bottom-right",
+            "hoverDuration": 300
+          },
+          "assert": {
+            "type": "has-class",
+            "selector": ".hover-box",
+            "expected": "hovered"
+          }
+        }
+      ]
+    }
+  ]
+}

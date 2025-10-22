@@ -7,8 +7,10 @@ const __dirname = dirname(__filename);
 
 const SRC_PAGES = join(__dirname, '../src/pages');
 const DIST_PAGES = join(__dirname, '../dist/pages');
+const TEST_SPECS = join(__dirname, '../test-specs');
+const DIST_TEST_SPECS = join(__dirname, '../dist/test-specs');
 
-function copyDir(src, dest) {
+function copyDir(src, dest, extensions = ['.html', '.css']) {
   try {
     mkdirSync(dest, { recursive: true });
 
@@ -19,8 +21,8 @@ function copyDir(src, dest) {
       const destPath = join(dest, entry.name);
 
       if (entry.isDirectory()) {
-        copyDir(srcPath, destPath);
-      } else if (entry.name.endsWith('.html') || entry.name.endsWith('.css')) {
+        copyDir(srcPath, destPath, extensions);
+      } else if (extensions.some(ext => entry.name.endsWith(ext))) {
         copyFileSync(srcPath, destPath);
         console.log(`✓ ${entry.name} → ${destPath}`);
       }
@@ -33,6 +35,8 @@ function copyDir(src, dest) {
 function copyAssets() {
   console.log('📦 Copying HTML and CSS files...');
   copyDir(SRC_PAGES, DIST_PAGES);
+  console.log('📦 Copying test specs...');
+  copyDir(TEST_SPECS, DIST_TEST_SPECS, ['.json']);
   console.log('✅ Assets copied successfully!\n');
 }
 
@@ -45,17 +49,13 @@ function startWatchMode() {
   copyAssets();
 
   // 디렉토리 변경 감지
-  const watcher = watch(
-    SRC_PAGES,
-    { recursive: true },
-    (eventType, filename) => {
-      if (filename && (filename.endsWith('.html') || filename.endsWith('.css'))) {
-        console.log(`📝 Asset changed: ${filename}`);
-        console.log(`🔄 Copying assets...\n`);
-        copyAssets();
-      }
+  const watcher = watch(SRC_PAGES, { recursive: true }, (eventType, filename) => {
+    if (filename && (filename.endsWith('.html') || filename.endsWith('.css'))) {
+      console.log(`📝 Asset changed: ${filename}`);
+      console.log(`🔄 Copying assets...\n`);
+      copyAssets();
     }
-  );
+  });
 
   // Ctrl+C 처리
   process.on('SIGINT', () => {

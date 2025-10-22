@@ -13,11 +13,14 @@ export {
 } from './automation';
 // Mouse Simulator
 export {
+  type HoverSimulatorOptions,
   MouseSimulator,
   type MouseSimulatorOptions,
   type Point,
+  type PositionType,
   simulateClick,
   simulateDrag,
+  simulateHover,
 } from './mouse-simulator';
 // Path Visualizer
 export {
