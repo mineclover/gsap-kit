@@ -27,7 +27,7 @@
   },
   "scripts": {
     "clean": "rimraf dist",
-    "prebuild": "npm run clean",
+    "prebuild": "npm run validate:entries && npm run clean",
     "serve": "npx http-server -p 8000 -o",
     "dev": "npx http-server -p 8000 -o /dist/pages",
     "example": "ts-node scripts/example-runner.ts",
@@ -51,6 +51,7 @@
     "copy:assets": "node scripts/copy-assets.js",
     "generate:index": "node scripts/generate-index.js",
     "generate:index:watch": "node scripts/generate-index.js --watch",
+    "validate:entries": "node scripts/validate-entries.js",
     "type-check": "tsc --noEmit",
     "lint": "biome lint .",
     "lint:fix": "biome lint --write .",
