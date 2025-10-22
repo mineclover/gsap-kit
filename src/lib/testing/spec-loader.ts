@@ -380,6 +380,15 @@ export class TestSpecLoader {
    * TestSpec을 TestCase로 변환
    */
   static convertToTestCase(spec: TestSpec, config?: TestFileSpec['config']): TestCase {
+    // Ensure simulation object exists
+    if (!spec.simulation) {
+      console.error('[TestSpecLoader] Missing simulation object for test:', spec.name);
+      throw new Error(`Test "${spec.name}" is missing required simulation object`);
+    }
+
+    // For click type, if 'to' is not specified, set it to 'from'
+    const simulationTo = spec.simulation.to ?? (spec.type === 'click' ? spec.simulation.from : undefined);
+
     const testCase: TestCase = {
       name: spec.name,
       description: spec.description,
@@ -387,7 +396,7 @@ export class TestSpecLoader {
       simulation: {
         // Drag/Click properties
         from: spec.simulation.from,
-        to: spec.simulation.to,
+        to: simulationTo,
         fromPosition: spec.simulation.fromPosition,
         toPosition: spec.simulation.toPosition,
 

@@ -13,6 +13,17 @@ test.describe('GSAP Animation Assertions - JSON Spec Execution', () => {
   });
 
   test('should load gsap.spec.json and execute all tests', async ({ page }) => {
+    test.setTimeout(120000); // 2 minutes for all 18 tests
+    // Capture console logs
+    const consoleLogs: string[] = [];
+    page.on('console', msg => {
+      const text = msg.text();
+      consoleLogs.push(text);
+      if (text.includes('TestSpecLoader') || text.includes('TestRunner') || text.includes('MouseSimulator')) {
+        console.log('[BROWSER]', text);
+      }
+    });
+
     // Load and execute JSON spec
     const report = await page.evaluate(async () => {
       try {
