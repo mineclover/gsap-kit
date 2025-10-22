@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Interaction Test (Web Component) - GSAP Kit</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .page-header {
+      text-align: center;
+      color: white;
+      margin-bottom: 30px;
+    }
+
+    .page-header h1 {
+      font-size: 48px;
+      margin-bottom: 10px;
+      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    }
+
+    .page-header p {
+      font-size: 18px;
+      opacity: 0.9;
+    }
+
+    .test-area {
+      background: white;
+      border-radius: 10px;
+      padding: 30px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .test-area h2 {
+      margin-bottom: 20px;
+      color: #333;
+    }
+
+    .matching-game {
+      display: flex;
+      justify-content: space-between;
+      gap: 100px;
+      padding: 40px;
+      background: #f7fafc;
+      border-radius: 8px;
+      position: relative;
+    }
+
+    .group {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .match-item {
+      padding: 15px 20px;
+      background: white;
+      border: 2px solid #e2e8f0;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-size: 16px;
+      font-weight: 500;
+      text-align: center;
+      user-select: none;
+    }
+
+    .match-item:hover {
+      border-color: #667eea;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+    }
+
+    .match-item.selected {
+      border-color: #667eea;
+      background: #eef2ff;
+    }
+
+    .game-status {
+      margin-top: 20px;
+      padding: 20px;
+      background: #f7fafc;
+      border-radius: 8px;
+      display: flex;
+      gap: 30px;
+      align-items: center;
+    }
+
+    .game-status p {
+      font-size: 16px;
+      font-weight: 600;
+      color: #2d3748;
+    }
+
+    .game-status span {
+      color: #667eea;
+    }
+
+    .btn {
+      padding: 8px 16px;
+      border: none;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-sm {
+      background: #667eea;
+      color: white;
+    }
+
+    .btn-sm:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header class="page-header">
+      <h1>🧪 Interaction Test (Web Component)</h1>
+      <p>웹 컴포넌트로 간단하게 테스트 러너 추가</p>
+    </header>
+
+    <!-- Test Target: Line Matching Game -->
+    <div id="test-area" class="test-area">
+      <h2>Test Target: Line Matching</h2>
+      <div class="matching-game">
+        <div class="group group-a">
+          <div class="match-item" id="fruit-1" data-match-id="a1">사과 🍎</div>
+          <div class="match-item" id="fruit-2" data-match-id="a2">바나나 🍌</div>
+          <div class="match-item" id="fruit-3" data-match-id="a3">오렌지 🍊</div>
+        </div>
+
+        <div class="group group-b">
+          <div class="match-item" id="english-1" data-match-id="b1">Apple</div>
+          <div class="match-item" id="english-2" data-match-id="b2">Orange</div>
+          <div class="match-item" id="english-3" data-match-id="b3">Banana</div>
+        </div>
+      </div>
+
+      <div class="game-status">
+        <p>정답: <span id="correctCount">0</span></p>
+        <p>오답: <span id="incorrectCount">0</span></p>
+        <button id="resetGame" class="btn btn-sm">Reset Game</button>
+      </div>
+    </div>
+
+    <!-- Test Runner Component (단 한 줄!) -->
+    <test-runner spec-file="/test-specs/line-matching.spec.json"></test-runner>
+  </div>
+
+  <!-- GSAP CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.13/dist/gsap.min.js"></script>
+
+  <!-- Main Script -->
+  <script type="module" src="./main.js"></script>
+</body>
+</html>

@@ -95,8 +95,8 @@ function defineTests(): void {
   const dragTests: TestCase[] = [
     testDrag(
       'Drag 사과 to Apple (Correct)',
-      '#fruit-1',
-      '#english-1',
+      '#fruit-1 .line-matching-point',
+      '#english-1 .line-matching-point',
       () => {
         // 검증: 정답 연결이 되었는지
         const passed = correctCount > 0;
@@ -109,8 +109,8 @@ function defineTests(): void {
       {
         description: 'Should connect 사과 to Apple correctly',
         simulation: {
-          from: '#fruit-1',
-          to: '#english-1',
+          from: '#fruit-1 .line-matching-point',
+          to: '#english-1 .line-matching-point',
           duration: baseDuration,
           curvature: 0.3,
           dispatchEvents: true,
@@ -128,17 +128,21 @@ function defineTests(): void {
           // line-matching-point 생성을 위한 대기
           await new Promise(resolve => setTimeout(resolve, 200));
         },
+        teardown: async () => {
+          // 연결된 라인을 볼 수 있도록 2초 대기
+          await new Promise(resolve => setTimeout(resolve, 2000));
+        },
       }
     ),
 
     testDrag(
       'Drag 바나나 to Banana (Correct)',
-      '#fruit-2',
-      '#english-3',
+      '#fruit-2 .line-matching-point',
+      '#english-3 .line-matching-point',
       () => {
-        const passed = correctCount >= 1;
+        const passed = correctCount > 0;
         log(
-          `  ✓ Assertion: correctCount=${correctCount} (expected >= 1) → ${passed ? 'PASS' : 'FAIL'}`,
+          `  ✓ Assertion: correctCount=${correctCount} (expected > 0) → ${passed ? 'PASS' : 'FAIL'}`,
           passed ? 'success' : 'error'
         );
         return passed;
@@ -146,8 +150,8 @@ function defineTests(): void {
       {
         description: 'Should connect 바나나 to Banana correctly',
         simulation: {
-          from: '#fruit-2',
-          to: '#english-3',
+          from: '#fruit-2 .line-matching-point',
+          to: '#english-3 .line-matching-point',
           duration: baseDuration,
           curvature: 0.4,
         },
@@ -158,13 +162,21 @@ function defineTests(): void {
               autoRemove: true,
             }
           : undefined,
+        setup: async () => {
+          resetGame();
+          await new Promise(resolve => setTimeout(resolve, 200));
+        },
+        teardown: async () => {
+          // 연결된 라인을 볼 수 있도록 2초 대기
+          await new Promise(resolve => setTimeout(resolve, 2000));
+        },
       }
     ),
 
     testDrag(
       'Drag 사과 to Orange (Incorrect)',
-      '#fruit-1',
-      '#english-2',
+      '#fruit-1 .line-matching-point',
+      '#english-2 .line-matching-point',
       () => {
         // 오답이므로 incorrectCount가 증가해야 함
         const passed = incorrectCount > 0;
@@ -177,8 +189,8 @@ function defineTests(): void {
       {
         description: 'Should detect incorrect connection',
         simulation: {
-          from: '#fruit-1',
-          to: '#english-2',
+          from: '#fruit-1 .line-matching-point',
+          to: '#english-2 .line-matching-point',
           duration: baseDuration,
           curvature: 0.5,
         },
@@ -193,20 +205,22 @@ function defineTests(): void {
           resetGame();
           await new Promise(resolve => setTimeout(resolve, 200));
         },
+        teardown: async () => {
+          // 오답 연결도 볼 수 있도록 2초 대기
+          await new Promise(resolve => setTimeout(resolve, 2000));
+        },
       }
     ),
 
     testDrag(
       'Drag 오렌지 to Orange (Correct)',
-      '#fruit-3',
-      '#english-2',
+      '#fruit-3 .line-matching-point',
+      '#english-2 .line-matching-point',
       () => {
-        // 시뮬레이션 후 정답/오답 처리가 되었는지 확인
-        // line-matching은 클릭 방식과 드래그 방식 모두 지원함
-        const totalAttempts = correctCount + incorrectCount;
-        const passed = totalAttempts >= 1; // 최소 1번 시도했으면 통과
+        // 오렌지 → Orange 정답 연결 확인
+        const passed = correctCount > 0;
         log(
-          `  ✓ Assertion: totalAttempts=${totalAttempts} (expected >= 1) → ${passed ? 'PASS' : 'FAIL'}`,
+          `  ✓ Assertion: correctCount=${correctCount} (expected > 0) → ${passed ? 'PASS' : 'FAIL'}`,
           passed ? 'success' : 'error'
         );
         return passed;
@@ -214,8 +228,8 @@ function defineTests(): void {
       {
         description: 'Should connect 오렌지 to Orange correctly',
         simulation: {
-          from: '#fruit-3',
-          to: '#english-2',
+          from: '#fruit-3 .line-matching-point',
+          to: '#english-2 .line-matching-point',
           duration: baseDuration,
           curvature: 0.4,
         },
@@ -229,6 +243,10 @@ function defineTests(): void {
         setup: async () => {
           resetGame();
           await new Promise(resolve => setTimeout(resolve, 200));
+        },
+        teardown: async () => {
+          // 연결된 라인을 볼 수 있도록 2초 대기
+          await new Promise(resolve => setTimeout(resolve, 2000));
         },
       }
     ),

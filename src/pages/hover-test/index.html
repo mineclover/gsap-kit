@@ -3,49 +3,84 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Hover Test - GSAP Kit</title>
+  <title>Hover Simulation Test Runner - GSAP Kit</title>
   <link rel="stylesheet" href="./style.css">
 </head>
 <body>
   <div class="container">
     <header class="page-header">
-      <h1>🎯 Hover Test Page</h1>
-      <p>Test hover interactions</p>
+      <h1>🎯 Hover Simulation Test Runner</h1>
+      <p>Automated testing for hover interactions with JSON-driven test specs</p>
     </header>
 
-    <div class="test-section">
-      <h2>1. Tooltip Display</h2>
-      <div class="test-group">
-        <button id="tooltip-trigger" class="hover-button">
-          Hover Me
-        </button>
-        <div class="tooltip" id="tooltip">Tooltip Content</div>
+    <div class="controls">
+      <button id="runAllTests" class="btn btn-primary">▶ Run All Tests</button>
+      <button id="clearTests" class="btn btn-danger">Clear Results</button>
+      <div class="controls-right">
+        <label>
+          <input type="checkbox" id="visualizeToggle" checked>
+          Visualize Paths
+        </label>
+        <label>
+          <input type="checkbox" id="slowMotionToggle">
+          Slow Motion (3x)
+        </label>
       </div>
     </div>
 
-    <div class="test-section">
-      <h2>2. Background Color Change</h2>
-      <div class="test-group">
-        <div class="hover-box" id="hover-box">
-          Hover for color change
+    <!-- Test Target: Hover Interactions -->
+    <div id="test-area" class="test-area">
+      <h2>Test Target: Hover Interactions</h2>
+
+      <!-- Scenario 1: Tooltip Display -->
+      <section class="test-section">
+        <h3>1. Tooltip Display</h3>
+        <div class="test-demo">
+          <button id="tooltip-trigger" class="hover-button">
+            Hover Me
+          </button>
+          <div class="tooltip" id="tooltip">Tooltip Content</div>
         </div>
-      </div>
+      </section>
+
+      <!-- Scenario 2: Background Color Change -->
+      <section class="test-section">
+        <h3>2. Background Color Change</h3>
+        <div class="test-demo">
+          <div class="hover-box" id="hover-box">
+            Hover for color change
+          </div>
+        </div>
+      </section>
+
+      <!-- Scenario 3: Scale Animation -->
+      <section class="test-section">
+        <h3>3. Scale Animation</h3>
+        <div class="test-demo">
+          <div class="hover-scale" id="hover-scale">
+            Hover to scale
+          </div>
+        </div>
+      </section>
     </div>
 
-    <div class="test-section">
-      <h2>3. Scale Animation</h2>
-      <div class="test-group">
-        <div class="hover-scale" id="hover-scale">
-          Hover to scale
-        </div>
-      </div>
+    <!-- Test Results -->
+    <div id="test-results" class="test-results">
+      <h2>Test Results</h2>
+      <div id="reporter-container"></div>
+    </div>
+
+    <!-- Test Log -->
+    <div class="test-log">
+      <h3>Test Log</h3>
+      <div id="log-container"></div>
     </div>
   </div>
 
   <!-- GSAP CDN -->
-  <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.13/dist/gsap.min.js"></script>
 
   <!-- Main Script -->
-  <script type="module" src="./main.js"></script>
+  <script src="./main.js"></script>
 </body>
 </html>

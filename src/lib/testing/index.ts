@@ -78,3 +78,5 @@ export {
   testDrag,
   testRunner,
 } from './test-runner';
+// Test Runner Component
+export { TestRunnerComponent } from './test-runner-component';

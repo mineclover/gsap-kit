@@ -1,27 +1,45 @@
 /**
- * GSAP Test Page - Animation Testing
+ * GSAP Assertions Test Runner
+ * Automated testing with JSON-driven specs
  */
 
-// GSAP은 CDN에서 로드됨
 declare const gsap: any;
 
-import { runTestsFromFile, setupGlobalAutomation, testRunner } from '../../lib/testing';
-import * as gsapAssertions from '../../lib/testing/gsap-assertions';
-import type { TestFileSpec } from '../../lib/testing/spec-loader';
-import { AssertionValidator, TestSpecLoader } from '../../lib/testing/spec-loader';
+import { createReport } from '../../lib/testing';
+import { runTestsFromFile, runTestsFromObject } from '../../lib/testing/spec-runner';
+
+// Logger
+const logContainer = document.getElementById('log-container')!;
+
+function log(message: string, type: 'info' | 'success' | 'error' | 'warning' = 'info'): void {
+  const entry = document.createElement('div');
+  entry.className = `log-entry ${type}`;
+
+  const timestamp = new Date().toLocaleTimeString();
+  entry.innerHTML = `<span class="log-timestamp">[${timestamp}]</span> ${message}`;
+
+  logContainer.appendChild(entry);
+  logContainer.scrollTop = logContainer.scrollHeight;
+}
 
 // Animation references
-let fadeAnimation: gsap.core.Tween | null = null;
-let slideAnimation: gsap.core.Tween | null = null;
-let scaleAnimation: gsap.core.Tween | null = null;
-let rotationAnimation: gsap.core.Tween | null = null;
-let timeline: gsap.core.Timeline | null = null;
-let progressAnimation: gsap.core.Tween | null = null;
+let fadeAnimation: any = null;
+let slideAnimation: any = null;
+let scaleAnimation: any = null;
+let rotationAnimation: any = null;
+let timeline: any = null;
+let progressAnimation: any = null;
+
+// Test configuration
+let visualizeEnabled = true;
+let slowMotionEnabled = false;
 
 /**
- * Initialize all animations
+ * Initialize all GSAP animations
  */
-function initAnimations() {
+function initAnimations(): void {
+  log('🎬 Initializing GSAP animations...', 'info');
+
   // 1. Fade Animation
   const fadeBox = document.querySelector('.fade-box');
   const fadeTrigger = document.getElementById('fade-trigger');
@@ -46,7 +64,6 @@ function initAnimations() {
 
   slideTrigger?.addEventListener('click', () => {
     if (!slideBox) return;
-
     slideAnimation = gsap.to(slideBox, {
       x: 200,
       duration: 1.5,
@@ -56,7 +73,6 @@ function initAnimations() {
 
   slideReset?.addEventListener('click', () => {
     if (!slideBox) return;
-
     slideAnimation = gsap.to(slideBox, {
       x: 0,
       duration: 0.5,
@@ -71,17 +87,15 @@ function initAnimations() {
 
   scaleTrigger?.addEventListener('click', () => {
     if (!scaleBox) return;
-
     scaleAnimation = gsap.to(scaleBox, {
       scale: 1.5,
-      duration: 1,
+      duration: 1.5,
       ease: 'elastic.out(1, 0.5)',
     });
   });
 
   scaleReset?.addEventListener('click', () => {
     if (!scaleBox) return;
-
     scaleAnimation = gsap.to(scaleBox, {
       scale: 1,
       duration: 0.5,
@@ -96,7 +110,6 @@ function initAnimations() {
 
   rotationTrigger?.addEventListener('click', () => {
     if (!rotationBox) return;
-
     rotationAnimation = gsap.to(rotationBox, {
       rotation: 360,
       duration: 2,
@@ -106,7 +119,6 @@ function initAnimations() {
 
   rotationReset?.addEventListener('click', () => {
     if (!rotationBox) return;
-
     rotationAnimation = gsap.to(rotationBox, {
       rotation: 0,
       duration: 0.5,
@@ -120,41 +132,16 @@ function initAnimations() {
   const timelinePause = document.getElementById('timeline-pause');
   const timelineRestart = document.getElementById('timeline-restart');
 
-  // Create timeline
   timeline = gsap.timeline({ paused: true });
   timeline
-    .to(timelineBox, {
-      x: 100,
-      duration: 1,
-      ease: 'power2.inOut',
-    })
-    .to(timelineBox, {
-      y: 100,
-      duration: 1,
-      ease: 'power2.inOut',
-    })
-    .to(timelineBox, {
-      x: 0,
-      duration: 1,
-      ease: 'power2.inOut',
-    })
-    .to(timelineBox, {
-      y: 0,
-      duration: 1,
-      ease: 'power2.inOut',
-    });
+    .to(timelineBox, { x: 100, duration: 1, ease: 'power2.inOut' })
+    .to(timelineBox, { y: 100, duration: 1, ease: 'power2.inOut' })
+    .to(timelineBox, { x: 0, duration: 1, ease: 'power2.inOut' })
+    .to(timelineBox, { y: 0, duration: 1, ease: 'power2.inOut' });
 
-  timelinePlay?.addEventListener('click', () => {
-    timeline?.play();
-  });
-
-  timelinePause?.addEventListener('click', () => {
-    timeline?.pause();
-  });
-
-  timelineRestart?.addEventListener('click', () => {
-    timeline?.restart();
-  });
+  timelinePlay?.addEventListener('click', () => timeline?.play());
+  timelinePause?.addEventListener('click', () => timeline?.pause());
+  timelineRestart?.addEventListener('click', () => timeline?.restart());
 
   // 6. Progress Tracking
   const progressBox = document.querySelector('.progress-box');
@@ -181,13 +168,16 @@ function initAnimations() {
       },
     });
   });
+
+  log('✓ Animations initialized', 'success');
 }
 
 /**
- * Reset all animations (for testing)
+ * Reset all animations
  */
-function resetAllAnimations() {
-  // Kill all tweens
+function resetAllAnimations(): void {
+  log('🔄 Resetting all animations...', 'info');
+
   gsap.killTweensOf('.fade-box');
   gsap.killTweensOf('.slide-box');
   gsap.killTweensOf('.scale-box');
@@ -195,11 +185,9 @@ function resetAllAnimations() {
   gsap.killTweensOf('.timeline-box');
   gsap.killTweensOf('.progress-box');
 
-  // Reset timeline
   timeline?.kill();
   timeline = null;
 
-  // Reset all properties
   gsap.set('.fade-box', { opacity: 0 });
   gsap.set('.slide-box', { x: 0 });
   gsap.set('.scale-box', { scale: 1 });
@@ -207,139 +195,200 @@ function resetAllAnimations() {
   gsap.set('.timeline-box', { x: 0, y: 0 });
   gsap.set('.progress-box', { x: 0 });
 
-  // Reset progress display
   const progressValue = document.getElementById('progress-value');
   if (progressValue) {
     progressValue.textContent = '0%';
   }
 
-  // Re-initialize animations
   initAnimations();
+  log('✓ Reset complete', 'success');
 }
 
 /**
- * Trigger fade animation (for testing)
+ * Run all tests from JSON spec
  */
-function triggerFadeAnimation() {
-  const fadeTrigger = document.getElementById('fade-trigger') as HTMLButtonElement;
-  fadeTrigger?.click();
-}
+async function runAllTests(): Promise<void> {
+  log('🧪 Starting test run...', 'info');
 
-/**
- * Trigger slide animation (for testing)
- */
-function triggerSlideAnimation() {
-  const slideTrigger = document.getElementById('slide-trigger') as HTMLButtonElement;
-  slideTrigger?.click();
-}
+  const reporterContainer = document.getElementById('reporter-container')!;
+  reporterContainer.innerHTML = '<p>Loading tests...</p>';
 
-/**
- * Trigger scale animation (for testing)
- */
-function triggerScaleAnimation() {
-  const scaleTrigger = document.getElementById('scale-trigger') as HTMLButtonElement;
-  scaleTrigger?.click();
-}
-
-/**
- * Trigger rotation animation (for testing)
- */
-function triggerRotationAnimation() {
-  const rotationTrigger = document.getElementById('rotation-trigger') as HTMLButtonElement;
-  rotationTrigger?.click();
-}
-
-/**
- * Start timeline (for testing)
- */
-function startTimeline() {
-  timeline?.play();
-}
-
-/**
- * Pause timeline (for testing)
- */
-function pauseTimeline() {
-  timeline?.pause();
-}
-
-/**
- * Restart timeline (for testing)
- */
-function restartTimeline() {
-  timeline?.restart();
-}
-
-/**
- * Trigger progress animation (for testing)
- */
-function triggerProgressAnimation() {
-  const progressTrigger = document.getElementById('progress-trigger') as HTMLButtonElement;
-  progressTrigger?.click();
-}
-
-/**
- * Get current timeline (for testing)
- */
-function getTimeline() {
-  return timeline;
-}
-
-/**
- * Run JSON spec tests
- */
-async function runSpecTests(specPath: string) {
   try {
-    return await runTestsFromFile(specPath);
+    // Load and run tests
+    log('📝 Loading test spec...', 'info');
+    const results = await runTestsFromFile('/test-specs/gsap.spec.json');
+
+    log(`📝 Loaded ${results.total} tests`, 'info');
+
+    // Display results
+    reporterContainer.innerHTML = '';
+    createReport(results.raw, reporterContainer);
+
+    // Log summary
+    const passRate = results.passRate.toFixed(2);
+    if (results.failed === 0) {
+      log(`✅ All tests passed! (${results.total} tests, ${passRate}%)`, 'success');
+    } else {
+      log(`⚠️ ${results.failed} test(s) failed out of ${results.total} (${passRate}% pass rate)`, 'warning');
+    }
   } catch (error) {
-    console.error('[GSAP Test] Failed to run spec tests:', error);
-    throw error;
+    log(`❌ Test run failed: ${error}`, 'error');
+    reporterContainer.innerHTML = `<p class="error">Error: ${error}</p>`;
   }
 }
 
-// Initialize on page load
-document.addEventListener('DOMContentLoaded', () => {
+/**
+ * Run custom spec from text input
+ */
+async function runCustomSpec(): Promise<void> {
+  log('🧪 Running custom spec...', 'info');
+
+  const customSpecInput = document.getElementById('customSpecInput') as HTMLTextAreaElement;
+  const reporterContainer = document.getElementById('reporter-container')!;
+  reporterContainer.innerHTML = '<p>Loading tests...</p>';
+
+  try {
+    // Parse JSON
+    const specText = customSpecInput.value.trim();
+    if (!specText) {
+      throw new Error('Please enter a JSON test spec');
+    }
+
+    const spec = JSON.parse(specText);
+    log('📝 Parsed custom spec successfully', 'info');
+
+    // Run tests
+    const results = await runTestsFromObject(spec);
+    log(`📝 Loaded ${results.total} tests`, 'info');
+
+    // Display results
+    reporterContainer.innerHTML = '';
+    createReport(results.raw, reporterContainer);
+
+    // Log summary
+    const passRate = results.passRate.toFixed(2);
+    if (results.failed === 0) {
+      log(`✅ All tests passed! (${results.total} tests, ${passRate}%)`, 'success');
+    } else {
+      log(`⚠️ ${results.failed} test(s) failed out of ${results.total} (${passRate}% pass rate)`, 'warning');
+    }
+  } catch (error) {
+    log(`❌ Custom spec execution failed: ${error}`, 'error');
+    reporterContainer.innerHTML = `<p class="error">Error: ${error}</p>`;
+  }
+}
+
+/**
+ * Load default spec into editor
+ */
+async function loadDefaultSpec(): Promise<void> {
+  log('📥 Loading default spec...', 'info');
+
+  try {
+    const response = await fetch('/test-specs/gsap.spec.json');
+    if (!response.ok) {
+      throw new Error(`Failed to load spec: ${response.statusText}`);
+    }
+
+    const spec = await response.json();
+    const customSpecInput = document.getElementById('customSpecInput') as HTMLTextAreaElement;
+    customSpecInput.value = JSON.stringify(spec, null, 2);
+
+    log('✅ Default spec loaded into editor', 'success');
+  } catch (error) {
+    log(`❌ Failed to load default spec: ${error}`, 'error');
+  }
+}
+
+/**
+ * Toggle custom spec panel
+ */
+function toggleCustomSpecPanel(): void {
+  const panel = document.getElementById('custom-spec-panel')!;
+  if (panel.style.display === 'none') {
+    panel.style.display = 'block';
+    log('📝 Custom spec panel opened', 'info');
+  } else {
+    panel.style.display = 'none';
+    log('📝 Custom spec panel closed', 'info');
+  }
+}
+
+/**
+ * Clear test results
+ */
+function clearResults(): void {
+  const reporterContainer = document.getElementById('reporter-container')!;
+  reporterContainer.innerHTML = '';
+  logContainer.innerHTML = '';
+  log('🗑️ Results cleared', 'info');
+}
+
+/**
+ * Initialize page
+ */
+function init(): void {
   initAnimations();
 
-  console.log('[GSAP Test] Page initialized');
-  console.log('[GSAP Test] Available test functions:');
-  console.log('  - resetAllAnimations()');
-  console.log('  - triggerFadeAnimation()');
-  console.log('  - triggerSlideAnimation()');
-  console.log('  - triggerScaleAnimation()');
-  console.log('  - triggerRotationAnimation()');
-  console.log('  - startTimeline()');
-  console.log('  - pauseTimeline()');
-  console.log('  - restartTimeline()');
-  console.log('  - triggerProgressAnimation()');
-  console.log('  - getTimeline()');
-  console.log('  - runSpecTests(specPath)');
-});
+  // Bind controls
+  document.getElementById('runAllTests')?.addEventListener('click', async () => {
+    const btn = document.getElementById('runAllTests') as HTMLButtonElement;
+    btn.disabled = true;
+    btn.textContent = '⏳ Running Tests...';
 
-// Expose to window for testing
+    try {
+      await runAllTests();
+    } finally {
+      btn.disabled = false;
+      btn.textContent = '▶ Run All Tests';
+    }
+  });
+
+  document.getElementById('clearTests')?.addEventListener('click', clearResults);
+
+  // Custom spec controls
+  document.getElementById('runCustomSpec')?.addEventListener('click', toggleCustomSpecPanel);
+  document.getElementById('closeSpecPanel')?.addEventListener('click', toggleCustomSpecPanel);
+  document.getElementById('executeCustomSpec')?.addEventListener('click', async () => {
+    const btn = document.getElementById('executeCustomSpec') as HTMLButtonElement;
+    btn.disabled = true;
+    btn.textContent = '⏳ Executing...';
+
+    try {
+      await runCustomSpec();
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'Execute Custom Spec';
+    }
+  });
+  document.getElementById('loadDefaultSpec')?.addEventListener('click', loadDefaultSpec);
+
+  // Visualization toggle
+  const visualizeToggle = document.getElementById('visualizeToggle') as HTMLInputElement;
+  visualizeToggle?.addEventListener('change', e => {
+    visualizeEnabled = (e.target as HTMLInputElement).checked;
+    log(`Visualization ${visualizeEnabled ? 'enabled' : 'disabled'}`, 'info');
+  });
+
+  // Slow motion toggle
+  const slowMotionToggle = document.getElementById('slowMotionToggle') as HTMLInputElement;
+  slowMotionToggle?.addEventListener('change', e => {
+    slowMotionEnabled = (e.target as HTMLInputElement).checked;
+    log(`Slow motion ${slowMotionEnabled ? 'enabled' : 'disabled'}`, 'info');
+  });
+
+  log('✅ Page initialized', 'success');
+  log('Click "Run All Tests" to start automated testing', 'info');
+}
+
+// Initialize on page load
+document.addEventListener('DOMContentLoaded', init);
+
+// Expose to window for console access
 if (typeof window !== 'undefined') {
   (window as any).gsapTest = {
     resetAllAnimations,
-    triggerFadeAnimation,
-    triggerSlideAnimation,
-    triggerScaleAnimation,
-    triggerRotationAnimation,
-    startTimeline,
-    pauseTimeline,
-    restartTimeline,
-    triggerProgressAnimation,
-    getTimeline,
-    runSpecTests,
+    runAllTests,
+    getTimeline: () => timeline,
   };
-
-  // Expose testing utilities
-  (window as any).TestSpecLoader = TestSpecLoader;
-  (window as any).AssertionValidator = AssertionValidator;
-  (window as any).gsapAssertions = gsapAssertions;
-  (window as any).runTestsFromFile = runTestsFromFile;
-
-  // Setup global automation API
-  setupGlobalAutomation(testRunner, {
-    autoStart: false,
-  });
 }

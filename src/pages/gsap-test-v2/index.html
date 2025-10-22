@@ -3,65 +3,140 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>GSAP Assertions Test Runner - GSAP Kit</title>
-  <link rel="stylesheet" href="./style.css">
+  <title>GSAP Test (Web Component) - GSAP Kit</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .page-header {
+      text-align: center;
+      color: white;
+      margin-bottom: 30px;
+    }
+
+    .page-header h1 {
+      font-size: 48px;
+      margin-bottom: 10px;
+      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    }
+
+    .page-header p {
+      font-size: 18px;
+      opacity: 0.9;
+    }
+
+    .test-area {
+      background: white;
+      border-radius: 10px;
+      padding: 30px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .test-area h2 {
+      margin-bottom: 20px;
+      color: #333;
+    }
+
+    .test-section {
+      margin-bottom: 30px;
+      padding: 20px;
+      background: #f7fafc;
+      border-radius: 8px;
+    }
+
+    .test-section h3 {
+      margin-bottom: 15px;
+      color: #2d3748;
+      font-size: 18px;
+    }
+
+    .test-demo {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .box {
+      width: 100px;
+      height: 100px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+    }
+
+    .fade-box { opacity: 0; }
+
+    .btn {
+      padding: 6px 12px;
+      font-size: 12px;
+      border: none;
+      border-radius: 6px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+
+    .btn-sm {
+      background: #667eea;
+      color: white;
+    }
+
+    .btn-secondary {
+      background: #48bb78;
+      color: white;
+    }
+
+    .timeline-controls {
+      display: flex;
+      gap: 10px;
+    }
+
+    .progress-info {
+      padding: 10px 20px;
+      background: #edf2f7;
+      border-radius: 6px;
+      font-weight: 600;
+    }
+
+    #progress-value {
+      color: #667eea;
+    }
+  </style>
 </head>
 <body>
   <div class="container">
     <header class="page-header">
-      <h1>🎬 GSAP Assertions Test Runner</h1>
-      <p>Automated testing for GSAP animation states with JSON-driven test specs</p>
+      <h1>🎬 GSAP Test (Web Component)</h1>
+      <p>웹 컴포넌트로 간단하게 테스트 러너 추가</p>
     </header>
-
-    <div class="controls">
-      <button id="runAllTests" class="btn btn-primary">▶ Run All Tests</button>
-      <button id="runCustomSpec" class="btn btn-secondary">▶ Run Custom Spec</button>
-      <button id="clearTests" class="btn btn-danger">Clear Results</button>
-      <div class="controls-right">
-        <label>
-          <input type="checkbox" id="visualizeToggle" checked>
-          Visualize Paths
-        </label>
-        <label>
-          <input type="checkbox" id="slowMotionToggle">
-          Slow Motion (3x)
-        </label>
-      </div>
-    </div>
-
-    <!-- Custom Spec Editor -->
-    <div id="custom-spec-panel" class="custom-spec-panel" style="display: none;">
-      <div class="panel-header">
-        <h3>Custom Test Spec (JSON)</h3>
-        <button id="closeSpecPanel" class="btn btn-sm">Close</button>
-      </div>
-      <textarea id="customSpecInput" class="spec-input" placeholder='Enter JSON test spec here, e.g.:
-{
-  "suites": [
-    {
-      "name": "My Test Suite",
-      "tests": [
-        {
-          "name": "Test opacity",
-          "type": "click",
-          "simulation": { "from": "#fade-trigger", "duration": 100 },
-          "assert": {
-            "type": "gsap-property-value",
-            "selector": ".fade-box",
-            "property": "opacity",
-            "expected": 0,
-            "tolerance": 0.01
-          }
-        }
-      ]
-    }
-  ]
-}'></textarea>
-      <div class="panel-actions">
-        <button id="executeCustomSpec" class="btn btn-primary">Execute Custom Spec</button>
-        <button id="loadDefaultSpec" class="btn btn-secondary">Load Default Spec</button>
-      </div>
-    </div>
 
     <!-- Test Target: GSAP Animations -->
     <div id="test-area" class="test-area">
@@ -132,23 +207,14 @@
       </section>
     </div>
 
-    <!-- Test Results -->
-    <div id="test-results" class="test-results">
-      <h2>Test Results</h2>
-      <div id="reporter-container"></div>
-    </div>
-
-    <!-- Test Log -->
-    <div class="test-log">
-      <h3>Test Log</h3>
-      <div id="log-container"></div>
-    </div>
+    <!-- Test Runner Component (단 한 줄!) -->
+    <test-runner spec-file="/test-specs/gsap.spec.json"></test-runner>
   </div>
 
   <!-- GSAP CDN -->
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.13/dist/gsap.min.js"></script>
 
   <!-- Main Script -->
-  <script src="./main.js"></script>
+  <script type="module" src="./main.js"></script>
 </body>
 </html>
