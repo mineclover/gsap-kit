@@ -71,8 +71,9 @@
   },
   "lint-staged": {
     "*.{js,ts}": [
-      "biome check --write"
-    ]
+      "biome check --write --files-ignore-unknown=true"
+    ],
+    "!scripts/*.js": []
   },
   "keywords": [
     "gsap",

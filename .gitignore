@@ -38,5 +38,7 @@ build/
 # Process IDs
 *.pid
 
-# Scripts
+# Scripts (exclude validation scripts)
 scripts/*.js
+!scripts/validate-*.js
+!scripts/auto-discover-*.js
