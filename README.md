@@ -774,7 +774,9 @@ function customAnimation(
 - **[📦 BUILD_SYSTEM_GUIDE.md](./BUILD_SYSTEM_GUIDE.md)** - 이중 빌드 시스템 가이드 (CDN vs Bundle)
 - **[📁 PROJECT_STRUCTURE.md](./PROJECT_STRUCTURE.md)** - 프로젝트 구조 상세 가이드
 - **[🔍 ENTRY_POINTS_GUIDE.md](./ENTRY_POINTS_GUIDE.md)** - 다중 진입점 관리 가이드
-- **[🚀 AUTO_EXPANSION_GUIDE.md](./AUTO_EXPANSION_GUIDE.md)** - 자동 확장 시스템 가이드 (신규)
+- **[🚀 AUTO_EXPANSION_GUIDE.md](./AUTO_EXPANSION_GUIDE.md)** - 자동 확장 시스템 가이드
+- **[📜 CONVENTIONS.md](./CONVENTIONS.md)** - 개발 컨벤션 (단일 원천)
+- **[🎯 SINGLE_SOURCE_SYSTEM.md](./SINGLE_SOURCE_SYSTEM.md)** - 단일 원천 관리 시스템 (신규)
 
 ## 참고 자료
 
