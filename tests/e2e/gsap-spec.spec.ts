@@ -26,32 +26,35 @@ test.describe('GSAP Animation Assertions - JSON Spec Execution', () => {
 
     // Verify report structure
     expect(report).toBeDefined();
-    expect(report.summary).toBeDefined();
-    expect(report.summary.total).toBeGreaterThan(0);
+    expect(report.total).toBeGreaterThan(0);
 
     // Log results
     console.log('\n📊 GSAP Spec Test Report:');
-    console.log(`Total: ${report.summary.total}`);
-    console.log(`Passed: ${report.summary.passed}`);
-    console.log(`Failed: ${report.summary.failed}`);
-    console.log(`Pass Rate: ${report.summary.passRate}%`);
+    console.log(`Total: ${report.total}`);
+    console.log(`Passed: ${report.passed}`);
+    console.log(`Failed: ${report.failed}`);
+    console.log(`Pass Rate: ${report.passRate.toFixed(2)}%`);
+    console.log(`Duration: ${report.duration}ms`);
 
-    // Check for failures
-    if (report.summary.failed > 0) {
-      console.log('\n❌ Failed Tests:');
-      report.suites.forEach((suite: any) => {
-        suite.results.forEach((result: any) => {
-          if (!result.passed) {
-            console.log(`  - ${suite.name} > ${result.test}`);
-            console.log(`    Error: ${result.error}`);
-          }
-        });
-      });
+    // Log suite details
+    for (const suite of report.suites) {
+      console.log(`\n${suite.name}:`);
+      console.log(`  Total: ${suite.total}`);
+      console.log(`  Passed: ${suite.passed}`);
+      console.log(`  Failed: ${suite.failed}`);
+
+      for (const testCase of suite.tests) {
+        const status = testCase.passed ? '✓' : '✗';
+        console.log(`  ${status} ${testCase.name} (${testCase.duration}ms)`);
+        if (!testCase.passed && testCase.error) {
+          console.log(`    Error: ${testCase.error}`);
+        }
+      }
     }
 
     // Assert all tests passed
-    expect(report.summary.failed).toBe(0);
-    expect(report.summary.passRate).toBe(100);
+    expect(report.failed).toBe(0);
+    expect(report.passRate).toBe(100);
   });
 
   test.describe('Specific GSAP Assertions', () => {
