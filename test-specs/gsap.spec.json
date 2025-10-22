@@ -4,7 +4,11 @@
     "title": "GSAP Animation Assertions Test Suite",
     "description": "Comprehensive tests for GSAP animation state validation",
     "author": "GSAP Kit",
-    "tags": ["gsap", "animation", "assertions"]
+    "tags": [
+      "gsap",
+      "animation",
+      "assertions"
+    ]
   },
   "config": {
     "visualizationEnabled": false,
@@ -88,13 +92,13 @@
             "from": "#slide-trigger",
             "duration": 100
           },
-          "delay": 100,
           "assert": {
             "type": "gsap-transform",
             "selector": ".slide-box",
             "transformProperty": "x",
             "expected": 0,
-            "tolerance": 1
+            "tolerance": 1,
+            "checkBeforeInteraction": true
           }
         },
         {
@@ -150,13 +154,13 @@
             "from": "#scale-trigger",
             "duration": 100
           },
-          "delay": 100,
           "assert": {
             "type": "gsap-transform",
             "selector": ".scale-box",
             "transformProperty": "scale",
             "expected": 1,
-            "tolerance": 0.05
+            "tolerance": 0.05,
+            "checkBeforeInteraction": true
           }
         },
         {
@@ -260,13 +264,13 @@
             "from": "#progress-trigger",
             "duration": 100
           },
-          "delay": 100,
           "assert": {
             "type": "gsap-transform",
             "selector": ".progress-box",
             "transformProperty": "x",
             "expected": 0,
-            "tolerance": 1
+            "tolerance": 1,
+            "checkBeforeInteraction": true
           }
         },
         {
@@ -297,6 +301,7 @@
           "setup": {
             "executeFunction": "gsapTest.triggerProgressAnimation"
           },
+          "delay": 3200,
           "assert": {
             "type": "gsap-progress",
             "selector": ".progress-box",
