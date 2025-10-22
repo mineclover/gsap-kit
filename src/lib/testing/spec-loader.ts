@@ -427,7 +427,7 @@ export class TestSpecLoader {
     if (spec.setup) {
       testCase.setup = async () => {
         if (spec.setup!.resetFunction) {
-          const resetFn = (window as any)[spec.setup!.resetFunction];
+          const resetFn = TestSpecLoader.resolveFunction(spec.setup!.resetFunction);
           if (typeof resetFn === 'function') {
             await resetFn();
           }
@@ -438,7 +438,7 @@ export class TestSpecLoader {
         }
 
         if (spec.setup!.executeFunction) {
-          const executeFn = (window as any)[spec.setup!.executeFunction];
+          const executeFn = TestSpecLoader.resolveFunction(spec.setup!.executeFunction);
           if (typeof executeFn === 'function') {
             await executeFn();
           }
@@ -450,7 +450,7 @@ export class TestSpecLoader {
     if (spec.teardown) {
       testCase.teardown = async () => {
         if (spec.teardown!.executeFunction) {
-          const executeFn = (window as any)[spec.teardown!.executeFunction];
+          const executeFn = TestSpecLoader.resolveFunction(spec.teardown!.executeFunction);
           if (typeof executeFn === 'function') {
             await executeFn();
           }
@@ -459,6 +459,24 @@ export class TestSpecLoader {
     }
 
     return testCase;
+  }
+
+  /**
+   * Resolve function from nested path (e.g., "gsapTest.resetAllAnimations")
+   */
+  private static resolveFunction(path: string): Function | null {
+    const parts = path.split('.');
+    let obj: any = window;
+
+    for (const part of parts) {
+      if (obj && typeof obj === 'object') {
+        obj = obj[part];
+      } else {
+        return null;
+      }
+    }
+
+    return typeof obj === 'function' ? obj : null;
   }
 
   /**
@@ -472,7 +490,7 @@ export class TestSpecLoader {
 
     return async () => {
       if (hook.executeFunction) {
-        const fn = (window as any)[hook.executeFunction];
+        const fn = TestSpecLoader.resolveFunction(hook.executeFunction);
         if (typeof fn === 'function') {
           await fn();
         }
