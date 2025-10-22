@@ -15,6 +15,7 @@
       "**/tests/**/*.js",
       "**/tests/**/*.ts",
       "**/*.config.js",
+      "test-manual.js",
       "!**/node_modules",
       "!**/dist",
       "!**/*.min.js",

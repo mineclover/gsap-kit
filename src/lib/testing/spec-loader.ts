@@ -3,6 +3,8 @@
  * JSON 기반 테스트 스펙을 로드하고 실행하는 엔진
  */
 
+import type { GSAPAssertionOptions } from './gsap-assertions';
+import { validateGSAPAssertion } from './gsap-assertions';
 import type { MouseSimulatorOptions } from './mouse-simulator';
 import type { VisualizerOptions } from './path-visualizer';
 import type { TestCase, TestCaseType } from './test-runner';
@@ -116,7 +118,15 @@ export interface TestSpec {
       | 'text-contains'
       | 'count-equals'
       | 'count-greater-than'
-      | 'custom';
+      | 'custom'
+      // GSAP assertions
+      | 'gsap-is-animating'
+      | 'gsap-is-paused'
+      | 'gsap-progress'
+      | 'gsap-duration'
+      | 'gsap-property-value'
+      | 'gsap-transform'
+      | 'gsap-timeline-state';
 
     /** 검증 대상 셀렉터 */
     selector?: string;
@@ -126,6 +136,28 @@ export interface TestSpec {
 
     /** 커스텀 검증 함수 (문자열로 저장, eval로 실행) */
     customFunction?: string;
+
+    // GSAP assertion options
+    /** CSS 속성 이름 (gsap-property-value용) */
+    property?: string;
+
+    /** 허용 오차 (숫자 비교용) */
+    tolerance?: number;
+
+    /** 최소 진행도 (gsap-progress용) */
+    minProgress?: number;
+
+    /** 최대 진행도 (gsap-progress용) */
+    maxProgress?: number;
+
+    /** Transform 속성 (gsap-transform용) */
+    transformProperty?: 'x' | 'y' | 'rotation' | 'scale' | 'scaleX' | 'scaleY';
+
+    /** 애니메이션 완료 대기 */
+    waitForAnimation?: boolean;
+
+    /** 대기 타임아웃 (ms) */
+    timeout?: number;
   };
 
   /** Setup 설정 */
@@ -288,6 +320,32 @@ export class AssertionValidator {
           console.error('[AssertionValidator] Custom function error:', error);
           return false;
         }
+      }
+
+      // GSAP Assertions
+      case 'gsap-is-animating':
+      case 'gsap-is-paused':
+      case 'gsap-progress':
+      case 'gsap-duration':
+      case 'gsap-property-value':
+      case 'gsap-transform':
+      case 'gsap-timeline-state': {
+        if (!assert.selector) return false;
+
+        const gsapOptions: GSAPAssertionOptions = {
+          type: assert.type,
+          selector: assert.selector,
+          property: assert.property,
+          expected: assert.expected,
+          tolerance: assert.tolerance,
+          minProgress: assert.minProgress,
+          maxProgress: assert.maxProgress,
+          transformProperty: assert.transformProperty,
+          waitForAnimation: assert.waitForAnimation,
+          timeout: assert.timeout,
+        };
+
+        return validateGSAPAssertion(gsapOptions);
       }
 
       default:

@@ -11,6 +11,24 @@ export {
   TestAutomation,
   waitForTestCompletion,
 } from './automation';
+// GSAP Assertions
+export {
+  checkDuration,
+  checkProgress,
+  checkPropertyValue,
+  checkTransformValue,
+  type GSAPAssertionOptions,
+  type GSAPAssertionType,
+  getDuration,
+  getProgress,
+  getPropertyValue,
+  getTransformValue,
+  isAnimating,
+  isPaused,
+  type TransformProperty,
+  validateGSAPAssertion,
+  waitForAnimation,
+} from './gsap-assertions';
 // Mouse Simulator
 export {
   type HoverSimulatorOptions,

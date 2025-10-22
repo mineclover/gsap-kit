@@ -1,0 +1,390 @@
+{
+  "version": "1.0.0",
+  "metadata": {
+    "title": "GSAP Animation Assertions Test Suite",
+    "description": "Comprehensive tests for GSAP animation state validation",
+    "author": "GSAP Kit",
+    "tags": ["gsap", "animation", "assertions"]
+  },
+  "config": {
+    "visualizationEnabled": false,
+    "slowMotion": false
+  },
+  "suites": [
+    {
+      "name": "Fade Animation Tests",
+      "description": "Testing opacity property validation",
+      "beforeEach": {
+        "executeFunction": "gsapTest.resetAllAnimations",
+        "waitTime": 500
+      },
+      "tests": [
+        {
+          "name": "Fade box starts with opacity 0",
+          "type": "click",
+          "simulation": {
+            "from": "#fade-trigger",
+            "duration": 100
+          },
+          "delay": 100,
+          "assert": {
+            "type": "gsap-property-value",
+            "selector": ".fade-box",
+            "property": "opacity",
+            "expected": 0,
+            "tolerance": 0.01
+          }
+        },
+        {
+          "name": "Fade box animates to opacity 1",
+          "type": "click",
+          "simulation": {
+            "from": "#fade-trigger",
+            "duration": 100
+          },
+          "setup": {
+            "executeFunction": "gsapTest.triggerFadeAnimation"
+          },
+          "assert": {
+            "type": "gsap-property-value",
+            "selector": ".fade-box",
+            "property": "opacity",
+            "expected": 1,
+            "tolerance": 0.1,
+            "waitForAnimation": true,
+            "timeout": 2000
+          }
+        },
+        {
+          "name": "Fade animation is active during transition",
+          "type": "click",
+          "simulation": {
+            "from": "#fade-trigger",
+            "duration": 100
+          },
+          "setup": {
+            "executeFunction": "gsapTest.triggerFadeAnimation"
+          },
+          "delay": 200,
+          "assert": {
+            "type": "gsap-is-animating",
+            "selector": ".fade-box"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Slide Animation Tests",
+      "description": "Testing transform X property validation",
+      "beforeEach": {
+        "executeFunction": "gsapTest.resetAllAnimations",
+        "waitTime": 500
+      },
+      "tests": [
+        {
+          "name": "Slide box starts at x: 0",
+          "type": "click",
+          "simulation": {
+            "from": "#slide-trigger",
+            "duration": 100
+          },
+          "delay": 100,
+          "assert": {
+            "type": "gsap-transform",
+            "selector": ".slide-box",
+            "transformProperty": "x",
+            "expected": 0,
+            "tolerance": 1
+          }
+        },
+        {
+          "name": "Slide box moves to x: 200",
+          "type": "click",
+          "simulation": {
+            "from": "#slide-trigger",
+            "duration": 100
+          },
+          "setup": {
+            "executeFunction": "gsapTest.triggerSlideAnimation"
+          },
+          "assert": {
+            "type": "gsap-transform",
+            "selector": ".slide-box",
+            "transformProperty": "x",
+            "expected": 200,
+            "tolerance": 5,
+            "waitForAnimation": true,
+            "timeout": 2000
+          }
+        },
+        {
+          "name": "Slide animation is active",
+          "type": "click",
+          "simulation": {
+            "from": "#slide-trigger",
+            "duration": 100
+          },
+          "setup": {
+            "executeFunction": "gsapTest.triggerSlideAnimation"
+          },
+          "delay": 300,
+          "assert": {
+            "type": "gsap-is-animating",
+            "selector": ".slide-box"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Scale Animation Tests",
+      "description": "Testing scale property validation",
+      "beforeEach": {
+        "executeFunction": "gsapTest.resetAllAnimations",
+        "waitTime": 500
+      },
+      "tests": [
+        {
+          "name": "Scale box starts at scale: 1",
+          "type": "click",
+          "simulation": {
+            "from": "#scale-trigger",
+            "duration": 100
+          },
+          "delay": 100,
+          "assert": {
+            "type": "gsap-transform",
+            "selector": ".scale-box",
+            "transformProperty": "scale",
+            "expected": 1,
+            "tolerance": 0.05
+          }
+        },
+        {
+          "name": "Scale box scales to 1.5",
+          "type": "click",
+          "simulation": {
+            "from": "#scale-trigger",
+            "duration": 100
+          },
+          "setup": {
+            "executeFunction": "gsapTest.triggerScaleAnimation"
+          },
+          "assert": {
+            "type": "gsap-transform",
+            "selector": ".scale-box",
+            "transformProperty": "scale",
+            "expected": 1.5,
+            "tolerance": 0.1,
+            "waitForAnimation": true,
+            "timeout": 2000
+          }
+        }
+      ]
+    },
+    {
+      "name": "Rotation Animation Tests",
+      "description": "Testing rotation property validation",
+      "beforeEach": {
+        "executeFunction": "gsapTest.resetAllAnimations",
+        "waitTime": 500
+      },
+      "tests": [
+        {
+          "name": "Rotation box starts at rotation: 0",
+          "type": "click",
+          "simulation": {
+            "from": "#rotation-trigger",
+            "duration": 100
+          },
+          "delay": 100,
+          "assert": {
+            "type": "gsap-transform",
+            "selector": ".rotation-box",
+            "transformProperty": "rotation",
+            "expected": 0,
+            "tolerance": 1
+          }
+        },
+        {
+          "name": "Rotation box rotates to 360 degrees",
+          "type": "click",
+          "simulation": {
+            "from": "#rotation-trigger",
+            "duration": 100
+          },
+          "setup": {
+            "executeFunction": "gsapTest.triggerRotationAnimation"
+          },
+          "assert": {
+            "type": "gsap-transform",
+            "selector": ".rotation-box",
+            "transformProperty": "rotation",
+            "expected": 360,
+            "tolerance": 5,
+            "waitForAnimation": true,
+            "timeout": 3000
+          }
+        },
+        {
+          "name": "Rotation animation duration is 2 seconds",
+          "type": "click",
+          "simulation": {
+            "from": "#rotation-trigger",
+            "duration": 100
+          },
+          "setup": {
+            "executeFunction": "gsapTest.triggerRotationAnimation"
+          },
+          "delay": 100,
+          "assert": {
+            "type": "gsap-duration",
+            "selector": ".rotation-box",
+            "expected": 2,
+            "tolerance": 0.1
+          }
+        }
+      ]
+    },
+    {
+      "name": "Progress Tracking Tests",
+      "description": "Testing animation progress validation",
+      "beforeEach": {
+        "executeFunction": "gsapTest.resetAllAnimations",
+        "waitTime": 500
+      },
+      "tests": [
+        {
+          "name": "Progress box starts at x: 0",
+          "type": "click",
+          "simulation": {
+            "from": "#progress-trigger",
+            "duration": 100
+          },
+          "delay": 100,
+          "assert": {
+            "type": "gsap-transform",
+            "selector": ".progress-box",
+            "transformProperty": "x",
+            "expected": 0,
+            "tolerance": 1
+          }
+        },
+        {
+          "name": "Progress animation reaches 50% progress",
+          "type": "click",
+          "simulation": {
+            "from": "#progress-trigger",
+            "duration": 100
+          },
+          "setup": {
+            "executeFunction": "gsapTest.triggerProgressAnimation"
+          },
+          "delay": 1500,
+          "assert": {
+            "type": "gsap-progress",
+            "selector": ".progress-box",
+            "minProgress": 0.4,
+            "maxProgress": 0.6
+          }
+        },
+        {
+          "name": "Progress animation completes to 100%",
+          "type": "click",
+          "simulation": {
+            "from": "#progress-trigger",
+            "duration": 100
+          },
+          "setup": {
+            "executeFunction": "gsapTest.triggerProgressAnimation"
+          },
+          "assert": {
+            "type": "gsap-progress",
+            "selector": ".progress-box",
+            "minProgress": 0.99,
+            "maxProgress": 1.0,
+            "waitForAnimation": true,
+            "timeout": 4000
+          }
+        },
+        {
+          "name": "Progress animation final position x: 300",
+          "type": "click",
+          "simulation": {
+            "from": "#progress-trigger",
+            "duration": 100
+          },
+          "setup": {
+            "executeFunction": "gsapTest.triggerProgressAnimation"
+          },
+          "assert": {
+            "type": "gsap-transform",
+            "selector": ".progress-box",
+            "transformProperty": "x",
+            "expected": 300,
+            "tolerance": 5,
+            "waitForAnimation": true,
+            "timeout": 4000
+          }
+        }
+      ]
+    },
+    {
+      "name": "Timeline Control Tests",
+      "description": "Testing timeline state validation",
+      "beforeEach": {
+        "executeFunction": "gsapTest.resetAllAnimations",
+        "waitTime": 500
+      },
+      "tests": [
+        {
+          "name": "Timeline box is not animating initially",
+          "type": "click",
+          "simulation": {
+            "from": "#timeline-play",
+            "duration": 100
+          },
+          "delay": 100,
+          "assert": {
+            "type": "custom",
+            "customFunction": "async () => { const tl = window.gsapTest.getTimeline(); return tl && !tl.isActive(); }"
+          }
+        },
+        {
+          "name": "Timeline animates when played",
+          "type": "click",
+          "simulation": {
+            "from": "#timeline-play",
+            "duration": 100
+          },
+          "setup": {
+            "executeFunction": "gsapTest.startTimeline"
+          },
+          "delay": 500,
+          "assert": {
+            "type": "gsap-is-animating",
+            "selector": ".timeline-box"
+          }
+        },
+        {
+          "name": "Timeline can be paused",
+          "type": "click",
+          "simulation": {
+            "from": "#timeline-pause",
+            "duration": 100
+          },
+          "setup": {
+            "executeFunction": "gsapTest.startTimeline"
+          },
+          "delay": 500,
+          "teardown": {
+            "executeFunction": "gsapTest.pauseTimeline"
+          },
+          "assert": {
+            "type": "gsap-is-paused",
+            "selector": ".timeline-box"
+          }
+        }
+      ]
+    }
+  ]
+}

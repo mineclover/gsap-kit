@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GSAP Test - GSAP Kit</title>
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>🎬 GSAP Animation Test</h1>
+      <p>GSAP 애니메이션 상태 검증 테스트 페이지</p>
+    </header>
+
+    <!-- Scenario 1: Fade Animation -->
+    <section class="test-section">
+      <h2>1. Fade Animation</h2>
+      <p>opacity 변화 검증</p>
+      <div class="test-area">
+        <div class="fade-box box">Fade Box</div>
+        <button id="fade-trigger" class="btn">Fade In/Out</button>
+      </div>
+    </section>
+
+    <!-- Scenario 2: Slide Animation -->
+    <section class="test-section">
+      <h2>2. Slide Animation</h2>
+      <p>transform X/Y 검증</p>
+      <div class="test-area">
+        <div class="slide-box box">Slide Box</div>
+        <button id="slide-trigger" class="btn">Slide Right</button>
+        <button id="slide-reset" class="btn btn-secondary">Reset</button>
+      </div>
+    </section>
+
+    <!-- Scenario 3: Scale Animation -->
+    <section class="test-section">
+      <h2>3. Scale Animation</h2>
+      <p>scale 검증</p>
+      <div class="test-area">
+        <div class="scale-box box">Scale Box</div>
+        <button id="scale-trigger" class="btn">Scale Up</button>
+        <button id="scale-reset" class="btn btn-secondary">Reset</button>
+      </div>
+    </section>
+
+    <!-- Scenario 4: Rotation Animation -->
+    <section class="test-section">
+      <h2>4. Rotation Animation</h2>
+      <p>rotation 검증</p>
+      <div class="test-area">
+        <div class="rotation-box box">Rotation Box</div>
+        <button id="rotation-trigger" class="btn">Rotate 360°</button>
+        <button id="rotation-reset" class="btn btn-secondary">Reset</button>
+      </div>
+    </section>
+
+    <!-- Scenario 5: Timeline Control -->
+    <section class="test-section">
+      <h2>5. Timeline Control</h2>
+      <p>타임라인 상태 검증</p>
+      <div class="test-area">
+        <div class="timeline-box box">Timeline Box</div>
+        <div class="timeline-controls">
+          <button id="timeline-play" class="btn">Play</button>
+          <button id="timeline-pause" class="btn btn-secondary">Pause</button>
+          <button id="timeline-restart" class="btn btn-secondary">Restart</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Scenario 6: Progress Tracking -->
+    <section class="test-section">
+      <h2>6. Progress Tracking</h2>
+      <p>진행도 검증</p>
+      <div class="test-area">
+        <div class="progress-box box">Progress Box</div>
+        <button id="progress-trigger" class="btn">Start Animation</button>
+        <div class="progress-info">
+          <span>Progress: <span id="progress-value">0%</span></span>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <p>Test Page for GSAP Assertions - JSON Spec Driven Testing</p>
+    </footer>
+  </div>
+
+  <!-- GSAP CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.13/dist/gsap.min.js"></script>
+
+  <!-- Main Script -->
+  <script src="./main.js"></script>
+</body>
+</html>
