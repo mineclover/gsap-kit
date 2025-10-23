@@ -1,48 +1,70 @@
 /**
  * GSAP Kit - Test Runner Web Component
  * 재사용 가능한 테스트 러너 UI 컴포넌트
+ *
+ * 의존성 주입을 통해 다양한 테스트 프레임워크와 연동 가능
  */
 
-import { createReport } from './reporter';
-import { runTestsFromFile, runTestsFromObject } from './spec-runner';
+import { defaultTestReporter, defaultTestRunner } from './gsap-test-runner-adapter';
+import type { ITestReporter, ITestRunner } from './test-runner-interface';
 
 /**
  * 테스트 러너 웹 컴포넌트
  *
  * @example
  * ```html
+ * <!-- 기본 사용법 (GSAP Kit 테스트 러너 사용) -->
  * <test-runner spec-file="/test-specs/my-test.spec.json"></test-runner>
+ *
+ * <!-- 커스텀 러너 주입 -->
+ * <script>
+ *   const runner = document.querySelector('test-runner');
+ *   runner.setTestRunner(myCustomRunner);
+ *   runner.setTestReporter(myCustomReporter);
+ * </script>
  * ```
  */
 export class TestRunnerComponent extends HTMLElement {
   private specFile: string | null = null;
-  private visualizeEnabled = true;
-  private slowMotionEnabled = false;
   private isRunning = false; // Prevent multiple simultaneous test runs
+  private testRunner: ITestRunner;
+  private testReporter: ITestReporter;
 
-  constructor() {
+  constructor(testRunner?: ITestRunner, testReporter?: ITestReporter) {
     super();
     this.attachShadow({ mode: 'open' });
+
+    // 의존성 주입 - 기본값은 GSAP Kit 어댑터 사용
+    this.testRunner = testRunner || defaultTestRunner;
+    this.testReporter = testReporter || defaultTestReporter;
   }
 
   static get observedAttributes() {
-    return ['spec-file', 'visualize', 'slow-motion'];
+    return ['spec-file'];
   }
 
   attributeChangedCallback(name: string, oldValue: string, newValue: string) {
     if (oldValue === newValue) return;
 
-    switch (name) {
-      case 'spec-file':
-        this.specFile = newValue;
-        break;
-      case 'visualize':
-        this.visualizeEnabled = newValue === 'true';
-        break;
-      case 'slow-motion':
-        this.slowMotionEnabled = newValue === 'true';
-        break;
+    if (name === 'spec-file') {
+      this.specFile = newValue;
     }
+  }
+
+  /**
+   * 테스트 러너 설정 (의존성 주입)
+   */
+  setTestRunner(runner: ITestRunner): void {
+    this.testRunner = runner;
+    this.log('🔧 Custom test runner configured', 'info');
+  }
+
+  /**
+   * 테스트 리포터 설정 (의존성 주입)
+   */
+  setTestReporter(reporter: ITestReporter): void {
+    this.testReporter = reporter;
+    this.log('🔧 Custom test reporter configured', 'info');
   }
 
   connectedCallback() {
@@ -71,11 +93,6 @@ export class TestRunnerComponent extends HTMLElement {
           align-items: center;
         }
 
-        .controls-right {
-          margin-left: auto;
-          display: flex;
-          gap: 15px;
-        }
 
         .btn {
           padding: 10px 20px;
@@ -155,20 +172,6 @@ export class TestRunnerComponent extends HTMLElement {
           margin-right: 8px;
         }
 
-        label {
-          display: flex;
-          align-items: center;
-          gap: 5px;
-          font-size: 14px;
-          cursor: pointer;
-          user-select: none;
-        }
-
-        input[type="checkbox"] {
-          width: 16px;
-          height: 16px;
-          cursor: pointer;
-        }
 
         .custom-spec-panel {
           background: white;
@@ -226,16 +229,6 @@ export class TestRunnerComponent extends HTMLElement {
         <button id="runAllTests" class="btn btn-primary">▶ Run All Tests</button>
         <button id="runCustomSpec" class="btn btn-secondary">▶ Run Custom Spec</button>
         <button id="clearTests" class="btn btn-danger">Clear Results</button>
-        <div class="controls-right">
-          <label>
-            <input type="checkbox" id="visualizeToggle" ${this.visualizeEnabled ? 'checked' : ''}>
-            Visualize Paths
-          </label>
-          <label>
-            <input type="checkbox" id="slowMotionToggle" ${this.slowMotionEnabled ? 'checked' : ''}>
-            Slow Motion (3x)
-          </label>
-        </div>
       </div>
 
       <div id="custom-spec-panel" class="custom-spec-panel">
@@ -300,14 +293,15 @@ export class TestRunnerComponent extends HTMLElement {
 
     try {
       this.log('📝 Loading test spec...', 'info');
-      const results = await runTestsFromFile(this.specFile);
+      // 의존성 주입된 testRunner 사용
+      const results = await this.testRunner.runFromFile(this.specFile);
 
       this.log(`📝 Loaded ${results.total} tests`, 'info');
 
-      // Display results
+      // Display results using injected reporter
       if (reporterContainer) {
         reporterContainer.innerHTML = '';
-        createReport(results.raw, reporterContainer);
+        this.testReporter.render(results.raw, reporterContainer);
       }
 
       // Log summary
@@ -356,11 +350,12 @@ export class TestRunnerComponent extends HTMLElement {
       const spec = JSON.parse(specText);
       this.log('📝 Parsed custom spec successfully', 'info');
 
-      const results = await runTestsFromObject(spec);
+      // 의존성 주입된 testRunner 사용
+      const results = await this.testRunner.runFromObject(spec);
       this.log(`📝 Loaded ${results.total} tests`, 'info');
 
       reporterContainer.innerHTML = '';
-      createReport(results.raw, reporterContainer);
+      this.testReporter.render(results.raw, reporterContainer);
 
       const passRate = results.passRate.toFixed(2);
       if (results.failed === 0) {
@@ -471,17 +466,6 @@ export class TestRunnerComponent extends HTMLElement {
 
     this.shadowRoot.getElementById('loadDefaultSpec')?.addEventListener('click', () => {
       this.loadDefaultSpec();
-    });
-
-    // Toggles
-    this.shadowRoot.getElementById('visualizeToggle')?.addEventListener('change', e => {
-      this.visualizeEnabled = (e.target as HTMLInputElement).checked;
-      this.log(`Visualization ${this.visualizeEnabled ? 'enabled' : 'disabled'}`, 'info');
-    });
-
-    this.shadowRoot.getElementById('slowMotionToggle')?.addEventListener('change', e => {
-      this.slowMotionEnabled = (e.target as HTMLInputElement).checked;
-      this.log(`Slow motion ${this.slowMotionEnabled ? 'enabled' : 'disabled'}`, 'info');
     });
   }
 }

@@ -29,6 +29,13 @@ export {
   validateGSAPAssertion,
   waitForAnimation,
 } from './gsap-assertions';
+// GSAP Test Runner Adapter
+export {
+  defaultTestReporter,
+  defaultTestRunner,
+  GsapTestReporterAdapter,
+  GsapTestRunnerAdapter,
+} from './gsap-test-runner-adapter';
 // Mouse Simulator
 export {
   type HoverSimulatorOptions,
@@ -80,3 +87,9 @@ export {
 } from './test-runner';
 // Test Runner Component
 export { TestRunnerComponent } from './test-runner-component';
+// Test Runner Interface (Dependency Injection)
+export type {
+  ITestReporter,
+  ITestRunner,
+  TestRunResult,
+} from './test-runner-interface';

@@ -222,7 +222,7 @@ async function runAllTests(): Promise<void> {
 
     // Display results
     reporterContainer.innerHTML = '';
-    createReport(results.raw, reporterContainer);
+    createReport(results.raw, { container: reporterContainer });
 
     // Log summary
     const passRate = results.passRate.toFixed(2);
@@ -263,7 +263,7 @@ async function runCustomSpec(): Promise<void> {
 
     // Display results
     reporterContainer.innerHTML = '';
-    createReport(results.raw, reporterContainer);
+    createReport(results.raw, { container: reporterContainer });
 
     // Log summary
     const passRate = results.passRate.toFixed(2);
