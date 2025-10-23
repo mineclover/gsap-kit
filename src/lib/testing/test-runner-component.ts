@@ -125,6 +125,11 @@ export class TestRunnerComponent extends HTMLElement {
           color: white;
         }
 
+        .btn-info {
+          background: #4299e1;
+          color: white;
+        }
+
         .test-results {
           background: white;
           border-radius: 10px;
@@ -228,7 +233,9 @@ export class TestRunnerComponent extends HTMLElement {
       <div class="controls">
         <button id="runAllTests" class="btn btn-primary">▶ Run All Tests</button>
         <button id="runCustomSpec" class="btn btn-secondary">▶ Run Custom Spec</button>
+        <button id="uploadSpec" class="btn btn-info">📂 Upload Spec File</button>
         <button id="clearTests" class="btn btn-danger">Clear Results</button>
+        <input type="file" id="fileInput" accept=".json" style="display: none;">
       </div>
 
       <div id="custom-spec-panel" class="custom-spec-panel">
@@ -466,6 +473,48 @@ export class TestRunnerComponent extends HTMLElement {
 
     this.shadowRoot.getElementById('loadDefaultSpec')?.addEventListener('click', () => {
       this.loadDefaultSpec();
+    });
+
+    // File upload
+    const uploadBtn = this.shadowRoot.getElementById('uploadSpec');
+    const fileInput = this.shadowRoot.getElementById('fileInput') as HTMLInputElement;
+
+    uploadBtn?.addEventListener('click', () => {
+      fileInput?.click();
+    });
+
+    fileInput?.addEventListener('change', async e => {
+      const files = (e.target as HTMLInputElement).files;
+      if (!files || files.length === 0) return;
+
+      const file = files[0];
+      this.log(`📂 Loading file: ${file.name}`, 'info');
+
+      try {
+        const text = await file.text();
+        const spec = JSON.parse(text);
+
+        this.log('✅ File loaded successfully', 'success');
+
+        // Load into custom spec editor
+        const customSpecInput = this.shadowRoot?.getElementById('customSpecInput') as HTMLTextAreaElement;
+        if (customSpecInput) {
+          customSpecInput.value = JSON.stringify(spec, null, 2);
+        }
+
+        // Show custom spec panel
+        const panel = this.shadowRoot?.getElementById('custom-spec-panel');
+        if (panel && !panel.classList.contains('visible')) {
+          panel.classList.add('visible');
+        }
+
+        this.log('📝 Spec loaded into editor. Click "Execute Custom Spec" to run.', 'info');
+      } catch (error) {
+        this.log(`❌ Failed to load file: ${error}`, 'error');
+      }
+
+      // Reset file input
+      fileInput.value = '';
     });
   }
 }

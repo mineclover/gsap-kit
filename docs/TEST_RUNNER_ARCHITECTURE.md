@@ -82,6 +82,20 @@ interface TestRunResult {
 <script type="module" src="./main.js"></script>
 ```
 
+### 1-1. 파일 업로드 기능
+
+TestRunnerComponent는 JSON 스펙 파일 업로드 기능을 내장하고 있습니다:
+
+1. **📂 Upload Spec File** 버튼 클릭
+2. JSON 파일 선택
+3. 자동으로 Custom Spec 에디터에 로드됨
+4. **Execute Custom Spec** 버튼으로 실행
+
+```html
+<!-- 파일 업로드 기능이 자동으로 포함됨 -->
+<test-runner></test-runner>
+```
+
 ### 2. 커스텀 테스트 러너 주입
 
 ```typescript
