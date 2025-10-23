@@ -6,7 +6,8 @@
  */
 
 import { defaultTestReporter, defaultTestRunner } from './gsap-test-runner-adapter';
-import type { ITestReporter, ITestRunner } from './test-runner-interface';
+import { downloadHTMLReport } from './html-report-generator';
+import type { ITestReporter, ITestRunner, TestRunResult } from './test-runner-interface';
 
 /**
  * 테스트 러너 웹 컴포넌트
@@ -29,6 +30,7 @@ export class TestRunnerComponent extends HTMLElement {
   private isRunning = false; // Prevent multiple simultaneous test runs
   private testRunner: ITestRunner;
   private testReporter: ITestReporter;
+  private lastTestResult: TestRunResult | null = null; // Store last test result for export
 
   constructor(testRunner?: ITestRunner, testReporter?: ITestReporter) {
     super();
@@ -128,6 +130,16 @@ export class TestRunnerComponent extends HTMLElement {
         .btn-info {
           background: #4299e1;
           color: white;
+        }
+
+        .btn-success {
+          background: #48bb78;
+          color: white;
+        }
+
+        .btn:disabled {
+          opacity: 0.5;
+          cursor: not-allowed;
         }
 
         .test-results {
@@ -234,6 +246,7 @@ export class TestRunnerComponent extends HTMLElement {
         <button id="runAllTests" class="btn btn-primary">▶ Run All Tests</button>
         <button id="runCustomSpec" class="btn btn-secondary">▶ Run Custom Spec</button>
         <button id="uploadSpec" class="btn btn-info">📂 Upload Spec File</button>
+        <button id="exportHTML" class="btn btn-success" disabled>📥 Export HTML Report</button>
         <button id="clearTests" class="btn btn-danger">Clear Results</button>
         <input type="file" id="fileInput" accept=".json" style="display: none;">
       </div>
@@ -303,6 +316,10 @@ export class TestRunnerComponent extends HTMLElement {
       // 의존성 주입된 testRunner 사용
       const results = await this.testRunner.runFromFile(this.specFile);
 
+      // Store results for export
+      this.lastTestResult = results;
+      this.enableExportButton();
+
       this.log(`📝 Loaded ${results.total} tests`, 'info');
 
       // Display results using injected reporter
@@ -359,6 +376,11 @@ export class TestRunnerComponent extends HTMLElement {
 
       // 의존성 주입된 testRunner 사용
       const results = await this.testRunner.runFromObject(spec);
+
+      // Store results for export
+      this.lastTestResult = results;
+      this.enableExportButton();
+
       this.log(`📝 Loaded ${results.total} tests`, 'info');
 
       reporterContainer.innerHTML = '';
@@ -424,7 +446,47 @@ export class TestRunnerComponent extends HTMLElement {
     if (reporterContainer) reporterContainer.innerHTML = '';
     if (logContainer) logContainer.innerHTML = '';
 
+    this.lastTestResult = null;
+    this.disableExportButton();
+
     this.log('🗑️ Results cleared', 'info');
+  }
+
+  private enableExportButton(): void {
+    const exportBtn = this.shadowRoot?.getElementById('exportHTML') as HTMLButtonElement;
+    if (exportBtn) {
+      exportBtn.disabled = false;
+    }
+  }
+
+  private disableExportButton(): void {
+    const exportBtn = this.shadowRoot?.getElementById('exportHTML') as HTMLButtonElement;
+    if (exportBtn) {
+      exportBtn.disabled = true;
+    }
+  }
+
+  private exportHTMLReport(): void {
+    if (!this.lastTestResult) {
+      this.log('⚠️ No test results to export', 'warning');
+      return;
+    }
+
+    try {
+      const title = this.specFile
+        ? `Test Report - ${this.specFile.split('/').pop()?.replace('.json', '')}`
+        : 'Test Report';
+
+      downloadHTMLReport(this.lastTestResult, undefined, {
+        title,
+        includeTimestamp: true,
+        includeSystemInfo: true,
+      });
+
+      this.log('✅ HTML report downloaded successfully', 'success');
+    } catch (error) {
+      this.log(`❌ Failed to export HTML report: ${error}`, 'error');
+    }
   }
 
   private attachEventListeners(): void {
@@ -515,6 +577,11 @@ export class TestRunnerComponent extends HTMLElement {
 
       // Reset file input
       fileInput.value = '';
+    });
+
+    // Export HTML Report
+    this.shadowRoot.getElementById('exportHTML')?.addEventListener('click', () => {
+      this.exportHTMLReport();
     });
   }
 }
