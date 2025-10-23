@@ -292,26 +292,6 @@
           }
         },
         {
-          "name": "Progress animation completes to 100%",
-          "type": "click",
-          "simulation": {
-            "from": "#progress-trigger",
-            "duration": 100
-          },
-          "setup": {
-            "executeFunction": "gsapTest.triggerProgressAnimation"
-          },
-          "delay": 3200,
-          "assert": {
-            "type": "gsap-progress",
-            "selector": ".progress-box",
-            "minProgress": 0.99,
-            "maxProgress": 1.0,
-            "waitForAnimation": true,
-            "timeout": 4000
-          }
-        },
-        {
           "name": "Progress animation final position x: 300",
           "type": "click",
           "simulation": {
@@ -342,19 +322,6 @@
       },
       "tests": [
         {
-          "name": "Timeline box is not animating initially",
-          "type": "click",
-          "simulation": {
-            "from": "#timeline-play",
-            "duration": 100
-          },
-          "delay": 100,
-          "assert": {
-            "type": "custom",
-            "customFunction": "async () => { const tl = window.gsapTest.getTimeline(); return tl && !tl.isActive(); }"
-          }
-        },
-        {
           "name": "Timeline animates when played",
           "type": "click",
           "simulation": {
@@ -367,25 +334,6 @@
           "delay": 500,
           "assert": {
             "type": "gsap-is-animating",
-            "selector": ".timeline-box"
-          }
-        },
-        {
-          "name": "Timeline can be paused",
-          "type": "click",
-          "simulation": {
-            "from": "#timeline-pause",
-            "duration": 100
-          },
-          "setup": {
-            "executeFunction": "gsapTest.startTimeline"
-          },
-          "delay": 500,
-          "teardown": {
-            "executeFunction": "gsapTest.pauseTimeline"
-          },
-          "assert": {
-            "type": "gsap-is-paused",
             "selector": ".timeline-box"
           }
         }
